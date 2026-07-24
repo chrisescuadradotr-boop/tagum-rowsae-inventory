@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12315b">
+<link rel="manifest" href="manifest.json">
+<title>Tagum ROWSAE Inventory</title>
+<style>
+:root{--navy:#12315b;--navy2:#1c4a86;--ink:#132033;--mut:#5a6b82;--line:#d9e0ea;--bg:#eef2f7;--card:#fff;
+ --ok:#1a7f4b;--okbg:#e5f5ec;--bad:#b02a2a;--badbg:#fbe9e9;--warn:#8a6d1a;--warnbg:#fbf4de;--pri:#7a1fa2;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+#top{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;padding-top:calc(10px + env(safe-area-inset-top))}
+#top b{font-size:15px}#top .sp{flex:1}
+#top .who{font-size:12px;opacity:.85;text-align:right;line-height:1.2}
+#nav{position:sticky;top:0;z-index:15;display:flex;gap:4px;overflow-x:auto;background:#0d2547;padding:6px 8px}
+#nav button{white-space:nowrap;background:transparent;color:#cdd8e8;border:0;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600}
+#nav button.on{background:var(--navy2);color:#fff}
+#main{padding:12px;max-width:960px;margin:0 auto}
+h2{font-size:19px;margin:.2rem 0 .5rem}h3{font-size:15px;margin:.2rem 0}h4{margin:.6rem 0 .3rem;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.sub{color:var(--mut);font-size:13px;margin:.1rem 0 .8rem}
+.muted{color:var(--mut);font-size:12.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 200px;min-width:150px;display:flex;flex-direction:column;margin-bottom:8px}
+.field.full{flex-basis:100%}
+label{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+input,select,textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--navy2);border-color:var(--navy2)}
+textarea{min-height:56px;resize:vertical}
+button{cursor:pointer;font:inherit}
+.btn{background:var(--navy);color:#fff;border:0;padding:11px 16px;border-radius:10px;font-weight:700;font-size:14px}
+.btn:active{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:8px}
+.btn.warn{background:var(--bad)}
+.btn.wide{width:100%;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+details.sec{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+details.sec>summary{cursor:pointer;list-style:none;padding:12px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"▾";margin-left:auto;color:var(--mut)}
+details.sec[open]>summary::after{content:"▴"}
+details.sec>.body{padding:0 12px 12px}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--bad)}.pill.y{background:var(--warnbg);color:var(--warn)}.pill.n{background:#eef;color:var(--navy2)}.pill.p{background:#f3e6fb;color:var(--pri)}
+.tag{display:inline-block;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:700;background:#eef2f7;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.grid-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flag{padding:9px 11px;border-radius:9px;font-size:13px;margin:6px 0}
+.flag.bad{background:var(--badbg);color:var(--bad)}.flag.ok{background:var(--okbg);color:var(--ok)}.flag.warn{background:var(--warnbg);color:var(--warn)}.flag.info{background:#e8f0fb;color:var(--navy2)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.prog{height:8px;background:#e3e9f1;border-radius:6px;overflow:hidden}.prog>i{display:block;height:100%;background:var(--navy2)}
+.list-item{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:#fff}
+.list-item .grow{flex:1;min-width:0}
+.list-item .grow b{display:block;font-size:14px}
+.chipbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;background:#fff}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.notice{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0d2547;color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:90%;text-align:center}
+.hidden{display:none!important}
+.gridtbl input,.gridtbl select{padding:7px;font-size:12.5px}
+.locked{background:#f1f4f8;color:var(--mut)}
+.reqmark{color:var(--bad)}
+@media(max-width:520px){#main{padding:10px}.field{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="auth" class="card" style="max-width:440px;margin:14vh auto">
+    <h2>Tagum ROWSAE Inventory</h2>
+    <p class="sub">Offline Case-Folder Inventory &amp; Summary Form · MRP-LGU Tagum · DOTr</p>
+    <div class="field"><label>Organization</label>
+      <select id="authOrg"><option value="">— select —</option><option>PMO</option><option>LGU Tagum</option></select></div>
+    <div class="field"><label>Your name</label><input id="authName" placeholder="Type your full name"></div>
+    <div class="field"><label>This device's short name (optional)</label><input id="authDevice" placeholder="e.g. TABLET-01"></div>
+    <button class="btn wide" onclick="App.login()">Enter</button>
+    <p class="muted" style="margin-top:10px">Local self-identification for accountability. Your name is stamped on records and reports as preparer. All case data stays in this device's storage until you export or sync. No internet, server, or Google sign-in required.</p>
+  </div>
+  <div id="top" class="hidden"><b>Tagum ROWSAE</b><span class="tag" id="tbEnv"></span><span class="sp"></span>
+    <div class="who"><span id="tbUser"></span><br><span id="tbDevice" class="mono"></span></div></div>
+  <div id="nav" class="hidden"></div>
+  <div id="main" class="hidden"></div>
+</div>
+<div id="noticeHost"></div>
+<div id="modalHost"></div>
+
+<script>
+/* ============================================================
+   TAGUM ROWSAE OFFLINE CASE-FOLDER INVENTORY & SUMMARY (D1)
+   Reduced-scope field tool. Console untouched. Offline-first.
+   ============================================================ */
+"use strict";
+
+/* ---------- STORAGE: IndexedDB -> localStorage -> memory ---------- */
+const STORES=["folders","parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances","meta","audit"];
+const Store=(function(){
+  const DB="tagum_inv_d1", LS="taginv_", VER=1;
+  let mode="memory", db=null, mem={};
+  STORES.forEach(s=>mem[s]={});
+  function lsGet(s){try{return JSON.parse(localStorage.getItem(LS+s)||"{}")}catch(e){return {}}}
+  function lsSet(s,o){try{localStorage.setItem(LS+s,JSON.stringify(o));return true}catch(e){return false}}
+  async function init(){
+    try{
+      db=await new Promise((res,rej)=>{
+        const rq=indexedDB.open(DB,VER);
+        rq.onupgradeneeded=e=>{const d=e.target.result;STORES.forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"__k"})})};
+        rq.onsuccess=e=>res(e.target.result); rq.onerror=e=>rej(e.target.error);
+        rq.onblocked=()=>rej(new Error("idb blocked"));
+      });
+      mode="indexeddb"; return mode;
+    }catch(e){
+      try{localStorage.setItem(LS+"probe","1");localStorage.removeItem(LS+"probe");mode="localStorage";STORES.forEach(s=>mem[s]=lsGet(s));return mode}
+      catch(e2){mode="memory";return mode}
+    }
+  }
+  function tx(store,write){return new Promise((res,rej)=>{const t=db.transaction(store,write?"readwrite":"readonly");const os=t.objectStore(store);res(os)})}
+  async function put(store,key,val){val=Object.assign({},val,{__k:key});
+    if(mode==="indexeddb"){const os=await tx(store,1);return new Promise((res,rej)=>{const r=os.put(val);r.onsuccess=()=>res(val);r.onerror=()=>rej(r.error)})}
+    mem[store][key]=val; if(mode==="localStorage")lsSet(store,mem[store]); return val}
+  async function get(store,key){
+    if(mode==="indexeddb"){const os=await tx(store,0);return new Promise((res)=>{const r=os.get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null)})}
+    return mem[store][key]||null}
+  async function all(store){
+    if(mode==="indexeddb"){const os=await tx(store,0);return new Promise((res)=>{const r=os.getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])})}
+    return Object.values(mem[store]||{})}
+  async function del(store,key){
+    if(mode==="indexeddb"){const os=await tx(store,1);return new Promise((res)=>{const r=os.delete(key);r.onsuccess=()=>res(1);r.onerror=()=>res(0)})}
+    delete mem[store][key]; if(mode==="localStorage")lsSet(store,mem[store]); return 1}
+  return {init,put,get,all,del,get mode(){return mode}};
+})();
+
+/* ---------- UTIL ---------- */
+const U={
+  uuid(){try{if(crypto&&crypto.randomUUID)return crypto.randomUUID()}catch(e){}
+    return "u-"+Date.now().toString(16)+"-"+Math.random().toString(16).slice(2,10)},
+  now(){return new Date().toISOString()},
+  today(){return new Date().toISOString().slice(0,10)},
+  esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))},
+  num(v){if(v==null)return null;const s=String(v).replace(/[,\s₱]/g,"");if(s===""||/^(n\/?a|nyv|not applicable|not yet verified)$/i.test(s))return null;const n=Number(s);return isNaN(n)?null:n},
+  peso(v){const n=U.num(v);if(n==null)return (v&&String(v).trim())?U.esc(String(v)):"—";return "₱"+n.toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2})},
+  fmtDate(s){return s?String(s).slice(0,10):"—"},
+  // stable non-crypto checksum (offline/file:// safe) — cyrb53
+  hash(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
+    h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);
+    h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+    return (4294967296*(2097151&h2)+(h1>>>0)).toString(16).padStart(14,"0")},
+  debounce(fn,ms){let t;return function(){clearTimeout(t);const a=arguments,c=this;t=setTimeout(()=>fn.apply(c,a),ms)}}
+};
+
+/* ---------- CONFIG ---------- */
+const CFG={
+  appVersion:"D1-1.0",
+  packageSchema:3,            // matches parked console envelope
+  formVariant:"reduced-inventory",
+  formSchemaVersion:1,
+  lgu:"TAGUM",
+  admin:"Atty. Chris Escuadra",
+  roster:[
+    {name:"Atty. Chris Escuadra",role:"Assignment Administrator / Division Chief",org:"PMO"},
+    {name:"Debbie Cartagena",role:"PMO Land Acquisition Lead",org:"PMO"},
+    {name:"Glenn",role:"Encoder",org:"PMO"},
+    {name:"Gab / Yvee",role:"Encoder",org:"PMO"},
+    {name:"Jommel",role:"Encoder",org:"PMO"},
+    {name:"LGU Tagum Case Handler",role:"Case Handler",org:"LGU"}
+  ],
+  // Tagum City barangays with deterministic temporary codes (name stored separately; UUID never depends on code)
+  barangays:[
+    ["Apokon","APOK"],["Bincungan","BINC"],["Busaon","BUSA"],["Canocotan","CANO"],["Cuambogan","CUAM"],
+    ["La Filipina","LAFI"],["Liboganon","LIBO"],["Madaum","MADA"],["Magdum","MAGD"],["Magugpo East","MAGE"],
+    ["Magugpo North","MAGN"],["Magugpo Poblacion","MAGP"],["Magugpo South","MAGS"],["Magugpo West","MAGW"],
+    ["Mankilam","MANK"],["New Balamban","NEWB"],["Nueva Fuerza","NUEF"],["Pagsabangan","PAGS"],["Pandapan","PAND"],
+    ["San Agustin","SANA"],["San Isidro","SANI"],["San Miguel (Camp 4)","SANM"],["Visayan Village","VISV"],["(Other / TBD)","OTHR"]
+  ],
+  priority:["P1","P2","P3","Other"],
+  projectComponents:["Station","Depot","Mainline","Critical Path (designated)","Other"],
+  statuses:["For Assignment","For Inventory","Inventory in Progress","Inventory Complete - For Review",
+    "For Simultaneous Review","Returned for Correction","Approved with Remarks","For Technical Completion",
+    "For Appraisal","For Offer Drafting","For Signature","For Service","Awaiting PAP Response",
+    "For Negotiated Instrument","For Expropriation Evaluation","For ECP Preparation","For Legal Review",
+    "For Endorsement to OULA","For Payment","For Title Transfer","For Possession/Clearing","Completed","On Hold","Other"],
+  statusRemarkRequired:["Other","On Hold","Returned for Correction","Approved with Remarks"],
+  routes:["Undetermined","Negotiated","Expropriation","Donation","CA 141 (free patent/reversion)","Other"],
+  instruments:["NOT","Request for Donation","Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C","DOAS-Land","DOAS-Structures/Improvements","ADRI","ACRCT","EJSE","ECP / Request for Expropriation","Other"],
+  civilStatus:["Single","Married","Widow/Widower","Separated","Annulled","Not applicable (juridical entity)","Not yet verified"],
+  docValidity:["Not yet verified","Updated","Expired","Not applicable"],
+  noticeTypes:["NOT","Request for Donation","Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C","Other"],
+  partyTypes:["Individual","Married couple","Heirs / Estate","Corporation","Cooperative","Government","Occupant / Informal","Creditor","Representative","Other"],
+  claimRoles:["Registered Owner","Co-owner","Heir","Spouse","Representative / SPA","Beneficial Owner","Creditor","Occupant","Interested Party","Other"],
+  docStatuses:["Not Yet Verified","Available","Missing","Not Applicable"],
+  docTypes:["Transfer/Original Certificate of Title","Tax Declaration","Survey / Parcellary Records","Technical Description",
+    "Appraisal Report","BIR Zonal Certification","SMV / Assessor Certification","Certificate of No/With Improvement",
+    "RPT Clearance","Government ID(s)","TIN","Marriage Certificate","SPA / Authority","Death Certificate / EJSE / Heirship",
+    "Corporate Documents","Landowner Waiver","Ownership Affidavit(s)","Proof of Service","Reply / Response",
+    "Negotiated Instrument(s)","ECP Requirements","Payment Documents","Title Transfer Documents","Possession Documents","Other"],
+  structureTypes:["Residential","Commercial","Industrial","Agricultural","Mixed-use","Fence/Perimeter","Other improvement"],
+  severity:["Marginal (<80%)","Severe (≥80%)","Severe (structural compromise)","N/A"],
+  ctClassifications:["Fruit-bearing","Non-fruit-bearing","Timber","Ornamental","Seedling","Agricultural crop","Other"],
+  ctMaturity:["Seedling","Non-bearing","Bearing","Old / Senile","N/A"],
+  units:["pc","sqm","lm","hill","cluster","kg","bundle"],
+  landClass:["Residential","Commercial","Industrial","Agricultural","Institutional","Other"],
+  reviewers:["Atty. Chris Escuadra (Division Chief)","PMO Team Lead","LGU ROWSAE Head","LGU Land Acquisition Lead","LGU Data Controller"],
+  syncStates:["Local Only","Pending Upload","Uploaded","Upload Error"]
+};
+CFG.brgyCode=name=>{const f=CFG.barangays.find(b=>b[0]===name);return f?f[1]:"OTHR"};
+
+/* ---------- FIELD ENGINE (generic render/collect) ----------
+   def = [key,label,type,options?]  type: text|area|num|area2|date|select|check */
+function renderFields(obj,defs,prefix){
+  obj=obj||{};
+  return defs.map(d=>{
+    const[key,label,type,opts]=d, id=(prefix||"f_")+key, v=obj[key]==null?"":obj[key];
+    let ctrl;
+    if(type==="area"){ctrl=`<textarea id="${id}">${U.esc(v)}</textarea>`}
+    else if(type==="select"){ctrl=`<select id="${id}"><option value=""></option>${(opts||[]).map(o=>`<option ${String(v)===String(o)?"selected":""}>${U.esc(o)}</option>`).join("")}</select>`}
+    else if(type==="check"){ctrl=`<label style="flex-direction:row;gap:8px;align-items:center;text-transform:none;font-weight:400;color:var(--ink)"><input type="checkbox" id="${id}" ${v?"checked":""} style="width:auto"> ${U.esc(label)}</label>`; return `<div class="field">${ctrl}</div>`}
+    else if(type==="num"){ctrl=`<input id="${id}" inputmode="decimal" value="${U.esc(v)}" placeholder="₱ or N/A">`}
+    else if(type==="area2"){ctrl=`<input id="${id}" inputmode="decimal" value="${U.esc(v)}" placeholder="sqm or N/A">`}
+    else if(type==="date"){ctrl=`<input type="date" id="${id}" value="${U.esc(v)}">`}
+    else if(type==="calc"){ctrl=`<input id="${id}" value="${U.esc(v)}" class="locked" readonly tabindex="-1">`}
+    else{ctrl=`<input id="${id}" value="${U.esc(v)}">`}
+    return `<div class="field"><label>${U.esc(label)}</label>${ctrl}</div>`;
+  }).join("");
+}
+function collectFields(obj,defs,prefix){
+  defs.forEach(d=>{const[key,,type]=d, e=document.getElementById((prefix||"f_")+key); if(!e)return;
+    obj[key]= type==="check" ? e.checked : e.value;});
+  return obj;
+}
+/* ---------- AUTO-CALCULATION ----------
+   Land: adopted rate comes from the chosen benchmark; adopted compensation = rate x compensable
+   (or affected) area. Structures / C&T: balance = adopted compensation - amount paid.
+   Everything derived is read-only; the underlying benchmarks are never altered. */
+const BASIS_RATE={"SMV":"smvRate","BIR zonal value":"zvRate","CMV / appraised":"cmvRate"};
+const BASIS_TOTAL={"SMV":"smvTotal","BIR zonal value":"zvTotal","CMV / appraised":"cmvTotal",
+  "Tax-declaration market value":"taxdecMV","Assessed value":"assessed","Other benchmark":"otherAmt"};
+function calcLand(lv,land){
+  lv=lv||{}; land=land||{};
+  const basis=lv.adoptedBasis||"";
+  const area=U.num(land.compensableArea)!=null?U.num(land.compensableArea):U.num(land.affectedArea);
+  const rateKey=BASIS_RATE[basis], totKey=BASIS_TOTAL[basis];
+  let rate=rateKey?U.num(lv[rateKey]):null;
+  let comp=null;
+  if(rate!=null&&area!=null){comp=rate*area}
+  else if(totKey&&U.num(lv[totKey])!=null){comp=U.num(lv[totKey]);
+    if(rate==null&&area)rate=comp/area}
+  return {adoptedRate:rate==null?"":String(Math.round(rate*100)/100),
+          adoptedComp:comp==null?"":String(Math.round(comp*100)/100)};
+}
+function calcBalance(v){const c=U.num(v&&v.adoptedComp), p=U.num(v&&v.paid);
+  if(c==null)return ""; return String(Math.round((c-(p||0))*100)/100)}
+function paintCalc(prefix,vals){Object.keys(vals).forEach(k=>{const e=document.getElementById(prefix+k);if(e)e.value=vals[k]})}
+/* Valuation field sets (asset-linked; N/A not zero). "calc" = auto-computed, read-only. */
+const VAL_BASES=["SMV","BIR zonal value","CMV / appraised","Tax-declaration market value","Assessed value","Replacement cost","Other benchmark"];
+const VAL_LAND=[["smvRate","SMV rate/sqm","num"],["smvTotal","SMV total","num"],["zvRate","BIR zonal rate/sqm","num"],["zvTotal","BIR zonal total","num"],
+  ["cmvRate","CMV/appraised rate/sqm","num"],["cmvTotal","CMV/appraised total","num"],["taxdecMV","Tax-dec market value","num"],["assessed","Assessed value","num"],
+  ["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["adoptedBasis","Adopted valuation basis","select",VAL_BASES],
+  ["adoptedRate","Adopted rate (auto)","calc"],["adoptedComp","Adopted land compensation (auto)","calc"],
+  ["offer","Offer amount","num"],
+  ["valSource","Source / reference","text"],["valDate","Valuation date","date"],["valRemarks","Remarks","area"]];
+const VAL_STRUCT=[["smv","SMV","num"],["zv","Zonal value","num"],["cmv","CMV/appraised value","num"],["taxdecMV","Tax-dec market value","num"],["assessed","Assessed value","num"],
+  ["rcRate","Replacement-cost rate","num"],["rcTotal","Replacement-cost total","num"],["deprStated","Depreciation stated by appraisal","text"],["deprValue","Depreciated value stated by appraisal","num"],
+  ["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["adoptedBasis","Adopted basis","select",VAL_BASES],["adoptedComp","Adopted compensation","num"],["offer","Offer","num"],
+  ["apprRef","Appraisal reference/date","text"],["valRemarks","Valuation remarks","area"]];
+const VAL_CT=[["smv","Applicable SMV","num"],["zv","Zonal value","num"],["cmv","CMV/appraisal benchmark","num"],["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["apprUnit","Appraisal unit value","num"],["adoptedUnit","Adopted unit value","num"],["adoptedBasis","Adopted basis","select",VAL_BASES],["adoptedComp","Adopted compensation","num"],["offer","Offer","num"],
+  ["apprRef","Reference / date","text"],["valRemarks","Remarks","area"]];
+
+/* ---------- FIELD DEFINITIONS (sectioned) ---------- */
+const BRGY_NAMES=CFG.barangays.map(b=>b[0]);
+const DEF={
+  ident:[["lotNumber","Lot number","text"],["barangay","Barangay","select",BRGY_NAMES],["mrpNo","MRP number","text"],["dotrPin","Tagum PIN","text"],
+    ["parcellaryLot","Parcellary lot number","text"],["legacyId","Sequence number","text"],["titleNo","Title number","text"],["taxDecNo","Tax-declaration number","text"]],
+  ctrl:[["projectComponent","Project component","select",CFG.projectComponents],["priority","Priority","select",CFG.priority],
+    ["priorityRemarks","Priority remarks (required if Other)","text"],
+    ["inventoryStart","Inventory date (start)","date"],["inventoryEnd","Inventory date (end)","date"]],
+  land:[["landClass","Land classification","select",CFG.landClass],
+    ["totalArea","Total area (sqm)","area2"],["affectedArea","Affected area (sqm)","area2"],["compensableArea","Compensable area (sqm)","area2"],["remainingArea","Remaining area (sqm)","area2"],
+    ["ca141","CA 141 applicable","select",["Yes","No","N/A"]],["ownershipIssue","Ownership / title issue","area"]],
+  landVal:VAL_LAND,
+  primary:[["name","Title holder","text"],["type","Party type","select",CFG.partyTypes],["civilStatus","Civil status","select",CFG.civilStatus],["spouse","Spouse","text"],
+    ["address","Address","text"],["disputeStatus","Dispute status","text"],["authority","Authority / representation","text"]],
+  stat:[["status","Current status","select",CFG.statuses],["statusDate","Status date / as-of","date"],["statusRemarks","Status remarks","area"],
+    ["primaryIssue","Primary issue","text"],["blocker","Blocker","text"],["blockerRemarks","Blocker remarks","text"],
+    ["route","Recommended route","select",CFG.routes],["instrument","Recommended legal instrument","select",CFG.instruments],
+    ["wayForward","Recommended way forward","area"],["responsibleOffice","Responsible office","text"]]
+};
+const CHILD_DEF={
+  parties:[["name","Name / entity","text"],["type","Party type","select",CFG.partyTypes],["role","Role","select",CFG.claimRoles],["assetClaimed","Asset claimed","text"],
+    ["relationship","Relationship to title holder/owner","text"],["civilStatus","Civil status","select",CFG.civilStatus],["spouse","Spouse","text"],["address","Address","text"],["contact","Contact","text"],
+    ["claimedShare","Claimed share","text"],["validatedShare","Validated share","text"],["claimBasis","Claim basis","text"],["spaAuthority","SPA / authority","text"],
+    ["heirDetails","Heir / estate details","text"],["creditorInterest","Creditor interest","text"],["validationStatus","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]],
+  structures:[["tag","Structure tag","text"],["ownerClaimant","Owner / claimant","text"],["type","Type","select",CFG.structureTypes],["use","Use","text"],["location","Location","text"],
+    ["totalFloorArea","Total floor area (sqm)","area2"],["affectedFloorArea","Affected floor area (sqm)","area2"],["pctAffected","% affected","text"],
+    ["severity","Severity","select",CFG.severity],["structuralCompromise","Structural compromise","check"],["ownershipBasis","Ownership basis","text"],["taxDec","Tax declaration","text"],
+    ["clearingStatus","Clearing status","select",["Not started","For clearing","Cleared","N/A"]],["remarks","Remarks","area"]],
+  cropsTrees:[["claimant","Claimant","text"],["species","Species / type","text"],["classification","Classification","select",CFG.ctClassifications],["maturity","Maturity","select",CFG.ctMaturity],
+    ["location","Location","text"],["quantity","Quantity","area2"],["unit","Unit","select",CFG.units],["unitValue","Appraisal unit value","num"],
+    ["apprRef","Appraisal reference / date","text"],["validation","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]],
+  offers:[["assetType","Applies to","select",["Land","Structure","Crops & trees","Land + improvements","Other"]],
+    ["owner","Owner / claimant served","text"],
+    ["offerType","Offer / notice type","select",CFG.noticeTypes],["issueDate","Issue date","date"],
+    ["serviceDate","Service date / attempt","date"],["recipient","Recipient","text"],["manner","Manner of service","text"],
+    ["outcome","Service outcome","select",["Served / received","Refused to receive","Unlocatable","Substituted service","Not yet served","Other"]],
+    ["proofAvailable","Proof available","select",["Yes","No","Awaiting verification"]],
+    ["response","Response","select",["None yet","Accepted","Rejected","Counter-offer","For further discussion","No reply within period"]],
+    ["responseDate","Response date","date"],["responseDeadline","Response deadline / lapse","date"],
+    ["triggerPotential","Potential expropriation trigger (note only)","text"],["remarks","Remarks","area"]],
+  encumbrances:[["type","Encumbrance type","select",["Mortgage","Lien","Adverse claim","Notice of lis pendens","Easement / right of way","Attachment / levy","Tax delinquency","Annotation (other)","Other"]],
+    ["holder","Holder / creditor / claimant","text"],["amount","Amount involved","num"],
+    ["instrument","Instrument / entry no.","text"],["dateAnnotated","Date annotated","date"],
+    ["annotated","Annotated on title","select",["Yes","No","Not yet verified"]],
+    ["status","Status","select",["Subsisting","Cancelled","For cancellation","Under verification","Other"]],["remarks","Remarks","area"]],
+  documents:[["docType","Document","select",CFG.docTypes],["status","Status","select",CFG.docStatuses],["validity","Validity","select",CFG.docValidity],["otherDesc","If Other, description","text"],
+    ["reference","Reference","text"],["date","Date","date"],["deficiency","Deficiency","text"],["remarks","Remarks","area"]]
+};
+
+/* ---------- APP ---------- */
+const App=(function(){
+  let S={user:null,device:null,deviceUuid:null,screen:"home",folder:null,filters:{},adminMode:false,data:{}};
+
+  async function boot(){
+    await Store.init();
+    document.getElementById("tbEnv").textContent=Store.mode;
+    // device uuid persistent
+    let du=localStorage.getItem("taginv_deviceUuid"); if(!du){du=U.uuid();localStorage.setItem("taginv_deviceUuid",du)}
+    S.deviceUuid=du;
+    const sess=localStorage.getItem("taginv_session");
+    if(sess){try{const o=JSON.parse(sess);S.user=o.user;S.device=o.device;await enter()}catch(e){}}
+    registerSW();
+  }
+  function isAdminName(name){return String(name||"").toLowerCase().replace(/[^a-z]/g,"").includes("escuadra")}
+  async function login(){
+    const orgSel=(document.getElementById("authOrg").value||"").trim();
+    const name=(document.getElementById("authName").value||"").trim();
+    if(!orgSel){notice("Select your organization.");return}
+    if(!name){notice("Type your name to continue.");return}
+    const org=(orgSel==="PMO")?"PMO":"LGU";
+    const dev=(document.getElementById("authDevice").value||"").trim()||("DEV-"+S.deviceUuid.slice(0,4).toUpperCase());
+    S.user={name,role:orgSel+" personnel",org}; S.device=dev;
+    localStorage.setItem("taginv_session",JSON.stringify({user:S.user,device:S.device}));
+    await audit("LOGIN","session","-","",org,name); await enter();
+  }
+  function logout(){localStorage.removeItem("taginv_session");location.reload()}
+  async function enter(){
+    document.getElementById("auth").classList.add("hidden");
+    ["top","nav","main"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    document.getElementById("tbUser").textContent=S.user.name.replace("Atty. ","");
+    document.getElementById("tbDevice").textContent=S.device;
+    S.isAdmin=isAdminName(S.user.name);
+    const NAV=[["home","Case Folders"],["new","New Folder"],["backup","Backup &amp; Sync"]].concat(S.isAdmin?[["admin","Admin"]]:[]).concat([["help","Help"]]);
+    document.getElementById("nav").innerHTML=NAV.map(n=>`<button data-v="${n[0]}" onclick="App.go('${n[0]}')">${n[1]}</button>`).join("");
+    await refresh(); go("home");
+  }
+  async function refresh(){for(const s of STORES){if(s!=="meta")S.data[s]=await Store.all(s)}
+    const m=await Store.get("meta","counters"); S.counters=(m&&m.value)||{seq:0};
+  }
+  function go(v){ if(v==="new"){return App.newFolder()} S.screen=v; S.folder=(v==="form")?S.folder:null;
+    document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v||(v==="form"&&b.dataset.v==="home")));
+    render(); window.scrollTo(0,0);
+  }
+  function render(){const m=document.getElementById("main");
+    const y=(typeof window!=="undefined"&&window.scrollY)||0;
+    if(S.screen==="form")captureOpen();
+    const R={home:vHome,form:vForm,admin:vAdmin,backup:vBackup,help:vHelp};
+    m.innerHTML=(R[S.screen]||vHome)();
+    if(S.screen==="form"){bindForm(); if(y)window.scrollTo(0,y);}
+  }
+
+  /* ---- provenance / ids ---- */
+  function stamp(isNew){const t=U.now();return isNew?
+    {createdBy:S.user.name,createdAt:t,createdDevice:S.deviceUuid,updatedBy:S.user.name,updatedAt:t,updatedDevice:S.deviceUuid,version:1,dirty:true}:
+    {updatedBy:S.user.name,updatedAt:t,updatedDevice:S.deviceUuid,dirty:true}}
+  async function nextSeq(){const c=S.counters||{seq:0};c.seq=(c.seq||0)+1;S.counters=c;await Store.put("meta","counters",{key:"counters",value:c});return c.seq}
+  async function audit(action,entity,id,field,oldv,newv){const e={id:U.uuid(),ts:U.now(),user:S.user?S.user.name:"?",device:S.deviceUuid,action,entity,recordId:id,field,oldv:String(oldv||""),newv:String(newv||"")};await Store.put("audit",e.id,e)}
+  function folderCode(f){const bc=CFG.brgyCode(f.ident?.barangay||"");const lot=(f.ident?.lotNumber||"").trim();
+    return lot?`TAG-${bc}-${lot}-${String(f.seq).padStart(3,"0")}`:`TAG-${bc}-TEMP-${String(f.seq).padStart(3,"0")}`}
+
+  /* ---- folder lifecycle ---- */
+  async function newFolder(){
+    const seq=await nextSeq();
+    const f={uuid:U.uuid(),seq,ident:{},ctrl:{priority:"",org:S.user.org},land:{},landVal:{},primary:{},offer:{},stat:{status:"Inventory in Progress"},
+      assignedHandler:S.user.name,assignedOrg:S.user.org,assignedBy:S.user.name,assignmentDate:U.now(),acceptanceDate:U.now(),assignmentStatus:"Assigned",
+      reassignHistory:[{at:U.now(),from:"",to:S.user.name,by:S.user.name,reason:"self-registered on this device (D1)"}],
+      parties:[],structures:[],cropsTrees:[],documents:[],specialConditions:[],offers:[],encumbrances:[],
+      status:"Inventory in Progress",reportVersion:1,draftFinal:"Draft",syncStatus:"Local Only",deleted:false};
+    f.caseFolderId=folderCode(f);
+    Object.assign(f,stamp(true));
+    await saveFolder(f,true);
+    S.openSecs=null; S.folder=f; S.screen="form"; go("form"); notice("New Case Folder "+f.caseFolderId+" created — you are the Case Handler.");
+  }
+  async function saveFolder(f,silent){
+    f.caseFolderId=folderCode(f);
+    f.status=(f.stat&&f.stat.status)||f.status||"For Assignment";
+    if(!f.__isNew__)Object.assign(f,stamp(false)); f.dirty=true;
+    if(f.syncStatus==="Uploaded")f.syncStatus="Pending Upload";
+    await Store.put("folders",f.uuid,f);
+    // child stores mirror (each child carries folderUuid + own uuid + provenance)
+    for(const cs of ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances"]){
+      for(const ch of (f[cs]||[])){if(!ch.uuid)ch.uuid=U.uuid();ch.folderUuid=f.uuid;if(!ch.createdAt)Object.assign(ch,stamp(true));else Object.assign(ch,stamp(false));await Store.put(cs,ch.uuid,ch)}
+    }
+    await refresh();
+    if(!silent)notice("Saved "+f.caseFolderId+" (v"+(f.version||1)+").");
+  }
+  const autosave=U.debounce(async()=>{ if(S.screen!=="form"||!S.folder)return; collectFolder(); S.folder.__auto__=true; await saveFolder(S.folder,true); const b=document.getElementById("autoflag"); if(b){b.textContent="autosaved "+new Date().toLocaleTimeString();} },900);
+
+  function loadFolder(uuid){const f=S.data.folders.find(x=>x.uuid===uuid);if(!f)return;
+    ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances"].forEach(cs=>{f[cs]=(S.data[cs]||[]).filter(c=>c.folderUuid===uuid)});
+    S.openSecs=null; S.folder=f; S.screen="form"; go("form"); window.scrollTo(0,0);
+  }
+  async function deleteFolder(uuid){const f=S.data.folders.find(x=>x.uuid===uuid);if(!f)return;
+    if(!confirm("Archive Case Folder "+f.caseFolderId+"? It is retained (soft-delete) and excluded from active lists."))return;
+    f.deleted=true;Object.assign(f,stamp(false));await Store.put("folders",f.uuid,f);await audit("ARCHIVE","folder",f.uuid,"deleted","","true");await refresh();go("home")}
+
+  /* ---- collect current form into S.folder ---- */
+  function collectFolder(){const f=S.folder;if(!f)return;
+    collectFields(f.ident,DEF.ident,"id_"); collectFields(f.ctrl,DEF.ctrl,"ct_");
+    collectFields(f.land,DEF.land,"ld_"); collectFields(f.landVal,DEF.landVal,"lv_");
+    collectFields(f.primary,DEF.primary,"pc_");
+    collectFields(f.stat,DEF.stat,"st_");
+    const og=document.getElementById("selOrg"); if(og)f.ctrl.org=og.value;
+    f.draftFinal=(document.getElementById("selDraftFinal")||{}).value||f.draftFinal;
+    // derived land valuation (never overwrites a benchmark)
+    const calc=calcLand(f.landVal,f.land);
+    f.landVal.adoptedRate=calc.adoptedRate; f.landVal.adoptedComp=calc.adoptedComp;
+    paintCalc("lv_",calc);
+  }
+
+  /* ---- completion indicator ---- */
+  function completion(f){
+    const checks=[f.ident.lotNumber||f.ident.barangay, f.ctrl.projectComponent, f.assignedHandler, f.primary.name,
+      f.land.totalArea, f.land.affectedArea, (f.structures.length||f.cropsTrees.length||f.land.affectedArea),
+      f.stat.status, f.stat.route, f.stat.wayForward, f.stat.responsibleOffice, f.documents.length];
+    const done=checks.filter(Boolean).length; return {done,total:checks.length,pct:Math.round(100*done/checks.length)};
+  }
+  function statusRemarkNeeded(f){return CFG.statusRemarkRequired.includes(f.stat.status)&&!(f.stat.statusRemarks||"").trim()}
+  function isProvisional(f){return (f.assignmentStatus==="For Assignment")||!f.assignedHandler}
+
+  /* ============ FORM ============ */
+  function secWrap(title,body,open){
+    const k=String(title).replace(/[^A-Za-z]/g,"").slice(0,24);
+    const isOpen=(S.openSecs&&S.openSecs[k]!==undefined)?S.openSecs[k]:!!open;
+    return `<details class="sec" data-k="${k}" ${isOpen?'open':''}><summary>${title}</summary><div class="body">${body}</div></details>`}
+  function captureOpen(){const o={};let n=0;
+    document.querySelectorAll("details.sec").forEach(d=>{if(d.dataset.k){o[d.dataset.k]=d.open;n++}});
+    if(n)S.openSecs=o}
+  function vForm(){const f=S.folder;if(!f)return vHome();
+    const cp=completion(f), prov=isProvisional(f), locked=!S.isAdmin;
+    const assignBlock=`<div class="flag info">Case Handler: <b>${U.esc(f.assignedHandler||S.user.name)}</b>${f.assignedHandler===S.user.name?" (you)":""}. You can encode everything and print the report now — no assignment step needed. ${S.isAdmin?"As Administrator you may reassign below (kept in history).":"Only the Administrator can reassign this folder."}</div>
+      <div class="row">
+        <div class="field"><label>Assigned Case Handler</label><input id="asgHandler" value="${U.esc(f.assignedHandler||'')}" class="locked" readonly></div>
+        <div class="field"><label>Organization</label><input value="${U.esc(f.assignedOrg||'')}" class="locked" readonly></div>
+        <div class="field"><label>Assigned by</label><input value="${U.esc(f.assignedBy||'')}" class="locked" readonly></div>
+        <div class="field"><label>Assignment date</label><input value="${U.esc(U.fmtDate(f.assignmentDate))}" class="locked" readonly></div>
+      </div>
+      ${S.isAdmin?`<button class="btn sm" onclick="App.assignModal('${f.uuid}')">Reassign (Admin)</button>`:''}
+      ${f.reassignHistory&&f.reassignHistory.length?`<h4>Assignment history</h4><div class="grid-wrap"><table><tr><th>When</th><th>From→To</th><th>By</th><th>Reason</th></tr>${f.reassignHistory.map(h=>`<tr><td>${U.fmtDate(h.at)}</td><td>${U.esc(h.from||'—')} → ${U.esc(h.to)}</td><td>${U.esc(h.by)}</td><td>${U.esc(h.reason)}</td></tr>`).join('')}</table></div>`:''}`;
+
+    const secA=assignBlock+renderFields(f.ctrl,DEF.ctrl,"ct_")+
+      `<div class="row">
+        <div class="field"><label>Handling org</label><select id="selOrg"><option ${f.ctrl.org==='PMO'?'selected':''}>PMO</option><option ${f.ctrl.org!=='PMO'?'selected':''}>LGU</option></select></div>
+        <div class="field"><label>Report status (local)</label><select id="selDraftFinal"><option ${f.draftFinal!=='Final (local)'?'selected':''}>Draft</option><option ${f.draftFinal==='Final (local)'?'selected':''}>Final (local)</option></select></div>
+      </div>
+      <p class="muted">“Final (local)” marks local completion only; FINAL-APPROVED requires the connected review (D3).</p>`;
+
+    const secB=`<h4>Parcel identifiers</h4>${renderFields(f.ident,DEF.ident,"id_")}
+      <p class="muted">Case Folder ID: <span class="mono">${U.esc(f.caseFolderId)}</span> · UUID <span class="mono">${U.esc(f.uuid)}</span> — the UUID never changes even if the lot/barangay is corrected.</p>
+      <h4>Land parcel</h4>${renderFields(f.land,DEF.land,"ld_")}
+      <h4>Encumbrances (${f.encumbrances.length})</h4>${gridEncumbrances(f)}
+      <h4>Title holder</h4>${renderFields(f.primary,DEF.primary,"pc_")}`;
+
+    const secLV=`<p class="muted">Benchmarks stay beside the land. Enter ₱ amount or N/A (not zero). Choose the <b>adopted valuation basis</b> — the adopted rate and adopted land compensation are then computed automatically (rate × compensable area, falling back to affected area). Land is never depreciated.</p>${renderFields(f.landVal,DEF.landVal,"lv_")}`;
+
+    const submitWarn = (statusRemarkNeeded(f)?'<div class="flag bad">Status Remarks are required for the selected status before submitting.</div>':'');
+    const review=`${submitWarn}
+      <p>Completion <b>${cp.pct}%</b> (${cp.done}/${cp.total} key areas). Structures: ${f.structures.length} · C&T lines: ${f.cropsTrees.length} · Other claimants: ${f.parties.length} · Documents: ${f.documents.length} · Special conditions: ${f.specialConditions.length}.</p>
+      <div class="bar">
+        <button class="btn ghost" onclick="App.openReport('${f.uuid}')">Print / Generate report (PDF)</button>
+        <button class="btn" onclick="App.submitReview('${f.uuid}')">Mark: For Simultaneous Review</button>
+      </div>`;
+
+    return `<div class="bar"><button class="btn ghost sm" onclick="App.go('home')">‹ All folders</button>
+      <span class="pill n">${U.esc(f.caseFolderId)}</span><span class="tag" id="autoflag">autosave on</span></div>
+    <div class="card"><div class="row" style="align-items:center">
+      <div style="flex:1"><h2 style="margin:0">${U.esc(f.primary.name||'(unnamed claimant)')}</h2>
+        <span class="muted">${U.esc(f.status)} · v${f.reportVersion} · ${U.esc(f.syncStatus)}</span></div>
+      <div style="min-width:96px;text-align:right"><span class="pill ${cp.pct>=80?'g':cp.pct>=40?'y':'r'}">${cp.pct}%</span></div></div>
+      <div class="prog" style="margin-top:8px"><i style="width:${cp.pct}%"></i></div>
+      <div class="bar" style="margin-top:10px"><button class="btn" onclick="App.saveNow('${f.uuid}')">Save</button>
+        <button class="btn ghost" onclick="App.openReport('${f.uuid}')">Report</button>
+        <button class="btn ghost warn" onclick="App.deleteFolder('${f.uuid}')">Archive</button></div>
+    </div>
+    ${secWrap("A · Folder control &amp; assignment",secA,true)}
+    ${secWrap("B · Land parcel &amp; primary claimant",secB,true)}
+    ${secWrap("B· · Land valuation",secLV)}
+    ${secWrap("C · Other claimants &amp; interested parties ("+f.parties.length+")",gridParties(f))}
+    ${secWrap("D · Structures &amp; improvements ("+f.structures.length+")",gridStructures(f))}
+    ${secWrap("E · Crops &amp; trees ("+f.cropsTrees.length+")",gridCT(f))}
+    ${secWrap("F · Derived valuation summary",valSummary(f))}
+    ${secWrap("G · Document checklist ("+f.documents.length+")",gridDocs(f))}
+    ${secWrap("H · Offers, notices &amp; responses ("+f.offers.length+")",gridOffers(f))}
+    ${secWrap("I · Status, issues &amp; way forward",renderFields(f.stat,DEF.stat,"st_")+(statusRemarkNeeded(f)?'<div class="flag bad">Status Remarks required for “'+U.esc(f.stat.status)+'”.</div>':''))}
+    ${secWrap("J · Special conditions &amp; proposed arrangements ("+f.specialConditions.length+")",gridSpecial(f))}
+    ${secWrap("K · Review &amp; submit",review,true)}`;
+  }
+  function bindForm(){const m=document.getElementById("main");
+    m.addEventListener("input",autosave); m.addEventListener("change",autosave);}
+
+  async function saveNow(uuid){collectFolder();await saveFolder(S.folder,false);render()}
+
+  /* ---- derived valuation summary (no double count: each asset once) ---- */
+  function valSummary(f){
+    collectFolder&&0;
+    const rows=[];
+    const lc=U.num(f.landVal.adoptedComp);
+    rows.push(["Land",f.ident.lotNumber?("Lot "+f.ident.lotNumber):"Land",f.landVal.adoptedComp,f.landVal.offer]);
+    f.structures.forEach((s,i)=>rows.push(["Structure",(s.tag||("Str "+(i+1)))+" "+(s.type||""),s.val?.adoptedComp,s.val?.offer]));
+    f.cropsTrees.forEach((c,i)=>rows.push(["Crops/Trees",(c.species||("Line "+(i+1)))+" ×"+(c.quantity||"—"),c.val?.adoptedComp,c.val?.offer]));
+    const sum=k=>rows.reduce((t,r)=>t+(U.num(r[k])||0),0);
+    const tAdopt=sum(2),tOffer=sum(3);
+    return `<p class="muted">Derived from asset records — each asset counted once (no double counting). Authoritative values live on the assets.</p>
+    <div class="grid-wrap"><table><thead><tr><th>Asset</th><th>Ref</th><th>Adopted comp.</th><th>Offer</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td>${r[0]}</td><td>${U.esc(r[1])}</td><td>${U.peso(r[2])}</td><td>${U.peso(r[3])}</td></tr>`).join("")}
+    <tr style="font-weight:700"><td colspan="2">TOTAL</td><td>${U.peso(tAdopt)}</td><td>${U.peso(tOffer)}</td></tr>
+    </tbody></table></div>`;
+  }
+
+  async function submitReview(uuid){collectFolder();const f=S.folder;
+    if(statusRemarkNeeded(f)){notice("Status Remarks required for the selected status.");return}
+    f.stat.status="For Simultaneous Review"; f.status="For Simultaneous Review";
+    f.reportVersion=(f.reportVersion||1)+1; f.draftFinal="Draft";
+    await saveFolder(f,true); await audit("SUBMIT","folder",f.uuid,"status","","For Simultaneous Review");
+    notice("Marked For Simultaneous Review (v"+f.reportVersion+"). Connected reviewer approval is handled in D3."); render();
+  }
+
+  /* ============ GRIDS ============ */
+  function gridParties(f){return `<button class="btn sm" onclick="App.openChild('parties',null)">+ Add claimant / party</button>
+    ${f.parties.length?`<div class="grid-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Share (claim/valid)</th><th>Validation</th><th></th></tr></thead><tbody>
+    ${f.parties.map((p,i)=>`<tr><td>${U.esc(p.name||'—')}</td><td>${U.esc(p.type||'—')}</td><td>${U.esc(p.role||'—')}</td><td>${U.esc(p.claimedShare||'—')} / ${U.esc(p.validatedShare||'—')}</td><td>${U.esc(p.validationStatus||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('parties',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('parties',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No other claimants recorded.</p>'}`}
+
+  function gridStructures(f){return `<button class="btn sm" onclick="App.openChild('structures',null)">+ Add structure / improvement</button>
+    ${f.structures.length?`<div class="grid-wrap"><table><thead><tr><th>Tag</th><th>Type</th><th>Aff. FA</th><th>Severity</th><th>Adopted comp.</th><th></th></tr></thead><tbody>
+    ${f.structures.map((s,i)=>`<tr><td>${U.esc(s.tag||('S'+(i+1)))}</td><td>${U.esc(s.type||'—')}</td><td>${U.esc(s.affectedFloorArea||'—')}</td><td>${U.esc(s.severity||'—')}</td><td>${U.peso(s.val?.adoptedComp)}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('structures',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('structures',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No structures. Each physical structure is one line, counted separately.</p>'}`}
+
+  function gridCT(f){return `<p class="muted">One line per species/classification. Line value = Quantity × Unit value (never × land area). Paste from Excel (Tab or comma) or import CSV.</p>
+    <div class="row"><div class="field full"><label>Paste rows: species, classification, maturity, quantity, unit, unit value</label><textarea id="ctPaste" placeholder="Narra&#9;Timber&#9;Bearing&#9;12&#9;pc&#9;1500&#10;Mango&#9;Fruit-bearing&#9;Bearing&#9;5&#9;pc&#9;8000"></textarea></div></div>
+    <div class="bar"><button class="btn sm" onclick="App.ctPaste()">Add pasted rows</button>
+      <label class="btn sm ghost" style="display:inline-block">Import CSV<input type="file" accept=".csv,text/csv" onchange="App.ctCSV(this.files[0])" style="display:none"></label>
+      <button class="btn sm ghost" onclick="App.ctAdd()">+ Add empty row</button></div>
+    ${f.cropsTrees.length?`<div class="grid-wrap"><table class="gridtbl"><thead><tr><th>Species</th><th>Classification</th><th>Maturity</th><th>Qty</th><th>Unit</th><th>Unit value</th><th>Line value</th><th></th></tr></thead><tbody>
+    ${f.cropsTrees.map((c,i)=>`<tr>
+      <td><input value="${U.esc(c.species||'')}" onchange="App.ctEdit(${i},'species',this.value)"></td>
+      <td><select onchange="App.ctEdit(${i},'classification',this.value)"><option value=""></option>${CFG.ctClassifications.map(o=>`<option ${c.classification===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><select onchange="App.ctEdit(${i},'maturity',this.value)"><option value=""></option>${CFG.ctMaturity.map(o=>`<option ${c.maturity===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><input inputmode="decimal" style="width:64px" value="${U.esc(c.quantity||'')}" onchange="App.ctEdit(${i},'quantity',this.value)"></td>
+      <td><select onchange="App.ctEdit(${i},'unit',this.value)">${CFG.units.map(o=>`<option ${c.unit===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><input inputmode="decimal" style="width:90px" value="${U.esc(c.unitValue||'')}" onchange="App.ctEdit(${i},'unitValue',this.value)"></td>
+      <td class="mono">${U.peso(c.lineValue)}</td>
+      <td><button class="btn sm ghost" onclick="App.ctLine(${i})">⋯</button> <button class="btn sm ghost" onclick="App.delChild('cropsTrees',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div><p class="muted">Tap ⋯ to add location, appraisal, validation and per-line valuation benchmarks.</p>`:'<p class="muted">No crops/trees lines.</p>'}`}
+
+  function gridDocs(f){return `<button class="btn sm" onclick="App.openChild('documents',null)">+ Add document row</button>
+    <button class="btn sm ghost" onclick="App.seedDocs()">Load standard checklist</button>
+    ${f.documents.length?`<div class="grid-wrap"><table class="gridtbl"><thead><tr><th>Document</th><th>Status</th><th>Reference</th><th></th></tr></thead><tbody>
+    ${f.documents.map((d,i)=>`<tr><td>${U.esc(d.docType||'—')}${d.docType==='Other'?' ('+U.esc(d.otherDesc||'')+')':''}</td>
+      <td><select onchange="App.docStatus(${i},this.value)">${CFG.docStatuses.map(o=>`<option ${d.status===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td>${U.esc(d.reference||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('documents',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('documents',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No documents yet — add rows or load the standard checklist.</p>'}`}
+
+  function gridSpecial(f){return `<div class="bar">
+      <button class="btn sm" onclick="App.openSpecial('RPT',null)">+ RPT deduction request</button>
+      <button class="btn sm" onclick="App.openSpecial('Creditor',null)">+ Creditor / Deed of Assignment</button>
+      <button class="btn sm ghost" onclick="App.openSpecial('Other',null)">+ Other condition</button></div>
+    ${f.specialConditions.length?f.specialConditions.map((sc,i)=>`<div class="list-item"><div class="grow"><b>${U.esc(sc.kind)}</b>
+      <span class="muted">${U.esc(sc.summary||'')}</span></div>
+      <button class="btn sm ghost" onclick="App.openSpecial('${sc.kind}',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('specialConditions',${i})">✕</button></div>`).join(''):'<p class="muted">No special conditions. Recording a proposal is not approval — all remain subject to review; RPT is a request, never auto-deducted.</p>'}`}
+
+  function gridOffers(f){return `<p class="muted">One row per offer/notice actually issued. Assets can be served separately and may belong to different owners — add a row for each. A typed date is not proof of service.</p>
+    <button class="btn sm" onclick="App.openChild('offers',null)">+ Add offer / notice</button>
+    ${f.offers.length?`<div class="grid-wrap"><table><thead><tr><th>Applies to</th><th>Asset ref</th><th>Owner served</th><th>Notice</th><th>Served</th><th>Outcome</th><th>Response</th><th></th></tr></thead><tbody>
+    ${f.offers.map((o,i)=>`<tr><td>${U.esc(o.assetType||'—')}</td><td>${U.esc(o.assetRef||'—')}${o.assetCount>1?` <span class="tag">${o.assetCount} assets</span>`:''}</td><td>${U.esc(o.owner||'—')}</td><td>${U.esc(o.offerType||'—')}</td>
+      <td>${U.fmtDate(o.serviceDate)}</td><td>${U.esc(o.outcome||'—')}</td><td>${U.esc(o.response||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('offers',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('offers',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No offers or notices recorded yet.</p>'}`}
+
+  function gridEncumbrances(f){return `<button class="btn sm" onclick="App.openChild('encumbrances',null)">+ Add encumbrance</button>
+    ${f.encumbrances.length?`<div class="grid-wrap"><table><thead><tr><th>Type</th><th>Holder / creditor</th><th>Amount</th><th>Instrument</th><th>Annotated</th><th>Status</th><th></th></tr></thead><tbody>
+    ${f.encumbrances.map((e,i)=>`<tr><td>${U.esc(e.type||'—')}</td><td>${U.esc(e.holder||'—')}</td><td>${U.peso(e.amount)}</td><td>${U.esc(e.instrument||'—')}</td>
+      <td>${U.esc(e.annotated||'—')}</td><td>${U.esc(e.status||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('encumbrances',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('encumbrances',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No encumbrances recorded. One row per encumbrance (mortgage, lien, adverse claim, easement…).</p>'}`}
+
+  /* ---- offer asset picker (one offer may cover several assets) ---- */
+  function assetOptions(f){
+    const out=[];
+    out.push({id:"LAND",label:"Land — Lot "+(f.ident.lotNumber||"—")+(f.land.affectedArea?(" ("+f.land.affectedArea+" sqm affected)"):""),group:"Land"});
+    (f.structures||[]).forEach((s,i)=>out.push({id:"STR:"+(s.uuid||i),label:(s.tag||("Structure "+(i+1)))+(s.type?(" — "+s.type):"")+(s.ownerClaimant?(" · "+s.ownerClaimant):""),group:"Structures"}));
+    (f.cropsTrees||[]).forEach((c,i)=>out.push({id:"CT:"+(c.uuid||i),label:(c.species||("Line "+(i+1)))+(c.quantity?(" ×"+c.quantity+" "+(c.unit||"")):"")+(c.claimant?(" · "+c.claimant):""),group:"Crops & trees"}));
+    return out;
+  }
+  function assetPicker(f,rec){
+    const opts=assetOptions(f), sel=(rec.assetIds||[]);
+    const groups={};opts.forEach(o=>{(groups[o.group]=groups[o.group]||[]).push(o)});
+    const body=Object.keys(groups).map(g=>`<div style="margin:.35rem 0">
+      <label style="display:flex;justify-content:space-between;align-items:center">${g}
+        <button type="button" class="btn sm ghost" style="padding:3px 8px" onclick="App.pickGroup('${g}',true)">all</button></label>
+      ${groups[g].map(o=>`<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink);margin:.15rem 0">
+        <input type="checkbox" class="offAsset" data-g="${g}" value="${U.esc(o.id)}" ${sel.indexOf(o.id)>=0?"checked":""} style="width:auto;margin-top:3px">
+        <span>${U.esc(o.label)}</span></label>`).join("")}</div>`).join("");
+    return `<div class="field full"><label>Assets covered by this offer (tick all that apply)</label>
+      <div style="border:1px solid var(--line);border-radius:9px;padding:8px;max-height:230px;overflow:auto;background:#fbfdff">${body}</div>
+      <p class="muted" style="margin:.3rem 0 0">One offer can cover several structures or crops/trees lines. Tick only the assets actually covered by this notice — leave the rest for a separate offer.</p></div>
+    <div class="field full"><label>Other / manual reference</label><input id="c_assetRefOther" value="${U.esc(rec.assetRefOther||"")}" placeholder="e.g. unnumbered improvement, or a description"></div>`;
+  }
+  function pickGroup(g,on){document.querySelectorAll('.offAsset[data-g="'+g+'"]').forEach(cb=>{cb.checked=on})}
+  function collectAssets(f){
+    const ids=[],labels=[];const map={};assetOptions(f).forEach(o=>map[o.id]=o.label);
+    document.querySelectorAll(".offAsset").forEach(cb=>{if(cb.checked){ids.push(cb.value);labels.push(map[cb.value]||cb.value)}});
+    return {ids,labels};
+  }
+
+  /* ---- modal + child editors ---- */
+  function modal(title,body){document.getElementById("modalHost").innerHTML=
+    `<div style="position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px" onclick="if(event.target===this)App.closeModal()">
+      <div class="card" style="max-width:640px;width:100%;margin-top:2vh"><div class="row" style="align-items:center"><h3 style="flex:1">${title}</h3><button class="btn sm ghost" onclick="App.closeModal()">✕</button></div>${body}</div></div>`}
+  function closeModal(){document.getElementById("modalHost").innerHTML=""}
+
+  function openChild(cs,idx){const f=S.folder;const rec=idx==null?{}:Object.assign({},f[cs][idx]);
+    let body=renderFields(rec,CHILD_DEF[cs],"c_");
+    if(cs==="offers"){body=renderFields(rec,CHILD_DEF[cs].slice(0,2),"c_")+assetPicker(f,rec)+renderFields(rec,CHILD_DEF[cs].slice(2),"c_")}
+    if(cs==="structures"){body+=`<h4>Structure valuation (on this line)</h4>`+renderFields(rec.val||{},VAL_STRUCT,"sv_")}
+    body+=`<button class="btn wide" onclick="App.saveChild('${cs}',${idx==null?'null':idx})">Save</button>`;
+    modal((idx==null?"Add ":"Edit ")+cs.replace(/s$/,""),body);
+  }
+  async function saveChild(cs,idx){const f=S.folder;const rec=idx==null?{uuid:U.uuid()}:f[cs][idx];
+    collectFields(rec,CHILD_DEF[cs],"c_");
+    if(cs==="offers"){const a=collectAssets(f);
+      rec.assetIds=a.ids; rec.assetCount=a.ids.length;
+      rec.assetRefOther=(document.getElementById("c_assetRefOther")||{}).value||"";
+      rec.assetRef=a.labels.join("; ")+(rec.assetRefOther?((a.labels.length?"; ":"")+rec.assetRefOther):"");
+      if(!a.ids.length&&!rec.assetRefOther){notice("Tick at least one asset (or type a manual reference) for this offer.");return}}
+    if(cs==="structures"){rec.val=collectFields(rec.val||{},VAL_STRUCT,"sv_")}
+    if(cs==="documents"&&rec.docType==="Other"&&!(rec.otherDesc||"").trim()){notice("“Other” document requires a description.");return}
+    if(idx==null)f[cs].push(rec);
+    await saveFolder(f,true);closeModal();render()}
+  async function delChild(cs,idx){const f=S.folder;const rec=f[cs][idx];if(!rec)return;
+    if(!confirm("Remove this "+cs.replace(/s$/,"")+"?"))return;
+    f[cs].splice(idx,1);if(rec.uuid)await Store.del(cs,rec.uuid);await saveFolder(f,true);render()}
+  async function docStatus(i,v){S.folder.documents[i].status=v;await saveFolder(S.folder,true)}
+  async function seedDocs(){const f=S.folder;const have=new Set(f.documents.map(d=>d.docType));
+    CFG.docTypes.filter(t=>t!=="Other"&&!have.has(t)).forEach(t=>f.documents.push({uuid:U.uuid(),docType:t,status:"Not Yet Verified"}));
+    await saveFolder(f,true);render();notice("Standard checklist loaded.")}
+
+  /* ---- crops & trees inline + paste/CSV ---- */
+  async function ctAdd(){S.folder.cropsTrees.push({uuid:U.uuid(),unit:"pc"});await saveFolder(S.folder,true);render()}
+  async function ctEdit(i,field,val){const c=S.folder.cropsTrees[i];c[field]=val;
+    c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";
+    await saveFolder(S.folder,true);if(field==='quantity'||field==='unitValue')render()}
+  function ctLine(i){const c=S.folder.cropsTrees[i];
+    const extra=[["claimant","Claimant","text"],["location","Location","text"],["apprRef","Appraisal reference / date","text"],["validation","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]];
+    let body=renderFields(c,extra,"cx_")+`<h4>Line valuation</h4>`+renderFields(c.val||{},VAL_CT,"cv_")+`<button class="btn wide" onclick="App.ctLineSave(${i})">Save line</button>`;
+    modal("Crops/Trees line — "+(c.species||("#"+(i+1))),body)}
+  async function ctLineSave(i){const c=S.folder.cropsTrees[i];
+    collectFields(c,[["claimant","Claimant","text"],["location","Location","text"],["apprRef","Appraisal","text"],["validation","Validation","text"],["remarks","Remarks","area"]],"cx_");
+    c.val=collectFields(c.val||{},VAL_CT,"cv_");
+    await saveFolder(S.folder,true);closeModal();render()}
+  function parseRows(text){return text.split(/\r?\n/).map(l=>l.replace(/\s+$/,"")).filter(l=>l.trim()).map(l=>l.split(/\t|,/).map(c=>c.trim()))}
+  async function ctPaste(){const t=(document.getElementById("ctPaste")||{}).value||"";const rows=parseRows(t);if(!rows.length){notice("Nothing to add.");return}
+    if(rows.length&&/species/i.test(rows[0][0]||""))rows.shift();
+    rows.forEach(r=>{const c={uuid:U.uuid(),species:r[0]||"",classification:r[1]||"",maturity:r[2]||"",quantity:r[3]||"",unit:r[4]||"pc",unitValue:r[5]||""};
+      c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";S.folder.cropsTrees.push(c)});
+    const ta=document.getElementById("ctPaste");if(ta)ta.value="";await saveFolder(S.folder,true);render();notice(rows.length+" line(s) added.")}
+  function ctCSV(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{let rows=parseRows(String(rd.result));
+    if(rows.length&&/species/i.test(rows[0][0]||""))rows.shift();
+    rows.forEach(r=>{const c={uuid:U.uuid(),species:r[0]||"",classification:r[1]||"",maturity:r[2]||"",quantity:r[3]||"",unit:r[4]||"pc",unitValue:r[5]||""};
+      c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";S.folder.cropsTrees.push(c)});
+    await saveFolder(S.folder,true);render();notice(rows.length+" line(s) imported from CSV.")};rd.readAsText(file)}
+
+  /* ---- special conditions ---- */
+  const SPEC_DEF={
+    RPT:[["estArrears","Estimated RPT arrears","num"],["certArrears","Certified RPT arrears","num"],["certRef","Certificate / reference","text"],
+      ["writtenRequest","Written request available","select",["Yes","No"]],["authorization","Authorization available","select",["Yes","No"]],
+      ["proposedDeduction","Proposed deduction","num"],["proposedNet","Proposed net payment to PAP","num"],["proposedRemit","Proposed remittance to LGU","num"],["remarks","Remarks","area"]],
+    Creditor:[["creditorName","Creditor / assignee name","text"],["address","Address / contact","text"],["basis","Basis of obligation","text"],
+      ["amountClaimed","Amount claimed","num"],["amountAck","Amount acknowledged by PAP","num"],["affectedComp","Affected compensation","num"],["supportingDoc","Supporting document","text"],
+      ["doaRequired","Deed of Assignment required","select",["Yes","No"]],["doaAvailable","Deed of Assignment available","select",["Yes","No"]],["creditorConsent","Creditor consent / release","select",["Yes","No","Pending"]],
+      ["proposedPayCreditor","Proposed payment to creditor","num"],["balanceToPAP","Balance to PAP","num"],["remarks","Remarks","area"]],
+    Other:[["title","Special condition / request","text"],["facts","Facts","area"],["persons","Persons / creditors","text"],["amount","Amount","num"],
+      ["basis","Supporting basis","text"],["arrangement","Proposed legal / payment arrangement","area"],["instrument","Recommended instrument","text"],["approval","Required approval / action","text"],["remarks","Remarks","area"]]
+  };
+  function openSpecial(kind,idx){const f=S.folder;const rec=idx==null?{kind}:Object.assign({},f.specialConditions[idx]);
+    const note=kind==="RPT"?'<div class="flag warn">Recorded as a request. The amount is not auto-deducted until the written request and authority are confirmed.</div>':
+      kind==="Creditor"?'<div class="flag warn">Recording the proposal is not legal approval. It remains subject to simultaneous review.</div>':'';
+    const body=note+renderFields(rec.data||{},SPEC_DEF[kind],"sp_")+`<button class="btn wide" onclick="App.saveSpecial('${kind}',${idx==null?'null':idx})">Save</button>`;
+    modal((idx==null?"Add ":"Edit ")+kind+" condition",body)}
+  async function saveSpecial(kind,idx){const f=S.folder;const rec=idx==null?{uuid:U.uuid(),kind}:f.specialConditions[idx];
+    rec.data=collectFields(rec.data||{},SPEC_DEF[kind],"sp_");
+    rec.summary=kind==="RPT"?("Arrears "+U.peso(rec.data.certArrears||rec.data.estArrears)+" · net to PAP "+U.peso(rec.data.proposedNet)):
+      kind==="Creditor"?((rec.data.creditorName||"")+" — claim "+U.peso(rec.data.amountClaimed)):(rec.data.title||"");
+    if(idx==null)f.specialConditions.push(rec);
+    await saveFolder(f,true);closeModal();render()}
+
+  /* ---- assignment (admin) ---- */
+  function assignModal(uuid){const f=S.folder;
+    const body=`<div class="field"><label>Assign to Case Handler</label><select id="asg_h"><option value=""></option>${CFG.roster.map(r=>`<option value="${U.esc(r.name)}|${r.org}" ${f.assignedHandler===r.name?'selected':''}>${U.esc(r.name)} (${r.org})</option>`).join("")}</select></div>
+      <div class="field"><label>Reason (required for reassignment)</label><input id="asg_reason" placeholder="basis for assignment / reassignment"></div>
+      <p class="muted">Only the Administrator may assign or reassign. Previous assignment is preserved in history; every PDF and export shows the assigned handler.</p>
+      <button class="btn wide" onclick="App.doAssign()">Confirm assignment</button>`;
+    modal("Assign / Reassign — "+f.caseFolderId,body)}
+  async function doAssign(){const f=S.folder;const v=(document.getElementById("asg_h")||{}).value||"";const reason=(document.getElementById("asg_reason")||{}).value||"";
+    if(!v){notice("Select a Case Handler.");return}
+    const[name,org]=v.split("|");
+    const prev=f.assignedHandler||"";
+    if(prev&&prev!==name&&!reason.trim()){notice("Reassignment requires a reason.");return}
+    f.reassignHistory.push({at:U.now(),from:prev,to:name,by:S.user.name,reason:reason||(prev?"reassignment":"initial assignment")});
+    f.assignedHandler=name;f.assignedOrg=org;f.assignedBy=S.user.name;f.assignmentDate=U.now();f.assignmentStatus="Assigned";
+    if(f.stat.status==="For Assignment"){f.stat.status="For Inventory";f.status="For Inventory"}
+    await saveFolder(f,true);await audit("ASSIGN","folder",f.uuid,"assignedHandler","",name);closeModal();render();notice("Assigned to "+name+".")}
+
+  function filt(k,v){S.filters[k]=v;render()}
+
+  async function mkFolder(over){const seq=await nextSeq();
+    const f=Object.assign({uuid:U.uuid(),seq,ident:{},ctrl:{priority:"",org:"LGU"},land:{},landVal:{},primary:{},offer:{},stat:{status:"For Inventory"},
+      assignedHandler:"",assignedOrg:"",assignedBy:"",assignmentDate:"",assignmentStatus:"For Assignment",reassignHistory:[],
+      parties:[],structures:[],cropsTrees:[],documents:[],specialConditions:[],offers:[],encumbrances:[],status:"For Inventory",reportVersion:1,draftFinal:"Draft",syncStatus:"Local Only",deleted:false},over);
+    f.caseFolderId=folderCode(f);Object.assign(f,stamp(true));return f}
+  async function seedSamples(){
+    // 1 land-only
+    const a=await mkFolder({ident:{lotNumber:"1001",barangay:"Apokon"},ctrl:{projectComponent:"Mainline",priority:"P3",org:"LGU"},
+      assignedHandler:"LGU Tagum Case Handler",assignedOrg:"LGU",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"800",affectedArea:"300",landClass:"Agricultural"},landVal:{smvRate:"1200",smvTotal:"360000",adoptedBasis:"SMV",adoptedRate:"1200",adoptedComp:"360000"},
+      primary:{name:"Reyes, Maria",type:"Individual",claimedShare:"1/1",claimBasis:"TCT T-1001"}});
+    a.reassignHistory=[{at:U.now(),from:"",to:"LGU Tagum Case Handler",by:CFG.admin,reason:"initial assignment"}];
+    // 2 land + 2 structures (Priority/PMO)
+    const b=await mkFolder({ident:{lotNumber:"2002",barangay:"Magugpo Poblacion"},ctrl:{projectComponent:"Station",priority:"P1",org:"PMO"},
+      assignedHandler:"Debbie Cartagena",assignedOrg:"PMO",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"1200",affectedArea:"1200",landClass:"Commercial"},landVal:{zvRate:"5000",zvTotal:"6000000",adoptedBasis:"BIR zonal value",adoptedRate:"5000",adoptedComp:"6000000"},
+      primary:{name:"Santos Holdings Inc.",type:"Corporation",claimedShare:"1/1",claimBasis:"TCT T-2002"},
+      structures:[{uuid:U.uuid(),tag:"S1",type:"Commercial",use:"Store",totalFloorArea:"200",affectedFloorArea:"200",pctAffected:"100",severity:"Severe (≥80%)",val:{rcRate:"12000",rcTotal:"2400000",adoptedBasis:"Replacement cost",adoptedComp:"2400000"}},
+        {uuid:U.uuid(),tag:"S2",type:"Fence/Perimeter",use:"Perimeter",totalFloorArea:"N/A",affectedFloorArea:"60",severity:"Marginal (<80%)",val:{rcRate:"800",rcTotal:"48000",adoptedComp:"48000"}}]});
+    b.reassignHistory=[{at:U.now(),from:"",to:"Debbie Cartagena",by:CFG.admin,reason:"initial assignment"}];
+    // 3 land + 3 crops/trees + RPT + creditor
+    const c=await mkFolder({ident:{lotNumber:"3003",barangay:"Madaum"},ctrl:{projectComponent:"Mainline",priority:"P3",org:"LGU"},
+      assignedHandler:"Glenn",assignedOrg:"PMO",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"5000",affectedArea:"1500",landClass:"Agricultural"},landVal:{smvRate:"300",smvTotal:"450000",adoptedBasis:"SMV",adoptedRate:"300",adoptedComp:"450000"},
+      primary:{name:"Heirs of Pedro Cruz",type:"Heirs / Estate",claimedShare:"pro-indiviso",claimBasis:"EJSE pending",disputeStatus:"Disputed"},
+      parties:[{uuid:U.uuid(),name:"Cruz, Ana",type:"Individual",role:"Heir",claimedShare:"1/3",validationStatus:"For validation"},
+        {uuid:U.uuid(),name:"Cruz, Ben",type:"Individual",role:"Heir",claimedShare:"1/3",validationStatus:"For validation"}],
+      cropsTrees:[{uuid:U.uuid(),species:"Coconut",classification:"Fruit-bearing",maturity:"Bearing",quantity:"40",unit:"pc",unitValue:"1200",lineValue:48000,val:{adoptedComp:"48000"}},
+        {uuid:U.uuid(),species:"Mango",classification:"Fruit-bearing",maturity:"Bearing",quantity:"12",unit:"pc",unitValue:"8000",lineValue:96000,val:{adoptedComp:"96000"}},
+        {uuid:U.uuid(),species:"Mahogany",classification:"Timber",maturity:"Old / Senile",quantity:"25",unit:"pc",unitValue:"2500",lineValue:62500,val:{adoptedComp:"62500"}}],
+      specialConditions:[{uuid:U.uuid(),kind:"RPT",data:{estArrears:"80000",certArrears:"75000",certRef:"RPT-2026-014",writtenRequest:"No",authorization:"No",proposedDeduction:"75000",proposedNet:"375000"},summary:"Arrears ₱75,000.00 · net to PAP ₱375,000.00"},
+        {uuid:U.uuid(),kind:"Creditor",data:{creditorName:"Rural Bank of Tagum",basis:"Mortgage",amountClaimed:"200000",doaRequired:"Yes",doaAvailable:"No",creditorConsent:"Pending",proposedPayCreditor:"200000",balanceToPAP:"250000"},summary:"Rural Bank of Tagum — claim ₱200,000.00"}]});
+    c.reassignHistory=[{at:U.now(),from:"",to:"Glenn",by:CFG.admin,reason:"initial assignment"}];
+    for(const f of [a,b,c]){await saveFolder(f,true)}
+    await refresh();render();notice("3 demo samples loaded.")}
+
+  function vHome(){
+    const q=(S.filters.q||"").toLowerCase();
+    let list=S.data.folders.filter(f=>!f.deleted);
+    if(S.filters.pri)list=list.filter(f=>f.ctrl.priority===S.filters.pri);
+    if(S.filters.sync)list=list.filter(f=>f.syncStatus===S.filters.sync);
+    if(q)list=list.filter(f=>[f.caseFolderId,f.primary.name,f.ident.lotNumber,f.ident.barangay,f.assignedHandler,f.status].some(x=>String(x||"").toLowerCase().includes(q)));
+    list.sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+    const counts={total:S.data.folders.filter(f=>!f.deleted).length};
+    return `<div class="bar"><button class="btn" onclick="App.newFolder()">+ New Case Folder</button>
+      <span class="pill n">${counts.total} folder(s)</span>
+      <span class="pill y">${S.data.folders.filter(f=>!f.deleted&&f.syncStatus!=='Uploaded').length} unsynced</span></div>
+    <div class="card">
+      <input id="q" placeholder="Search: folder ID, claimant, lot, barangay, handler…" oninput="App.filt('q',this.value)" value="${U.esc(S.filters.q||'')}">
+      <div class="chipbar">
+        <span class="chip ${!S.filters.pri?'on':''}" onclick="App.filt('pri','')">All</span>
+        ${CFG.priority.map(p=>`<span class="chip ${S.filters.pri===p?'on':''}" onclick="App.filt('pri','${S.filters.pri===p?'':p}')">${p}</span>`).join("")}
+        ${CFG.syncStates.map(s=>`<span class="chip ${S.filters.sync===s?'on':''}" onclick="App.filt('sync','${S.filters.sync===s?'':s}')">${s}</span>`).join("")}
+      </div>
+    </div>
+    ${list.map(f=>{const cp=completion(f);return `<div class="list-item" onclick="App.loadFolder('${f.uuid}')">
+      <div class="grow"><b>${U.esc(f.caseFolderId)}</b>
+        <span class="muted">${U.esc(f.primary.name||"—")} · Lot ${U.esc(f.ident.lotNumber||"—")}, ${U.esc(f.ident.barangay||"—")}</span><br>
+        <span class="tag">${U.esc(f.status)}</span> <span class="tag">${U.esc(f.ctrl.priority||'—')}</span>
+        <span class="tag">handler: ${U.esc(f.assignedHandler||"For Assignment")}</span>
+        <span class="tag">${f.structures.length||(S.data.structures||[]).filter(x=>x.folderUuid===f.uuid).length} str · ${f.cropsTrees.length||(S.data.cropsTrees||[]).filter(x=>x.folderUuid===f.uuid).length} C&T</span></div>
+      <div style="text-align:right;min-width:74px"><span class="pill ${cp.pct>=80?'g':cp.pct>=40?'y':'r'}">${cp.pct}%</span><br>
+        <span class="tag ${f.syncStatus==='Uploaded'?'':''}">${f.syncStatus}</span></div>
+    </div>`}).join("")||`<div class="card muted">No case folders yet. Tap “New Case Folder” to begin the inventory.</div>`}`;
+  }
+  /* ============ REPORT (print-CSS, Letter) ============ */
+  function vfRows(obj,defs){return defs.map(d=>{const v=obj?obj[d[0]]:"";const isMoney=(d[2]==="num");const disp=isMoney?U.peso(v):(v&&String(v).trim()?U.esc(v):"—");
+    return `<tr><td class="k">${U.esc(d[1])}</td><td>${disp}</td></tr>`}).join("")}
+  function openReport(uuid){collectFolder&&(S.folder&&S.folder.uuid===uuid&&collectFolder());
+    const f=S.data.folders.find(x=>x.uuid===uuid)||S.folder; if(!f)return;
+    const kids=cs=>(S.folder&&S.folder.uuid===uuid?S.folder[cs]:(S.data[cs]||[]).filter(c=>c.folderUuid===uuid))||[];
+    const parties=kids("parties"),structures=kids("structures"),ct=kids("cropsTrees"),docs=kids("documents"),spec=kids("specialConditions"),offers=kids("offers"),encumbrances=kids("encumbrances");
+    const sumRows=[["Land",f.ident.lotNumber?("Lot "+f.ident.lotNumber):"Land",f.landVal.adoptedComp,f.landVal.offer]]
+      .concat(structures.map((s,i)=>["Structure",(s.tag||("S"+(i+1)))+" "+(s.type||""),s.val?.adoptedComp,s.val?.offer]))
+      .concat(ct.map((c,i)=>["Crops/Trees",(c.species||("Line"+(i+1)))+" ×"+(c.quantity||"—"),c.val?.adoptedComp,c.val?.offer]));
+    const tot=k=>sumRows.reduce((t,r)=>t+(U.num(r[k])||0),0);
+    const sec=(t,inner)=>`<h2>${t}</h2>${inner}`;
+    const kv=(obj,defs)=>`<table class="kv">${vfRows(obj,defs)}</table>`;
+    const reviewers=CFG.reviewers.map(r=>`<tr><td class="k">${U.esc(r)}</td><td>Pending — [ ] Approved [ ] Approved w/ remarks [ ] Returned</td></tr>`).join("");
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>${U.esc(f.caseFolderId)} — Case Folder Summary</title>
+    <style>
+    @page{size:Letter;margin:16mm 14mm 16mm}
+    body{font:11px/1.4 Arial,Helvetica,sans-serif;color:#111;margin:0}
+    .runhdr{position:fixed;top:0;left:0;right:0;font-size:9px;color:#333;border-bottom:1px solid #999;padding-bottom:2px;display:flex;justify-content:space-between}
+    .wm{position:fixed;top:42%;left:0;right:0;text-align:center;font-size:46px;color:rgba(176,42,42,.10);transform:rotate(-22deg);font-weight:800;letter-spacing:3px;z-index:-1}
+    .content{padding-top:16px}
+    h1{font-size:16px;margin:0 0 2px;color:#12315b}
+    h2{font-size:12px;background:#12315b;color:#fff;padding:4px 7px;margin:12px 0 5px;break-after:avoid}
+    table{width:100%;border-collapse:collapse;margin:3px 0}
+    td,th{border:1px solid #b6bfcb;padding:4px 6px;vertical-align:top;text-align:left}
+    th{background:#eef2f7;font-size:9.5px;text-transform:uppercase;letter-spacing:.03em}
+    table.kv td.k{width:34%;background:#f6f8fb;font-weight:700;color:#33435c}
+    thead{display:table-header-group}
+    tr{break-inside:avoid}
+    .muted{color:#666}.right{text-align:right}
+    .sig{margin-top:34px;border-top:1px solid #333;padding-top:2px;font-size:9.5px;width:70%}
+    </style></head><body>
+    <div class="runhdr"><span>${U.esc(f.caseFolderId)} · ${U.esc(f.primary.name||"—")}</span><span>DRAFT – FOR REVIEW · Handler: ${U.esc(f.assignedHandler||"For Assignment")} · v${f.reportVersion}</span></div>
+    <div class="wm">DRAFT – FOR REVIEW</div>
+    <div class="content">
+    <h1>MRP · LGU Tagum — ROWSAE Case Folder Summary</h1>
+    <div class="muted">Generated ${new Date().toLocaleString()} · Case Folder ID <b>${U.esc(f.caseFolderId)}</b> · UUID ${U.esc(f.uuid)} · Report v${f.reportVersion} · <b>DRAFT – FOR REVIEW – NOT YET THE FINAL CASE DISPOSITION</b></div>
+
+    ${sec("Folder &amp; assignment",kv({
+        h:f.assignedHandler||"For Assignment",b:f.assignedBy,d:U.fmtDate(f.assignmentDate),o:f.assignedOrg,
+        pr:f.ctrl.priority,prc:f.ctrl.priorityRemarks,st:f.status
+      },[["h","Assigned Case Handler"],["o","Organization"],["b","Assigned by"],["d","Assignment date"],["pr","Priority"],["prc","Priority remarks"],["st","Current status"]]))}
+
+    ${sec("Land parcel &amp; primary claimant",kv(f.ident,DEF.ident)+kv(f.land,DEF.land)+`<h4>Primary claimant</h4>`+kv(f.primary,DEF.primary))}
+
+    ${sec("Land valuation",kv(f.landVal,DEF.landVal))}
+
+    ${parties.length?sec("Other claimants &amp; interested parties",`<table><thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Claimed/Validated</th><th>Basis</th><th>Validation</th></tr></thead><tbody>${parties.map(p=>`<tr><td>${U.esc(p.name)}</td><td>${U.esc(p.type||"")}</td><td>${U.esc(p.role||"")}</td><td>${U.esc(p.claimedShare||"")}/${U.esc(p.validatedShare||"")}</td><td>${U.esc(p.claimBasis||"")}</td><td>${U.esc(p.validationStatus||"")}</td></tr>`).join("")}</tbody></table>`):""}
+
+    ${structures.length?sec("Structures &amp; improvements",structures.map((s,i)=>`<h4>Structure ${i+1}: ${U.esc(s.tag||"")} — ${U.esc(s.type||"")}</h4>${kv(s,CHILD_DEF.structures.filter(d=>d[2]!=="check"))}<div class="muted">Structural compromise: ${s.structuralCompromise?"Yes":"No"}</div><table class="kv">${vfRows(s.val,VAL_STRUCT)}</table>`).join("")):""}
+
+    ${ct.length?sec("Crops &amp; trees",`<table><thead><tr><th>Species</th><th>Class</th><th>Maturity</th><th>Qty</th><th>Unit</th><th>Unit value</th><th>Line value</th><th>Adopted comp.</th></tr></thead><tbody>${ct.map(c=>`<tr><td>${U.esc(c.species||"")}</td><td>${U.esc(c.classification||"")}</td><td>${U.esc(c.maturity||"")}</td><td>${U.esc(c.quantity||"")}</td><td>${U.esc(c.unit||"")}</td><td class="right">${U.peso(c.unitValue)}</td><td class="right">${U.peso(c.lineValue)}</td><td class="right">${U.peso(c.val?.adoptedComp)}</td></tr>`).join("")}</tbody></table>`):""}
+
+    ${sec("Derived valuation summary",`<table><thead><tr><th>Asset</th><th>Reference</th><th class="right">Adopted comp.</th><th class="right">Offer</th></tr></thead><tbody>${sumRows.map(r=>`<tr><td>${r[0]}</td><td>${U.esc(r[1])}</td><td class="right">${U.peso(r[2])}</td><td class="right">${U.peso(r[3])}</td></tr>`).join("")}<tr style="font-weight:700"><td colspan="2">TOTAL</td><td class="right">${U.peso(tot(2))}</td><td class="right">${U.peso(tot(3))}</td></tr></tbody></table>`)}
+
+    ${sec("Document checklist",`<table><thead><tr><th>Document</th><th>Status</th><th>Validity</th><th>Reference</th><th>Deficiency</th><th>Remarks</th></tr></thead><tbody>${docs.map(d=>`<tr><td>${U.esc(d.docType)}${d.docType==="Other"?" ("+U.esc(d.otherDesc||"")+")":""}</td><td>${U.esc(d.status||"")}</td><td>${U.esc(d.validity||"")}</td><td>${U.esc(d.reference||"")}</td><td>${U.esc(d.deficiency||"")}</td><td>${U.esc(d.remarks||"")}</td></tr>`).join("")||`<tr><td colspan="6" class="muted">No documents recorded.</td></tr>`}</tbody></table>`)}
+
+    ${offers.length?sec("Offers, notices &amp; responses",`<table><thead><tr><th>Applies to</th><th>Asset ref</th><th>Owner served</th><th>Notice</th><th>Issued</th><th>Served</th><th>Outcome</th><th>Proof</th><th>Response</th><th>Deadline</th></tr></thead><tbody>${offers.map(o=>`<tr><td>${U.esc(o.assetType||"")}</td><td>${U.esc(o.assetRef||"")}</td><td>${U.esc(o.owner||"")}</td><td>${U.esc(o.offerType||"")}</td><td>${U.esc(U.fmtDate(o.issueDate))}</td><td>${U.esc(U.fmtDate(o.serviceDate))}</td><td>${U.esc(o.outcome||"")}</td><td>${U.esc(o.proofAvailable||"")}</td><td>${U.esc(o.response||"")}</td><td>${U.esc(U.fmtDate(o.responseDeadline))}</td></tr>`).join("")}</tbody></table><div class="muted">A typed date is not proof of service — the receiving copy or affidavit must be on file.</div>`):""}
+
+    ${spec.length?sec("Special conditions &amp; proposed arrangements",spec.map(sc=>`<h4>${U.esc(sc.kind)}</h4><table class="kv">${Object.entries(sc.data||{}).map(([k,v])=>`<tr><td class="k">${U.esc(k)}</td><td>${U.esc(v)}</td></tr>`).join("")}</table><div class="muted">${sc.kind==="RPT"?"Request only — not auto-deducted.":sc.kind==="Creditor"?"Proposal only — subject to review.":""}</div>`).join("")):""}
+
+    ${sec("Status, issues &amp; recommended way forward",kv(f.stat,DEF.stat))}
+
+    ${sec("Simultaneous review (pending — D3)",`<table class="kv">${reviewers}</table><div class="muted">FINAL APPROVED becomes available only through the connected review process when all required reviewers approve the same version.</div>`)}
+
+    <div style="display:flex;gap:8%;margin-top:10px"><div class="sig">Prepared by: ${U.esc(f.assignedHandler||S.user.name)} — signature / date</div><div class="sig">Noted: ${U.esc(CFG.admin)} — signature / date</div></div>
+    </div>
+    <script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script>
+    </body></html>`;
+    const w=window.open("","_blank"); if(!w){notice("Allow pop-ups to print the report.");return}
+    w.document.write(html); w.document.close();
+    audit("PRINT","report",f.uuid,"","","DRAFT");
+  }
+
+  /* ============ ADMIN ============ */
+  function vAdmin(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const byClass=k=>fs.filter(f=>f.ctrl.priority===k).length;
+    const prov=fs.filter(f=>isProvisional(f));
+    const byHandler={};fs.forEach(f=>{const h=f.assignedHandler||"(For Assignment)";byHandler[h]=(byHandler[h]||0)+1});
+    return `<h2>Administration</h2><p class="sub">Assignment Administrator: ${CFG.admin} · storage ${Store.mode} · ${CFG.appVersion}</p>
+    <div class="card"><h3>Portfolio</h3>
+      <div class="bar"><span class="pill n">${fs.length} folders</span>${CFG.priority.map(p=>`<span class="pill n">${byClass(p)} ${p}</span>`).join("")}<span class="pill y">${prov.length} For Assignment</span></div>
+      <h4>By handler</h4><div class="grid-wrap"><table><thead><tr><th>Handler</th><th>Folders</th></tr></thead><tbody>${Object.entries(byHandler).map(([h,n])=>`<tr><td>${U.esc(h)}</td><td>${n}</td></tr>`).join("")}</tbody></table></div>
+    </div>
+    ${prov.length?`<div class="card"><h3>Provisional — need assignment</h3>${prov.map(f=>`<div class="list-item"><div class="grow"><b>${U.esc(f.caseFolderId)}</b><span class="muted">${U.esc(f.primary.name||"—")}</span></div><button class="btn sm" onclick="App.loadFolder('${f.uuid}')">Open</button></div>`).join("")}</div>`:""}
+    <div class="card"><h3>Demo samples (field-testing)</h3><p class="muted">Loads three representative Case Folders (land-only; land + 2 structures; land + 3 crops/trees with RPT and creditor/DoA). For training and acceptance testing.</p>
+      <button class="btn ghost" onclick="App.seedSamples()">Load demo samples</button></div>
+    <div class="card"><h3>Barangay code reference</h3><p class="muted">Deterministic temporary codes. Names stored separately; UUID never depends on the code.</p>
+      <div class="grid-wrap"><table><thead><tr><th>Barangay</th><th>Code</th></tr></thead><tbody>${CFG.barangays.map(b=>`<tr><td>${U.esc(b[0])}</td><td class="mono">${b[1]}</td></tr>`).join("")}</tbody></table></div></div>`;
+  }
+
+  /* ============ BACKUP & SYNC ============ */
+  function vBackup(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const counts=CFG.syncStates.map(s=>[s,fs.filter(f=>f.syncStatus===s).length]);
+    return `<h2>Backup &amp; Sync</h2><p class="sub">All data stays on this device until you export. Google Sheets import is D2 — the JSON package below is the authoritative export.</p>
+    <div class="card"><h3>Sync status</h3><div class="bar">${counts.map(c=>`<span class="pill ${c[0]==='Uploaded'?'g':c[0]==='Upload Error'?'r':'y'}">${c[1]} ${c[0]}</span>`).join("")}</div></div>
+    <div class="card"><h3>A · Complete device backup</h3><p class="muted">Everything needed to restore this device (all folders, children, assignments, drafts, settings, audit).</p>
+      <div class="bar"><button class="btn" onclick="App.exportBackup()">Download full backup (JSON)</button>
+        <label class="btn ghost" style="display:inline-block">Restore from backup<input type="file" accept=".json,application/json" onchange="App.importBackup(this.files[0])" style="display:none"></label></div></div>
+    <div class="card"><h3>B · Daily update package</h3><p class="muted">Export this, then upload it to the Google Sheets consolidator (D2) — open the upload web app, choose this file, and it fills the Master List. Carries package ID, schema version, device UUID, counts, and an integrity checksum. Same envelope as the parked console (packageType = inventory).</p>
+      <button class="btn" onclick="App.exportPackage()">Download daily package (JSON)</button></div>
+    <div class="card"><h3>C · Mark uploaded (from receipt)</h3><p class="muted">After the consolidator imports your package it returns a receipt. Import it here to mark those folders <b>Uploaded</b>. Folders you edited after exporting stay Pending.</p>
+      <label class="btn ghost" style="display:inline-block">Import upload receipt<input type="file" accept=".json,application/json" onchange="App.importReceipt(this.files[0])" style="display:none"></label></div>
+    <div class="card"><h3>D · Human-readable CSV</h3><p class="muted">Case Folder master list for emergency review. Convenience copy only — it does not replace the repeatable child records in the JSON package.</p>
+      <button class="btn ghost" onclick="App.exportCSV()">Download master list (CSV)</button></div>`;
+  }
+
+  /* ============ HELP ============ */
+  function vHelp(){return `<h2>Help</h2>
+    <div class="card"><h3>Field workflow</h3><ol>
+      <li>Tap <b>New Case Folder</b>. The Case Folder ID and permanent UUID are generated automatically.</li>
+      <li>Fill sections A–J. Everything autosaves as you type; you can close and reopen safely.</li>
+      <li>Add other claimants, structures and crops/trees as repeatable lines. Crops/trees line value = Quantity × Unit value.</li>
+      <li>Keep each valuation benchmark beside its asset; use <b>N/A</b> where a benchmark does not apply (not zero).</li>
+      <li>Tap <b>Report</b> to generate the printable Draft summary, then use the browser's Save as PDF.</li>
+      <li>In <b>Backup &amp; Sync</b>, export the full backup and the daily package before handing off.</li>
+    </ol></div>
+    <div class="card"><h3>Rules the tool enforces</h3><ul>
+      <li>Whoever creates a folder is automatically its Case Handler and can encode, complete and print right away — no assignment step.</li>
+      <li>Only the Administrator (a login whose name contains “Escuadra”) can reassign a folder to a different handler; reassignment keeps a reason and history.</li>
+      <li>RPT is recorded as a request and never auto-deducted; land and assessed value are never depreciated; adopted compensation is manual.</li>
+      <li>FINAL APPROVED is not available in D1 — reports print as DRAFT – FOR REVIEW until the connected D3 review.</li>
+    </ul></div>
+    <div class="card"><h3>Session</h3><button class="btn ghost" onclick="App.logout()">Log out on this device</button></div>`;
+  }
+
+  /* ============ EXPORTS ============ */
+  async function dumpAll(){const o={};for(const s of STORES){o[s]=await Store.all(s)}return o}
+  async function exportBackup(){const data=await dumpAll();
+    const pkg={type:"backup",app:CFG.appVersion,formSchemaVersion:CFG.formSchemaVersion,lgu:CFG.lgu,deviceUuid:S.deviceUuid,device:S.device,user:S.user.name,exportedAt:U.now(),data};
+    download(JSON.stringify(pkg,null,2),"TAGUM_INV_BACKUP_"+S.device.replace(/\W+/g,"")+"_"+ts()+".json");
+    await audit("BACKUP","device","-","","",Object.values(data).reduce((n,a)=>n+a.length,0)+" records")}
+  async function importBackup(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{
+    let pkg;try{pkg=JSON.parse(rd.result)}catch(e){notice("Invalid backup file.");return}
+    const data=pkg.data||pkg.records||pkg; if(!data.folders){notice("Not a recognizable backup.");return}
+    if(!confirm("Restore this backup? Records with the same key will be overwritten on this device."))return;
+    for(const s of STORES){if(Array.isArray(data[s]))for(const r of data[s]){const k=r.__k||r.uuid||r.id||r.key;if(k)await Store.put(s,k,r)}}
+    await refresh();notice("Backup restored.");go("home")};rd.readAsText(file)}
+  async function importReceipt(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{
+    let rc;try{rc=JSON.parse(rd.result)}catch(e){notice("Invalid receipt file.");return}
+    if(rc.type!=="receipt"||!Array.isArray(rc.uploadedFolders)){notice("Not a valid upload receipt.");return}
+    let marked=0,newer=0;
+    for(const uf of rc.uploadedFolders){const f=(await Store.all("folders")).find(x=>x.uuid===uf.uuid);if(!f)continue;
+      if((f.version||1)<=(uf.version||1)){f.syncStatus="Uploaded";f.uploadedAt=rc.at;f.uploadedPackageId=rc.packageId;await Store.put("folders",f.uuid,f);marked++}
+      else newer++;}
+    await refresh();render();
+    await audit("RECEIPT","package",rc.packageId||"-","","",marked+" marked uploaded");
+    notice(marked+" folder(s) marked Uploaded"+(newer?"; "+newer+" have newer local edits (left Pending).":"."));
+  };rd.readAsText(file)}
+  async function exportPackage(){let fs=(await Store.all("folders")).filter(f=>!f.deleted);
+    // mark Pending Upload BEFORE snapshotting so the payload and checksum agree
+    for(const f of fs){if(f.syncStatus==="Local Only"){f.syncStatus="Pending Upload";await Store.put("folders",f.uuid,f)}}
+    fs=(await Store.all("folders")).filter(f=>!f.deleted);
+    const records={folders:fs,
+      parties:(await Store.all("parties")),structures:(await Store.all("structures")),
+      cropsTrees:(await Store.all("cropsTrees")),documents:(await Store.all("documents")),
+      specialConditions:(await Store.all("specialConditions")),offers:(await Store.all("offers")),
+      encumbrances:(await Store.all("encumbrances")),audit:(await Store.all("audit")).slice(-400)};
+    const body=JSON.stringify(records);
+    const pkg={packageSchema:CFG.packageSchema,packageType:"inventory",formVariant:CFG.formVariant,formSchemaVersion:CFG.formSchemaVersion,
+      lgu:CFG.lgu,app:CFG.appVersion,packageId:"TAGUM_INV_"+S.device.replace(/\W+/g,"")+"_"+ts(),
+      sourceDeviceUuid:S.deviceUuid,sourceUser:S.user.name,assignedHandlers:[...new Set(fs.map(f=>f.assignedHandler).filter(Boolean))],
+      exportedAt:U.now(),includedFolderUuids:fs.map(f=>f.uuid),recordVersions:Object.fromEntries(fs.map(f=>[f.uuid,f.version||1])),
+      counts:Object.fromEntries(Object.entries(records).map(([k,v])=>[k,v.length])),checksum:U.hash(body),records};
+    await refresh();
+    download(JSON.stringify(pkg,null,2),pkg.packageId+".json");
+    await audit("EXPORT","package",pkg.packageId,"","",pkg.counts.folders+" folders")}
+  function exportCSV(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const cols=["caseFolderId","uuid","ident.lotNumber","ident.barangay","ctrl.projectComponent","ctrl.priority","ctrl.org","assignedHandler","primary.name","status","stat.route","stat.instrument","stat.wayForward","stat.responsibleOffice","reportVersion","syncStatus","updatedAt"];
+    const head=["Case Folder ID","UUID","Lot","Barangay","Component","Priority","Org","Assigned handler","Title holder","Status","Route","Instrument","Way forward","Responsible office","Report version","Sync status","Last updated"];
+    const val=(o,path)=>path.split(".").reduce((x,k)=>x==null?"":x[k],o);
+    const esc=s=>{s=String(s==null?"":s).replace(/"/g,'""');return /[",\n]/.test(s)?'"'+s+'"':s};
+    const rows=[head.join(",")].concat(fs.map(f=>cols.map(c=>esc(val(f,c))).join(",")));
+    // child counts appended
+    download(rows.join("\r\n"),"TAGUM_INV_MASTERLIST_"+ts()+".csv");
+    audit("EXPORT","csv","-","","",fs.length+" folders")}
+  let __lastExport=null;
+  function download(text,name){__lastExport={name,text};
+    try{const blob=new Blob([text],{type:name.endsWith(".csv")?"text/csv":"application/json"});
+      const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){}}
+  function ts(){return U.now().replace(/\D/g,"").slice(0,14)}
+
+  /* ---- misc ---- */
+  function notice(msg){const h=document.getElementById("noticeHost");h.innerHTML=`<div class="notice">${U.esc(msg)}</div>`;setTimeout(()=>{h.innerHTML=""},3200)}
+  function registerSW(){try{if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}}catch(e){}}
+
+  /* ---- expose ---- */
+  return {boot,login,logout,go,render,newFolder,loadFolder,deleteFolder,saveNow,filt,
+    openChild,saveChild,delChild,docStatus,seedDocs,ctAdd,ctEdit,ctLine,ctLineSave,ctPaste,ctCSV,
+    openSpecial,saveSpecial,assignModal,doAssign,submitReview,openReport,closeModal,pickGroup,
+    exportBackup,importBackup,importReceipt,exportPackage,exportCSV,seedSamples,
+    _S:()=>S,_stamp:stamp,_audit:audit,_refresh:refresh,_folderCode:folderCode,_completion:completion,_collect:collectFolder,_saveFolder:saveFolder,_lastExport:()=>__lastExport,_isProvisional:isProvisional};
+})();
+
+/* ---------- BOOT ---------- */
+if(typeof window!=="undefined"){window.App=App;window.U=U;window.CFG=CFG;window.Store=Store;window.STORES=STORES;window.calcLand=calcLand;window.calcBalance=calcBalance;window.DEF=DEF;window.CHILD_DEF=CHILD_DEF;window.VAL_STRUCT=VAL_STRUCT;window.VAL_CT=VAL_CT;}
+if(typeof document!=="undefined"){document.addEventListener("DOMContentLoaded",()=>{App.boot()})}
+if(typeof module!=="undefined"){module.exports={App,U,CFG,Store,STORES}}
+</script>
+</body>
+</html>
+</body>
+</html>
