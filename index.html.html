@@ -1,0 +1,2512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12315b">
+<link rel="manifest" href="manifest.json">
+<title>Tagum ROWSAE Inventory</title>
+<style>
+:root{--navy:#12315b;--navy2:#1c4a86;--ink:#132033;--mut:#5a6b82;--line:#d9e0ea;--bg:#eef2f7;--card:#fff;
+ --ok:#1a7f4b;--okbg:#e5f5ec;--bad:#b02a2a;--badbg:#fbe9e9;--warn:#8a6d1a;--warnbg:#fbf4de;--pri:#7a1fa2;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+#top{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px;padding-top:calc(10px + env(safe-area-inset-top))}
+#top b{font-size:15px}#top .sp{flex:1}
+#top .who{font-size:12px;opacity:.85;text-align:right;line-height:1.2}
+#nav{position:sticky;top:0;z-index:15;display:flex;gap:4px;overflow-x:auto;background:#0d2547;padding:6px 8px}
+#nav button{white-space:nowrap;background:transparent;color:#cdd8e8;border:0;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600}
+#nav button.on{background:var(--navy2);color:#fff}
+#main{padding:12px;max-width:960px;margin:0 auto}
+h2{font-size:19px;margin:.2rem 0 .5rem}h3{font-size:15px;margin:.2rem 0}h4{margin:.6rem 0 .3rem;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.sub{color:var(--mut);font-size:13px;margin:.1rem 0 .8rem}
+.muted{color:var(--mut);font-size:12.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 200px;min-width:150px;display:flex;flex-direction:column;margin-bottom:8px}
+.field.full{flex-basis:100%}
+label{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+input,select,textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--navy2);border-color:var(--navy2)}
+textarea{min-height:56px;resize:vertical}
+button{cursor:pointer;font:inherit}
+.btn{background:var(--navy);color:#fff;border:0;padding:11px 16px;border-radius:10px;font-weight:700;font-size:14px}
+.btn:active{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:8px}
+.btn.warn{background:var(--bad)}
+.btn.wide{width:100%;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+details.sec{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+details.sec>summary{cursor:pointer;list-style:none;padding:12px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"▾";margin-left:auto;color:var(--mut)}
+details.sec[open]>summary::after{content:"▴"}
+details.sec>.body{padding:0 12px 12px}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.g{background:var(--okbg);color:var(--ok)}.pill.r{background:var(--badbg);color:var(--bad)}.pill.y{background:var(--warnbg);color:var(--warn)}.pill.n{background:#eef;color:var(--navy2)}.pill.p{background:#f3e6fb;color:var(--pri)}
+.tag{display:inline-block;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:700;background:#eef2f7;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.grid-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flag{padding:9px 11px;border-radius:9px;font-size:13px;margin:6px 0}
+.flag.bad{background:var(--badbg);color:var(--bad)}.flag.ok{background:var(--okbg);color:var(--ok)}.flag.warn{background:var(--warnbg);color:var(--warn)}.flag.info{background:#e8f0fb;color:var(--navy2)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.prog{height:8px;background:#e3e9f1;border-radius:6px;overflow:hidden}.prog>i{display:block;height:100%;background:var(--navy2)}
+.list-item{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:#fff}
+.list-item .grow{flex:1;min-width:0}
+.list-item .grow b{display:block;font-size:14px}
+.chipbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;background:#fff}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.notice{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0d2547;color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:90%;text-align:center}
+.hidden{display:none!important}
+.gridtbl input,.gridtbl select{padding:7px;font-size:12.5px}
+.locked{background:#f1f4f8;color:var(--mut)}
+.reqmark{color:var(--bad)}
+@media(max-width:520px){#main{padding:10px}.field{flex-basis:100%}}
+/* ===== D1-2.0 dashboard / tracker extension ===== */
+:root{--teal:#0f766e;--tealbg:#e6f4f2;--orange:#b45309;--orangebg:#fdf1e0;--band:#1c4a86}
+#demobadge{position:sticky;top:0;z-index:30;background:#7a1fa2;color:#fff;font-size:12px;font-weight:700;
+  padding:6px 12px;text-align:center;letter-spacing:.04em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0}
+.tile{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.tile b{display:block;font-size:22px;line-height:1.1;color:var(--navy)}
+.tile span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+.tile.click{cursor:pointer}.tile.click:hover{border-color:var(--navy2);background:#f7fafd}
+.tile.on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(28,74,134,.18)}
+.tile.t b{color:var(--teal)}.tile.o b{color:var(--orange)}.tile.r b{color:var(--bad)}
+.pipe{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch}
+.stg{flex:0 0 auto;min-width:112px;max-width:150px;background:#fff;border:1px solid var(--line);
+  border-radius:10px;padding:8px 9px;cursor:pointer;text-align:left}
+.stg:hover{border-color:var(--navy2)}
+.stg.on{background:var(--navy);border-color:var(--navy)}
+.stg.on .c,.stg.on .l,.stg.on .b{color:#fff}
+.stg .c{display:block;font-size:19px;font-weight:800;color:var(--navy);line-height:1.1}
+.stg .l{display:block;font-size:10.5px;color:var(--mut);margin-top:2px;line-height:1.25}
+.stg .b{display:block;font-size:9.5px;color:var(--navy2);font-weight:700;margin-top:3px}
+.stg.zero .c{color:#b8c2d0}
+.lane{margin:6px 0 2px;font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}
+.lane.neg{color:var(--teal)}.lane.exp{color:var(--orange)}
+.fbar{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.fbar .field{margin-bottom:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.fchip{padding:4px 9px;border-radius:999px;font-size:11.5px;font-weight:700;background:#e8f0fb;color:var(--navy2);
+  border:1px solid #cfe0f5;display:inline-flex;align-items:center;gap:6px}
+.fchip x{cursor:pointer;font-weight:900;opacity:.7}
+.dtbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.dtbl th{position:sticky;top:0;background:#f3f6fa;z-index:2;cursor:pointer;white-space:nowrap}
+.dtbl th.nos{cursor:default}
+.dtbl td{white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.dtbl tbody tr{cursor:pointer}
+.dtbl tbody tr:hover{background:#f7fafd}
+.scroller{max-height:62vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:8px;font-size:12.5px;color:var(--mut)}
+.mv{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:800}
+.mv.adv{background:var(--tealbg);color:var(--teal)}
+.mv.non{background:#eef2f7;color:var(--mut)}
+.mv.reg{background:var(--badbg);color:var(--bad)}
+.mv.shift{background:var(--orangebg);color:var(--orange)}
+.mv.new{background:#eef;color:var(--navy2)}
+.mv.done{background:var(--okbg);color:var(--ok)}
+.mv.dd{background:var(--warnbg);color:var(--warn)}
+.mv.nob{background:#f3e6fb;color:var(--pri)}
+.bandbar{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:12px}
+.bandbar .nm{flex:0 0 190px;color:var(--mut)}
+.bandbar .tr{flex:1;height:14px;background:#eef2f7;border-radius:4px;overflow:hidden;display:flex}
+.bandbar .tr i{display:block;height:100%}
+.bandbar .tr i.i0{background:#9fb3cc}.bandbar .tr i.i1{background:var(--navy2)}
+.bandbar .vv{flex:0 0 96px;text-align:right;font-variant-numeric:tabular-nums}
+.mini{font-size:11.5px;color:var(--mut)}
+.lock{background:#f1f4f8;border:1px dashed #c3cede;border-radius:10px;padding:9px 11px;margin:6px 0}
+.lock b{font-size:12px;color:var(--navy)}
+.gate{background:var(--badbg);border:1px solid #f0c9c9;border-radius:10px;padding:9px 11px;margin:6px 0;font-size:12.5px;color:var(--bad)}
+.gate.adv{background:var(--warnbg);border-color:#ecdcae;color:var(--warn)}
+.modewrap{display:flex;gap:6px;margin:6px 0 10px}
+.modewrap button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:13px;color:var(--mut)}
+.modewrap button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+@media(max-width:640px){.bandbar .nm{flex-basis:118px}.dtbl{font-size:12px}}
+@media print{#nav,#top,#demobadge,.bar,.fbar,.pager{display:none!important}}
+</style>
+</head>
+<body>
+<div id="demobadge" class="hidden"></div>
+<div id="app">
+  <div id="auth" class="card" style="max-width:440px;margin:14vh auto">
+    <h2>Tagum ROWSAE Inventory</h2>
+    <p class="sub">Offline Case-Folder Inventory &amp; Summary Form · MRP-LGU Tagum · DOTr</p>
+    <div class="field"><label>Organization</label>
+      <select id="authOrg"><option value="">— select —</option><option>PMO</option><option>LGU Tagum</option></select></div>
+    <div class="field"><label>Your name</label><input id="authName" placeholder="Type your full name"></div>
+    <div class="field"><label>This device's short name (optional)</label><input id="authDevice" placeholder="e.g. TABLET-01"></div>
+    <button class="btn wide" onclick="App.login()">Enter</button>
+    <p class="muted" style="margin-top:10px">Local self-identification for accountability. Your name is stamped on records and reports as preparer. All case data stays in this device's storage until you export or sync. No internet, server, or Google sign-in required.</p>
+  </div>
+  <div id="top" class="hidden"><b>Tagum ROWSAE</b><span class="tag" id="tbEnv"></span><span class="sp"></span>
+    <div class="who"><span id="tbUser"></span><br><span id="tbDevice" class="mono"></span></div></div>
+  <div id="nav" class="hidden"></div>
+  <div id="main" class="hidden"></div>
+</div>
+<div id="noticeHost"></div>
+<div id="modalHost"></div>
+
+<script>
+/* ============================================================
+   TAGUM ROWSAE OFFLINE CASE-FOLDER INVENTORY & SUMMARY (D1)
+   Reduced-scope field tool. Console untouched. Offline-first.
+   ============================================================ */
+"use strict";
+
+/* ============================================================
+   D1-2.0 CONFIGURATION — tracker, dashboard, comparison
+   Every item below is a configuration point. Change values here;
+   no interface code needs rewriting.
+   ============================================================ */
+
+/* ---- DEMO MODE ----------------------------------------------------------
+   true  = isolated sandbox. Separate database, separate device identity,
+           deterministic fictional records, every export marked, all network
+           writes blocked.
+   false = the field tool. Live database tagum_inv_d1.
+   The demo build NEVER reads or writes the live database.               */
+const DEMO_MODE = false;
+
+/* ---- CONSOLIDATOR -------------------------------------------------------
+   Deliberately blank. The Google Sheets /exec endpoint is held separately
+   and is not embedded in a distributed file. Upload remains manual:
+   export package -> open the consolidator web app -> choose the file.
+   SHARED_SECRET is echoed in the package envelope for the consolidator to
+   validate; leave blank until the token is set in Code.gs.             */
+const CONSOLIDATOR_URL = "";
+const SHARED_SECRET    = "";
+
+/* ---- EXPROPRIATION GATE -------------------------------------------------
+   "advisory" = stages E08+ may be saved without proof of service, but the
+                record is flagged and appears on the exception list.
+   "hard"     = stages E08+ cannot be saved unless service is proven.
+                Administrative override remains available, and is audited.
+   SHIPPED AS "advisory". Flip to "hard" once the legal position paper on
+   service and proof of service is ratified in writing.                  */
+const EXPRO_GATE = "advisory";
+
+
+/* ---------- STORAGE: IndexedDB -> localStorage -> memory ----------
+   D1-2.0: schema version 2 adds the awaitingActions store and backfills
+   provenance introduced by the tracker extension. The demo build uses a
+   completely separate database and localStorage prefix, so opening the
+   demo on a device holding live folders cannot touch live data.        */
+const STORES=["folders","parties","structures","cropsTrees","documents","specialConditions",
+  "offers","encumbrances","transmittals","meta","audit"];
+const DB_NAME = DEMO_MODE ? "tagum_inv_demo" : "tagum_inv_d1";
+const LS_PREFIX = DEMO_MODE ? "taginv_demo_" : "taginv_";
+function LSK(k){return LS_PREFIX+k}
+const Store=(function(){
+  const DB=DB_NAME, LS=LS_PREFIX, VER=3;  /* v3: adds transmittals store */
+  let mode="memory", db=null, mem={};
+  STORES.forEach(s=>mem[s]={});
+  function lsGet(s){try{return JSON.parse(localStorage.getItem(LS+s)||"{}")}catch(e){return {}}}
+  function lsSet(s,o){try{localStorage.setItem(LS+s,JSON.stringify(o));return true}catch(e){return false}}
+  async function init(){
+    try{
+      db=await new Promise((res,rej)=>{
+        const rq=indexedDB.open(DB,VER);
+        rq.onupgradeneeded=e=>{const d=e.target.result;STORES.forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"__k"})})};
+        rq.onsuccess=e=>res(e.target.result); rq.onerror=e=>rej(e.target.error);
+        rq.onblocked=()=>rej(new Error("idb blocked"));
+      });
+      mode="indexeddb"; return mode;
+    }catch(e){
+      try{localStorage.setItem(LS+"probe","1");localStorage.removeItem(LS+"probe");mode="localStorage";STORES.forEach(s=>mem[s]=lsGet(s));return mode}
+      catch(e2){mode="memory";return mode}
+    }
+  }
+  function tx(store,write){return new Promise((res,rej)=>{const t=db.transaction(store,write?"readwrite":"readonly");const os=t.objectStore(store);res(os)})}
+  async function put(store,key,val){val=Object.assign({},val,{__k:key});
+    if(mode==="indexeddb"){const os=await tx(store,1);return new Promise((res,rej)=>{const r=os.put(val);r.onsuccess=()=>res(val);r.onerror=()=>rej(r.error)})}
+    mem[store][key]=val; if(mode==="localStorage")lsSet(store,mem[store]); return val}
+  /* One transaction for many records. Seeding 698 demo records through
+     put() individually is slow enough to look broken. */
+  async function bulkPut(store,pairs){
+    if(mode!=="indexeddb"){pairs.forEach(([k,v])=>{mem[store][k]=Object.assign({},v,{__k:k})});
+      if(mode==="localStorage")lsSet(store,mem[store]); return pairs.length}
+    return new Promise((res,rej)=>{const t=db.transaction(store,"readwrite");const os=t.objectStore(store);
+      pairs.forEach(([k,v])=>os.put(Object.assign({},v,{__k:k})));
+      t.oncomplete=()=>res(pairs.length); t.onerror=()=>rej(t.error);});
+  }
+  async function get(store,key){
+    if(mode==="indexeddb"){const os=await tx(store,0);return new Promise((res)=>{const r=os.get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null)})}
+    return mem[store][key]||null}
+  async function all(store){
+    if(mode==="indexeddb"){const os=await tx(store,0);return new Promise((res)=>{const r=os.getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])})}
+    return Object.values(mem[store]||{})}
+  async function del(store,key){
+    if(mode==="indexeddb"){const os=await tx(store,1);return new Promise((res)=>{const r=os.delete(key);r.onsuccess=()=>res(1);r.onerror=()=>res(0)})}
+    delete mem[store][key]; if(mode==="localStorage")lsSet(store,mem[store]); return 1}
+  async function clearAll(){
+    for(const s of STORES){
+      if(mode==="indexeddb"){await new Promise(res=>{const t=db.transaction(s,"readwrite");t.objectStore(s).clear();t.oncomplete=()=>res();t.onerror=()=>res()})}
+      else {mem[s]={}; if(mode==="localStorage")lsSet(s,{})}
+    }
+  }
+  return {init,put,bulkPut,get,all,del,clearAll,get mode(){return mode}};
+})();
+
+/* ---------- SCHEMA MIGRATION v1 -> v2 ----------
+   Backfills the fields the tracker layer expects. It deliberately does NOT
+   fabricate a baseline for pre-v2 records: a record that was never assessed
+   under the intervention has no As Found state, and inventing one from its
+   current status would manufacture the very comparison this tool exists to
+   measure honestly. Such records are reported as "Incomplete baseline".  */
+async function migrateV2(){
+  const folders=await Store.all("folders");
+  let touched=0;
+  for(const f of folders){
+    let dirty=false;
+    if(f.formSchemaVersion===2)continue;
+    if(f.route==null){f.route=(f.stat&&f.stat.route)||"Undetermined";dirty=true}
+    if(f.stage==null){
+      const cw=CFG.crossFrom((f.stat&&f.stat.status)||f.status);
+      f.stage=cw?cw[2]:"N02"; if(cw&&(!f.route||f.route==="Undetermined"))f.route=cw[1];
+      dirty=true;
+    }
+    if(f.stageDate==null){f.stageDate=(f.stat&&f.stat.statusDate)||String(f.updatedAt||"").slice(0,10);dirty=true}
+    if(f.lastMovementDate==null){f.lastMovementDate=String(f.updatedAt||f.createdAt||"").slice(0,10)||U.today();dirty=true}
+    if(f.nextAction==null){f.nextAction=(f.stat&&f.stat.wayForward)||"";dirty=true}
+    if(f.baseline==null){f.baseline={locked:false,migrated:true};dirty=true}
+    if(!Array.isArray(f.transmittals)){f.transmittals=[];dirty=true}
+    if(!Array.isArray(f.remarksLog)){f.remarksLog=[];dirty=true}
+    if(f.expro==null){f.expro={};dirty=true}
+    if(dirty){f.formSchemaVersion=2;await Store.put("folders",f.uuid,f);touched++}
+  }
+  for(const cs of ["structures","cropsTrees"]){
+    const rows=await Store.all(cs);
+    for(const r of rows){
+      if(r.stage==null||r.route==null){
+        r.route=r.route||"Undetermined";
+        r.stage=r.stage||(r.route==="Expropriation"?"E02":"N02");
+        r.stageDate=r.stageDate||"";
+        await Store.put(cs,r.uuid,r);touched++;
+      }
+    }
+  }
+  return touched;
+}
+
+/* ---------- UTIL ---------- */
+const U={
+  uuid(){try{if(crypto&&crypto.randomUUID)return crypto.randomUUID()}catch(e){}
+    return "u-"+Date.now().toString(16)+"-"+Math.random().toString(16).slice(2,10)},
+  now(){return new Date().toISOString()},
+  today(){return new Date().toISOString().slice(0,10)},
+  esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))},
+  num(v){if(v==null)return null;const s=String(v).replace(/[,\s₱]/g,"");if(s===""||/^(n\/?a|nyv|not applicable|not yet verified)$/i.test(s))return null;const n=Number(s);return isNaN(n)?null:n},
+  peso(v){const n=U.num(v);if(n==null)return (v&&String(v).trim())?U.esc(String(v)):"—";return "₱"+n.toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2})},
+  fmtDate(s){return s?String(s).slice(0,10):"—"},
+  // stable non-crypto checksum (offline/file:// safe) — cyrb53
+  hash(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
+    h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);
+    h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);
+    return (4294967296*(2097151&h2)+(h1>>>0)).toString(16).padStart(14,"0")},
+  debounce(fn,ms){let t;return function(){clearTimeout(t);const a=arguments,c=this;t=setTimeout(()=>fn.apply(c,a),ms)}}
+};
+
+/* ---------- CONFIG ---------- */
+const CFG={
+  appVersion:"D1-1.0",
+  packageSchema:3,            // matches parked console envelope
+  formVariant:"reduced-inventory",
+  formSchemaVersion:1,
+  lgu:"TAGUM",
+  admin:"Atty. Chris Escuadra",
+  roster:[
+    {name:"Atty. Chris Escuadra",role:"Assignment Administrator / Division Chief",org:"PMO"},
+    {name:"Debbie Cartagena",role:"PMO Land Acquisition Lead",org:"PMO"},
+    {name:"Glenn",role:"Encoder",org:"PMO"},
+    {name:"Gab / Yvee",role:"Encoder",org:"PMO"},
+    {name:"Jommel",role:"Encoder",org:"PMO"},
+    {name:"LGU Tagum Case Handler",role:"Case Handler",org:"LGU"}
+  ],
+  // Tagum City barangays with deterministic temporary codes (name stored separately; UUID never depends on code)
+  barangays:[
+    ["Apokon","APOK"],["Bincungan","BINC"],["Busaon","BUSA"],["Canocotan","CANO"],["Cuambogan","CUAM"],
+    ["La Filipina","LAFI"],["Liboganon","LIBO"],["Madaum","MADA"],["Magdum","MAGD"],["Magugpo East","MAGE"],
+    ["Magugpo North","MAGN"],["Magugpo Poblacion","MAGP"],["Magugpo South","MAGS"],["Magugpo West","MAGW"],
+    ["Mankilam","MANK"],["New Balamban","NEWB"],["Nueva Fuerza","NUEF"],["Pagsabangan","PAGS"],["Pandapan","PAND"],
+    ["San Agustin","SANA"],["San Isidro","SANI"],["San Miguel (Camp 4)","SANM"],["Visayan Village","VISV"],["(Other / TBD)","OTHR"]
+  ],
+  priority:["P1","P2","P3","Other"],
+  projectComponents:["Station","Depot","Mainline","Critical Path (designated)","Other"],
+  statuses:["For Assignment","For Inventory","Inventory in Progress","Inventory Complete - For Review",
+    "For Simultaneous Review","Returned for Correction","Approved with Remarks","For Technical Completion",
+    "For Appraisal","For Offer Drafting","For Signature","For Service","Awaiting PAP Response",
+    "For Negotiated Instrument","For Expropriation Evaluation","For ECP Preparation","For Legal Review",
+    "For Endorsement to OULA","For Payment","For Title Transfer","For Possession/Clearing","Completed","On Hold","Other"],
+  statusRemarkRequired:["Other","On Hold","Returned for Correction","Approved with Remarks"],
+  routes:["Undetermined","Negotiated","Expropriation","Donation","CA 141 (free patent/reversion)","Other"],
+  instruments:["NOT","Request for Donation","Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C","DOAS-Land","DOAS-Structures/Improvements","ADRI","ACRCT","EJSE","ECP / Request for Expropriation","Other"],
+  civilStatus:["Single","Married","Widow/Widower","Separated","Annulled","Not applicable (juridical entity)","Not yet verified"],
+  docValidity:["Not yet verified","Updated","Expired","Not applicable"],
+  noticeTypes:["NOT","Request for Donation","Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C","Other"],
+  partyTypes:["Individual","Married couple","Heirs / Estate","Corporation","Cooperative","Government","Occupant / Informal","Creditor","Representative","Other"],
+  claimRoles:["Registered Owner","Co-owner","Heir","Spouse","Representative / SPA","Beneficial Owner","Creditor","Occupant","Interested Party","Other"],
+  docStatuses:["Not Yet Verified","Available","Missing","Not Applicable"],
+  docTypes:["Transfer/Original Certificate of Title","Tax Declaration","Survey / Parcellary Records","Technical Description",
+    "Appraisal Report","BIR Zonal Certification","SMV / Assessor Certification","Certificate of No/With Improvement",
+    "RPT Clearance","Government ID(s)","TIN","Marriage Certificate","SPA / Authority","Death Certificate / EJSE / Heirship",
+    "Corporate Documents","Landowner Waiver","Ownership Affidavit(s)","Proof of Service","Reply / Response",
+    "Negotiated Instrument(s)","ECP Requirements","Payment Documents","Title Transfer Documents","Possession Documents","Other"],
+  structureTypes:["Residential","Commercial","Industrial","Agricultural","Mixed-use","Fence/Perimeter","Other improvement"],
+  severity:["Marginal (<80%)","Severe (≥80%)","Severe (structural compromise)","N/A"],
+  ctClassifications:["Fruit-bearing","Non-fruit-bearing","Timber","Ornamental","Seedling","Agricultural crop","Other"],
+  ctMaturity:["Seedling","Non-bearing","Bearing","Old / Senile","N/A"],
+  units:["pc","sqm","lm","hill","cluster","kg","bundle"],
+  landClass:["Residential","Commercial","Industrial","Agricultural","Institutional","Other"],
+  reviewers:["Atty. Chris Escuadra (Division Chief)","PMO Team Lead","LGU ROWSAE Head","LGU Land Acquisition Lead","LGU Data Controller"],
+  syncStates:["Local Only","Pending Upload","Uploaded","Upload Error"]
+};
+CFG.brgyCode=name=>{const f=CFG.barangays.find(b=>b[0]===name);return f?f[1]:"OTHR"};
+
+/* ===== D1-2.0 configuration (continued) ===== */
+Object.assign(CFG,{
+  appVersion:"D1-2.1",
+  formSchemaVersion:2,
+  demo:DEMO_MODE,
+  consolidatorUrl:CONSOLIDATOR_URL,
+  sharedSecret:SHARED_SECRET,
+  exproGate:EXPRO_GATE,
+  interventionStart:"2026-07-01",   // records first assessed on/after this date are "newly inventoried"
+  adminPassphrase:"",               // blank = name-based admin (legacy). Set a value to require it.
+  dormancyBands:[15,30,60],         // days since last SUBSTANTIVE movement
+  referralBands:[7,15,30,60],       // days since referred to an action holder
+
+  /* ---- Which service outcomes count as valid service for the
+     expropriation trigger. Proof of service is required in every case.
+     Subject to written legal ratification — see the position paper.   */
+  serviceRule:{
+    acceptServed:true,
+    acceptRefused:true,       // refusal to receive, evidenced by affidavit
+    acceptSubstituted:true,   // substituted service, evidenced by affidavit
+    requireProof:true         // proofAvailable must be "Yes". Do not relax.
+  },
+
+  /* ---- Unified progress bands (comparison only, never a stage) ---- */
+  bands:[
+    [0,"Not yet inventoried"],[1,"Inventoried and initially assessed"],
+    [2,"Due diligence and PAP coordination"],[3,"Technical documents, valuation, or offer readiness"],
+    [4,"Offer served or negotiation action"],[5,"Instrument or expropriation case preparation"],
+    [6,"Legal, approval, endorsement, or court filing"],[7,"Payment, deposit, possession, tax, or transfer"],
+    [8,"Fully paid or closed"]
+  ],
+
+  /* ============================================================
+     LGU-MANAGED STAGE LANES (Tagum, Carmen, Sta. Cruz, Digos)
+     These are the LGU lanes Chris gave, NOT the PMO-managed 134-hop
+     library (that is Davao/Panabo). Codes: LN = LGU Negotiated,
+     LX = LGU Expropriation. Each row: [code, label, band, holder,
+     handoff?]. holder is the desk that acts AT that step; the finer
+     climb inside PMO review / OULA / court is carried by Transmittals.
+     ============================================================ */
+  stagesN:[
+    ["LN01","Technical documents complete",3,"LGU",false],
+    ["LN02","LGU drafts NOT / RFD / OTB-C",3,"LGU",false],
+    ["LN03","Mayor signs NOT etc.",3,"LGU_MAYOR",false],
+    ["LN04","LGU serves NOT etc.",4,"LGU",false],
+    ["LN05","Coordinate with PAP for documents",4,"PAP",false],
+    ["LN06","Determine NEGO or EXPRO route",4,"LGU",false],
+    ["LN07","LGU prepares NEGO docs",5,"LGU",false],
+    ["LN08","Endorse NEGO docs to PMO for legal review",6,"LGU",true],
+    ["LN09","PMO review & approval",6,"PMO",true],
+    ["LN10","OULA issues Legal Pass",6,"OULA",false],
+    ["LN11","OAROWSA endorses Legal Pass to PMO",6,"OAROWSA",true],
+    ["LN12","PMO informs LGU of Legal Pass findings",6,"PMO",true],
+    ["LN13","LGU asks PAP to sign",6,"PAP",false],
+    ["LN14","Forward signed NEGO doc to PMO",6,"LGU",true],
+    ["LN15","PMO routes to OAROWSA, Legal for signature",6,"PMO",true],
+    ["LN16","PMO returns to LGU for notarization",6,"PMO",true],
+    ["LN17","LGU processes payment — Tranche 1",7,"LGU",false],
+    ["LN18","Clear area & transfer / annotate title",7,"LGU",false],
+    ["LN19","LGU processes payment — Tranche 2 / Closed",8,"LGU",false]
+  ],
+  stagesE:[
+    ["LX01","Technical documents complete",3,"LGU",false],
+    ["LX02","LGU drafts NOT / RFD / OTB-C",3,"LGU",false],
+    ["LX03","Mayor signs NOT etc.",3,"LGU_MAYOR",false],
+    ["LX04","LGU serves NOT etc.",4,"LGU",false],
+    ["LX05","Coordinate with PAP for documents",4,"PAP",false],
+    ["LX06","Determine NEGO or EXPRO route",4,"LGU",false],
+    ["LX07","LGU prepares ECP",5,"LGU",false],
+    ["LX08","Endorse ECP to PMO for legal review",6,"LGU",true],
+    ["LX09","PMO review & approval",6,"PMO",true],
+    ["LX10","OULA issues Legal Pass",6,"OULA",false],
+    ["LX11","OAROWSA endorses Legal Pass to PMO",6,"OAROWSA",true],
+    ["LX12","PMO informs LGU of Legal Pass findings",6,"PMO",true],
+    ["LX13","LGU prepares Request for Expropriation Letter",6,"LGU",false],
+    ["LX14","RFEL coursed through PMO for OULA review",6,"PMO",true],
+    ["LX15","LGU coordinates with SolGen for Complaint (PMO supports)",6,"OSG",true],
+    ["LX16","SolGen issues Complaint",6,"OSG",false],
+    ["LX17","LGU Mayor signs Complaint",6,"LGU_MAYOR",false],
+    ["LX18","LGU serves Complaint on respondent",6,"LGU",false],
+    ["LX19","LGU files case in court",6,"COURT",true],
+    ["LX20","LGU deposits provisional check with court",7,"LGU",false],
+    ["LX21","Court issues Writ of Possession",7,"COURT",false],
+    ["LX22","LGU clears area",7,"LGU",false],
+    ["LX23","Litigation tail — legal support to SolGen; balance of just compensation",7,"LGU",false],
+    ["LX24","Final compensation paid / Closed",8,"LGU",false]
+  ],
+
+  /* Steps whose HOLDER is the litigation tail — long by nature, never
+     flagged for dormancy (elapsed time shown, never turns red). */
+  tailStages:["LX23"],
+
+  /* ---- Proof of service becomes mandatory when a case is endorsed for
+     the expropriation route. On the LGU lane that is the ECP endorsement. */
+  exproGateFrom:"LX08",
+
+  /* ============================================================
+     CUSTODY HOLDERS (titles only — no personal names) with per-desk
+     escalation threshold in working days. A transmittal rung sitting
+     past its threshold turns red.
+     ============================================================ */
+  holders:[
+    ["CH","Case Handler",3],
+    ["LR","Legal Researcher",3],
+    ["RLH","ROWSAE / Legal Head",3],
+    ["ODPL","Over-All Deputy Project Lead",3],
+    ["ASEC","ASec for ROW & Site Acquisition",3],
+    ["PMO","PMO (pass-through)",3],
+    ["OULA_H","OULA — Handling Lawyer",10],
+    ["OULA_S","OULA — Supervising Lawyer",10],
+    ["OULA_A","OULA — Legal ASec / USec",10],
+    ["OAROWSA","OAROWSA",5],
+    ["OSG","Office of the Solicitor General",20],
+    ["COURT","Court",30],
+    ["LGU","LGU ROWSAE",5],
+    ["LGU_MAYOR","LGU Mayor",5],
+    ["PAP","PAP / Owner",99],
+    ["BIR","BIR",20],
+    ["ROD","Registry of Deeds",20],
+    ["APPRAISER","Appraiser",20]
+  ],
+  /* PAP threshold is high on purpose: a PAP is not a desk you escalate
+     against the same way, so their aging is shown but rarely red. */
+
+  /* ============================================================
+     ROUTING LADDERS. Each document in transit follows one ladder;
+     the rungs are the ordered custody holders. The finer PMO review
+     climb (CH->LR->RLH->ODPL->ASEC) and OULA climb are expanded here,
+     so "with the Legal Researcher vs. you vs. ODPL vs. ASec" is visible.
+     No OUAF / finance ladder — on the LGU lane the money is LGU-held.
+     ============================================================ */
+  ladders:{
+    INSTRUMENT:{label:"Compensation instrument (DOAS / ADRI / ACRCT)",
+      rungs:["LGU","CH","LR","RLH","ODPL","ASEC","OULA_H","OULA_S","OULA_A","OAROWSA","LGU"]},
+    ECP:{label:"Expropriation Case Profile (ECP)",
+      rungs:["LGU","CH","LR","RLH","ODPL","ASEC","OULA_H","OULA_S","OULA_A","OAROWSA","LGU"]},
+    RFEL:{label:"Request for Expropriation Letter (RFEL)",
+      rungs:["LGU","PMO","OULA_H","OULA_S","OULA_A","LGU"]},
+    COURT:{label:"Court complaint & writ",
+      rungs:["LGU","OSG","LGU_MAYOR","LGU","COURT","LGU","COURT","LGU"]},
+    TAX:{label:"Tax / title transfer",
+      rungs:["LGU","BIR","ROD"]}
+  },
+  ladderList:["INSTRUMENT","ECP","RFEL","COURT","TAX"],
+
+  /* ---- Deposit regimes. RA 12289 took effect 03 October 2025. ---- */
+  depositRegimes:[
+    "RA 10752 — 100% land / 100% structures / 100% C&T",
+    "RA 12289 §7(a) — 15% land / 100% structures (RC less depreciation) / 15% C&T",
+    "RA 12289 §19 carve-out — written agreement as of 04 October 2025, 100%",
+    "Not yet determined"
+  ],
+
+  /* ---- CROSSWALK ---------------------------------------------------------
+     Old flat 23-item status  ->  route  ->  N/E stage  ->  band.
+     stepLib is left null: the 134-hop Step Library hop identifiers are not
+     in this file. Populate from the Step Library export; nothing in the
+     interface depends on it, and it exists so the mapping has one home. */
+  crosswalk:[
+    ["For Assignment","Undetermined","LN01",3,null],
+    ["For Inventory","Undetermined","LN01",3,null],
+    ["Inventory in Progress","Undetermined","LN01",3,null],
+    ["Inventory Complete - For Review","Undetermined","LN01",3,null],
+    ["For Simultaneous Review","Undetermined","LN01",3,null],
+    ["Returned for Correction","Undetermined","LN01",3,null],
+    ["Approved with Remarks","Undetermined","LN01",3,null],
+    ["For Technical Completion","Negotiated","LN01",3,null],
+    ["For Appraisal","Negotiated","LN01",3,null],
+    ["For Offer Drafting","Negotiated","LN02",3,null],
+    ["For Signature","Negotiated","LN03",3,null],
+    ["For Service","Negotiated","LN04",4,null],
+    ["Awaiting PAP Response","Negotiated","LN05",4,null],
+    ["For Negotiated Instrument","Negotiated","LN07",5,null],
+    ["For Expropriation Evaluation","Expropriation","LX06",4,null],
+    ["For ECP Preparation","Expropriation","LX07",5,null],
+    ["For Legal Review","Expropriation","LX09",6,null],
+    ["For Endorsement to OULA","Expropriation","LX09",6,null],
+    ["For Payment","Negotiated","LN17",7,null],
+    ["For Title Transfer","Negotiated","LN18",7,null],
+    ["For Possession/Clearing","Negotiated","LN18",7,null],
+    ["Completed","Negotiated","LN19",8,null],
+    ["On Hold","Undetermined","LN05",4,null],
+    ["Other","Undetermined","LN01",3,null]
+  ],
+
+  /* ---- Due-diligence reasons seen in dormant Tagum folders ---- */
+  ddReasons:["Owner deceased — heirs unconfirmed","Title not on file","Tax declaration outdated",
+    "Occupant changed since last visit","Boundary / area discrepancy","Ownership disputed",
+    "Proof of service missing","Appraisal lapsed","PAP unlocatable","Structure altered since survey",
+    "Encumbrance not cleared","Other"],
+
+  movementLabels:{completed:"Completed",newly:"Newly inventoried",shifted:"Route shifted to expropriation",
+    returned:"Returned for due diligence",advanced:"Advanced",none:"No movement",
+    regressed:"Moved backward",nobase:"Incomplete baseline"}
+});
+
+/* ---- Derived lookups ---- */
+CFG.stageList=r=>r==="Expropriation"?CFG.stagesE:CFG.stagesN;
+CFG.stageBand=code=>{const a=CFG.stagesN.concat(CFG.stagesE).find(s=>s[0]===code);return a?a[2]:0};
+CFG.stageLabel=code=>{const a=CFG.stagesN.concat(CFG.stagesE).find(s=>s[0]===code);return a?a[0]+" — "+a[1]:(code||"—")};
+CFG.stageRoute=code=>String(code||"").slice(0,2)==="LX"?"Expropriation":"Negotiated";
+CFG.holderLabel=c=>{const h=(CFG.holders||[]).find(x=>x[0]===c);return h?h[1]:(c||"—")};
+CFG.holderDays=c=>{const h=(CFG.holders||[]).find(x=>x[0]===c);return h?h[2]:10};
+CFG.stageHolder=code=>{const a=CFG.stagesN.concat(CFG.stagesE).find(s=>s[0]===code);return a?a[3]:null};
+CFG.isTail=code=>(CFG.tailStages||[]).indexOf(code)>=0;
+CFG.gateStages=CFG.stagesE.filter(s=>s[0]>=CFG.exproGateFrom).map(s=>s[0]);
+CFG.crossFrom=status=>CFG.crosswalk.find(c=>c[0]===status)||null;
+CFG.bandLabel=b=>{const a=CFG.bands.find(x=>x[0]===b);return a?a[1]:String(b)};
+
+
+/* ---------- FIELD ENGINE (generic render/collect) ----------
+   def = [key,label,type,options?]  type: text|area|num|area2|date|select|check */
+function renderFields(obj,defs,prefix){
+  obj=obj||{};
+  return defs.map(d=>{
+    const[key,label,type,opts]=d, id=(prefix||"f_")+key, v=obj[key]==null?"":obj[key];
+    let ctrl;
+    if(type==="area"){ctrl=`<textarea id="${id}">${U.esc(v)}</textarea>`}
+    else if(type==="select"){ctrl=`<select id="${id}"><option value=""></option>${(opts||[]).map(o=>`<option ${String(v)===String(o)?"selected":""}>${U.esc(o)}</option>`).join("")}</select>`}
+    else if(type==="check"){ctrl=`<label style="flex-direction:row;gap:8px;align-items:center;text-transform:none;font-weight:400;color:var(--ink)"><input type="checkbox" id="${id}" ${v?"checked":""} style="width:auto"> ${U.esc(label)}</label>`; return `<div class="field">${ctrl}</div>`}
+    else if(type==="num"){ctrl=`<input id="${id}" inputmode="decimal" value="${U.esc(v)}" placeholder="₱ or N/A">`}
+    else if(type==="area2"){ctrl=`<input id="${id}" inputmode="decimal" value="${U.esc(v)}" placeholder="sqm or N/A">`}
+    else if(type==="date"){ctrl=`<input type="date" id="${id}" value="${U.esc(v)}">`}
+    else if(type==="calc"){ctrl=`<input id="${id}" value="${U.esc(v)}" class="locked" readonly tabindex="-1">`}
+    else{ctrl=`<input id="${id}" value="${U.esc(v)}">`}
+    return `<div class="field"><label>${U.esc(label)}</label>${ctrl}</div>`;
+  }).join("");
+}
+function collectFields(obj,defs,prefix){
+  defs.forEach(d=>{const[key,,type]=d, e=document.getElementById((prefix||"f_")+key); if(!e)return;
+    obj[key]= type==="check" ? e.checked : e.value;});
+  return obj;
+}
+/* ---------- AUTO-CALCULATION ----------
+   Land: adopted rate comes from the chosen benchmark; adopted compensation = rate x compensable
+   (or affected) area. No payment balance is ever computed here.
+   Everything derived is read-only; the underlying benchmarks are never altered. */
+const BASIS_RATE={"SMV":"smvRate","BIR zonal value":"zvRate","CMV / appraised":"cmvRate"};
+const BASIS_TOTAL={"SMV":"smvTotal","BIR zonal value":"zvTotal","CMV / appraised":"cmvTotal",
+  "Tax-declaration market value":"taxdecMV","Assessed value":"assessed","Other benchmark":"otherAmt"};
+function calcLand(lv,land){
+  lv=lv||{}; land=land||{};
+  const basis=lv.adoptedBasis||"";
+  const area=U.num(land.compensableArea)!=null?U.num(land.compensableArea):U.num(land.affectedArea);
+  const rateKey=BASIS_RATE[basis], totKey=BASIS_TOTAL[basis];
+  let rate=rateKey?U.num(lv[rateKey]):null;
+  let comp=null;
+  if(rate!=null&&area!=null){comp=rate*area}
+  else if(totKey&&U.num(lv[totKey])!=null){comp=U.num(lv[totKey]);
+    if(rate==null&&area)rate=comp/area}
+  return {adoptedRate:rate==null?"":String(Math.round(rate*100)/100),
+          adoptedComp:comp==null?"":String(Math.round(comp*100)/100)};
+}
+/* calcBalance() removed in D1-2.0. It referenced a paid field that exists in no
+   valuation set, and a derived payment balance is a COA exposure: the tracker
+   must not assert a figure that Accounting has not reconciled. See C-09. */
+function paintCalc(prefix,vals){Object.keys(vals).forEach(k=>{const e=document.getElementById(prefix+k);if(e)e.value=vals[k]})}
+/* Valuation field sets (asset-linked; N/A not zero). "calc" = auto-computed, read-only. */
+const VAL_BASES=["SMV","BIR zonal value","CMV / appraised","Tax-declaration market value","Assessed value","Replacement cost","Other benchmark"];
+const VAL_LAND=[["smvRate","SMV rate/sqm","num"],["smvTotal","SMV total","num"],["zvRate","BIR zonal rate/sqm","num"],["zvTotal","BIR zonal total","num"],
+  ["cmvRate","CMV/appraised rate/sqm","num"],["cmvTotal","CMV/appraised total","num"],["taxdecMV","Tax-dec market value","num"],["assessed","Assessed value","num"],
+  ["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["adoptedBasis","Adopted valuation basis","select",VAL_BASES],
+  ["adoptedRate","Adopted rate (auto)","calc"],["adoptedComp","Adopted land compensation (auto)","calc"],
+  ["offer","Offer amount","num"],
+  ["valSource","Source / reference","text"],["valDate","Valuation date","date"],["valRemarks","Remarks","area"]];
+const VAL_STRUCT=[["smv","SMV","num"],["zv","Zonal value","num"],["cmv","CMV/appraised value","num"],["taxdecMV","Tax-dec market value","num"],["assessed","Assessed value","num"],
+  ["rcRate","Replacement-cost rate","num"],["rcTotal","Replacement-cost total","num"],["deprStated","Depreciation stated by appraisal","text"],["deprValue","Depreciated value stated by appraisal","num"],
+  ["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["adoptedBasis","Adopted basis","select",VAL_BASES],["adoptedComp","Adopted compensation","num"],["offer","Offer","num"],
+  ["apprRef","Appraisal reference/date","text"],["valRemarks","Valuation remarks","area"]];
+const VAL_CT=[["smv","Applicable SMV","num"],["zv","Zonal value","num"],["cmv","CMV/appraisal benchmark","num"],["otherType","Other benchmark type","text"],["otherAmt","Other benchmark amount","num"],
+  ["apprUnit","Appraisal unit value","num"],["adoptedUnit","Adopted unit value","num"],["adoptedBasis","Adopted basis","select",VAL_BASES],["adoptedComp","Adopted compensation","num"],["offer","Offer","num"],
+  ["apprRef","Reference / date","text"],["valRemarks","Remarks","area"]];
+
+/* ============================================================
+   DERIVATION ENGINE (D1-2.0)
+   Nothing here is stored. Everything is computed at read time from
+   records, so a change of rule never requires a data migration.
+   ============================================================ */
+const Derive=(function(){
+
+  const OFFER_TYPES=["Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C"];
+
+  function validServiceOutcomes(){
+    const r=CFG.serviceRule,o=[];
+    if(r.acceptServed)o.push("Served / received");
+    if(r.acceptRefused)o.push("Refused to receive");
+    if(r.acceptSubstituted)o.push("Substituted service");
+    return o;
+  }
+
+  /* ---- EXPROPRIATION READINESS -------------------------------------------
+     The trigger is valid service of an OFFER plus non-acceptance.
+     It is never inferred from folder incompleteness, and never from the
+     stage field. The 30-day clock under RA 10752 s.6 runs from the offer
+     only; a Notice of Taking or Request for Donation does not start it. */
+  function exproRipe(folder,asOf){
+    const today=asOf||U.today();
+    const ok=validServiceOutcomes();
+    const offers=(folder.offers||[]).filter(o=>OFFER_TYPES.indexOf(o.offerType)>=0);
+    const out={ripe:false,reasons:[],offer:null,servedOffers:offers.length};
+    if(!offers.length){out.reasons.push("No Offer to Buy / Offer to Compensate on record");return out}
+    for(const o of offers){
+      if(ok.indexOf(o.outcome)<0)continue;
+      if(CFG.serviceRule.requireProof && o.proofAvailable!=="Yes")continue;
+      const rejected=(o.response==="Rejected");
+      const lapsed=(o.response==="None yet"||o.response==="No reply within period")
+                   && o.responseDeadline && today>String(o.responseDeadline).slice(0,10);
+      if(rejected||lapsed){out.ripe=true;out.offer=o;out.basis=rejected?"Offer expressly rejected":"Response period lapsed";return out}
+    }
+    const served=offers.filter(o=>ok.indexOf(o.outcome)>=0);
+    if(!served.length)out.reasons.push("No offer with a valid recorded service outcome");
+    else{
+      const proven=served.filter(o=>o.proofAvailable==="Yes");
+      if(!proven.length)out.reasons.push("Offer served but proof of service not on file");
+      else out.reasons.push("Served with proof, but no rejection and response period has not lapsed");
+    }
+    return out;
+  }
+
+  /* ---- Is this record sitting at or beyond the gate stage? ---- */
+  function pastGate(stage){return CFG.gateStages.indexOf(stage)>=0}
+
+  /* ---- Gate evaluation. Returns null when there is nothing to say. ---- */
+  function gateCheck(folder){
+    const stages=[folder.stage].concat(
+      (folder.structures||[]).map(s=>s.stage),(folder.cropsTrees||[]).map(c=>c.stage));
+    if(!stages.some(pastGate))return null;
+    const r=exproRipe(folder);
+    if(r.ripe)return null;
+    return {blocked:CFG.exproGate==="hard",reasons:r.reasons,
+      overridden:!!folder.exproOverride,
+      overrideBy:folder.exproOverrideBy,overrideReason:folder.exproOverrideReason};
+  }
+
+  /* ---- Bands ---- */
+  function bandOf(stage){return CFG.stageBand(stage)}
+
+  /* ---- Case roll-up. A case is only as advanced as its slowest asset. ---- */
+  function caseBand(f){
+    const b=[bandOf(f.stage)];
+    (f.structures||[]).forEach(s=>b.push(bandOf(s.stage)));
+    (f.cropsTrees||[]).forEach(c=>b.push(bandOf(c.stage)));
+    return Math.min.apply(null,b);
+  }
+  function caseDrag(f){
+    const items=[{k:"Land",b:bandOf(f.stage),s:f.stage}]
+      .concat((f.structures||[]).map(s=>({k:"Structure "+(s.tag||""),b:bandOf(s.stage),s:s.stage})))
+      .concat((f.cropsTrees||[]).map(c=>({k:"C&T "+(c.species||""),b:bandOf(c.stage),s:c.stage})));
+    items.sort((a,b)=>a.b-b.b);return items[0];
+  }
+  /* Route roll-up: expropriation wins, because any asset on that route puts
+     the case on the expropriation calendar. */
+  function caseRoute(f){
+    const rs=[f.route].concat((f.structures||[]).map(s=>s.route),(f.cropsTrees||[]).map(c=>c.route)).filter(Boolean);
+    if(rs.indexOf("Expropriation")>=0)return "Expropriation";
+    if(rs.indexOf("Negotiated")>=0)return "Negotiated";
+    return f.route||"Undetermined";
+  }
+
+  /* ---- Dormancy uses lastMovementDate, never updatedAt. A clerical
+     correction is not movement. ---- */
+  function daysSince(d){if(!d)return null;const a=new Date(String(d).slice(0,10)),b=new Date(U.today());
+    if(isNaN(a))return null;return Math.max(0,Math.round((b-a)/86400000))}
+  function dormancy(f){return daysSince(f.lastMovementDate)}
+
+  /* ---- MOVEMENT CLASSIFICATION -------------------------------------------
+     Exactly one bucket per record, evaluated in this order. The buckets sum
+     to the population; a newly inventoried record is never also counted as
+     advanced. ---- */
+  function movement(f){
+    const cur=caseBand(f);
+    if(!f.baseline||!f.baseline.locked)
+      return {key:"nobase",cls:"nob",label:CFG.movementLabels.nobase,from:null,to:cur,delta:null};
+    const base=f.baseline.band==null?0:f.baseline.band;
+    const d=cur-base;
+    if(cur===8)return {key:"completed",cls:"done",label:CFG.movementLabels.completed,from:base,to:cur,delta:d};
+    const lockedAt=String(f.baseline.lockedAt||"").slice(0,10);
+    if(lockedAt>=CFG.interventionStart && base<=1)
+      return {key:"newly",cls:"new",label:CFG.movementLabels.newly,from:base,to:cur,delta:d};
+    if(f.baseline.route==="Negotiated" && caseRoute(f)==="Expropriation")
+      return {key:"shifted",cls:"shift",label:CFG.movementLabels.shifted,from:base,to:cur,delta:d};
+    if((f.stage==="N04"||f.stage==="E03") && base>2)
+      return {key:"returned",cls:"dd",label:CFG.movementLabels.returned,from:base,to:cur,delta:d};
+    if(d>0)return {key:"advanced",cls:"adv",label:CFG.movementLabels.advanced,from:base,to:cur,delta:d};
+    if(d<0)return {key:"regressed",cls:"reg",label:CFG.movementLabels.regressed,from:base,to:cur,delta:d};
+    return {key:"none",cls:"non",label:CFG.movementLabels.none,from:base,to:cur,delta:0};
+  }
+
+  /* ---- Soft completeness. Saving always succeeds; gaps are counted. ---- */
+  function completeness(f){
+    const gaps=[];
+    if(!f.route||f.route==="Undetermined")gaps.push("Acquisition route not determined");
+    if(!f.stage)gaps.push("Current stage not set");
+    if(!f.stageDate)gaps.push("Stage date not set");
+    if(!f.nextAction)gaps.push("Next action not stated");
+    if(!f.lastMovementDate)gaps.push("Last movement date not set");
+    if(!f.baseline||!f.baseline.locked)gaps.push("Initial PMO (As Found) baseline not locked");
+    if(!(f.ident&&f.ident.barangay))gaps.push("Barangay not set");
+    if(!U.num(f.land&&f.land.affectedArea))gaps.push("Affected area not recorded");
+    (f.structures||[]).forEach((s,i)=>{if(!s.stage)gaps.push("Structure "+(s.tag||i+1)+" has no stage")});
+    (f.cropsTrees||[]).forEach((c,i)=>{if(!c.stage)gaps.push("C&T line "+(c.species||i+1)+" has no stage")});
+    return {ok:gaps.length===0,gaps:gaps};
+  }
+
+  /* ---- Monetary read. Adopted value only for headline totals; the other
+     benchmarks are reference and filter values. N/A is never zero. ---- */
+  function adoptedOf(f){
+    let t=0,any=false;
+    const l=U.num(f.landVal&&f.landVal.adoptedComp); if(l!=null){t+=l;any=true}
+    (f.structures||[]).forEach(s=>{const v=U.num(s.val&&s.val.adoptedComp);if(v!=null){t+=v;any=true}});
+    (f.cropsTrees||[]).forEach(c=>{const v=U.num(c.val&&c.val.adoptedComp);if(v!=null){t+=v;any=true}});
+    return any?t:null;
+  }
+  function basisOf(f,basis){
+    if(basis==="Adopted")return adoptedOf(f);
+    const m={"SMV":"smvTotal","ZV":"zvTotal","CMV / appraised":"cmvTotal","Offer":"offer"};
+    const k=m[basis]; if(!k)return null;
+    return U.num(f.landVal&&f.landVal[k]);
+  }
+
+  /* ---- Awaiting actions, flattened for the module ---- */
+  /* ---- TRANSMITTALS -------------------------------------------------------
+     A transmittal is one document climbing one ladder. hops[] records each
+     rung with in/out dates. The current holder is the first rung with no
+     out-date. Aging is days on that desk; over the desk threshold -> red. */
+  function ladderKeyByLabel(lbl){return (CFG.ladderList||[]).find(k=>CFG.ladders[k].label===lbl)||null}
+  function currentHop(t){
+    if(t.closedOn)return null;
+    const hops=t.hops||[];
+    const open=hops.find(h=>!h.out);
+    if(open)return open;
+    // no explicit hop log yet: hold at the first rung
+    const key=ladderKeyByLabel(t.ladder);
+    const rungs=key?CFG.ladders[key].rungs:[];
+    return rungs.length?{holder:rungs[0],in:t.startedOn||"",out:""}:null;
+  }
+  function transmittalView(t){
+    const h=currentHop(t);
+    const key=ladderKeyByLabel(t.ladder);
+    const rungs=key?CFG.ladders[key].rungs:[];
+    const idx=h?rungs.indexOf(h.holder):-1;
+    const days=h?daysSince(h.in||t.startedOn):null;
+    const thr=h?CFG.holderDays(h.holder):null;
+    const red=(days!=null&&thr!=null&&days>thr);
+    return {docType:t.docType,ladder:t.ladder,assetRef:t.assetRef,ref:t.ref,
+      closed:!!t.closedOn,holder:h?h.holder:null,holderLabel:h?CFG.holderLabel(h.holder):"—",
+      rung:idx>=0?(idx+1):null,rungs:rungs.length,days,thr,red,startedOn:t.startedOn,closedOn:t.closedOn};
+  }
+  function openTransmittals(f){
+    return (f.transmittals||[]).filter(t=>!t.closedOn).map(t=>{
+      const v=transmittalView(t);
+      return Object.assign(v,{folderUuid:f.uuid,caseFolderId:f.caseFolderId,
+        barangay:(f.ident||{}).barangay,caseRoute:caseRoute(f),handler:f.assignedHandler});
+    });
+  }
+  /* Oldest open desk on the folder — the rollup number the case shows. */
+  function oldestOpenDesk(f){
+    const open=openTransmittals(f).filter(v=>!CFG.isTail(f.stage));
+    let worst=null;
+    open.forEach(v=>{if(v.days!=null&&(worst==null||v.days>worst.days))worst=v});
+    return worst;
+  }
+  /* Non-routing waits, derived from the remarks log (holder set, no close). */
+  function openWaits(f){
+    return (f.remarksLog||[]).filter(r=>r.holder&&!r.resolvedOn).map(r=>({
+      holder:r.holder,text:r.text,since:r.at,days:daysSince(r.at),
+      folderUuid:f.uuid,caseFolderId:f.caseFolderId,handler:f.assignedHandler,
+      barangay:(f.ident||{}).barangay,caseRoute:caseRoute(f),nonRouting:true}));
+  }
+  function referralBand(days){
+    if(days==null)return "Not dated";
+    const b=CFG.referralBands;
+    if(days<=b[0])return "0–"+b[0];
+    if(days<=b[1])return (b[0]+1)+"–"+b[1];
+    if(days<=b[2])return (b[1]+1)+"–"+b[2];
+    if(days<=b[3])return (b[2]+1)+"–"+b[3];
+    return "Over "+b[3];
+  }
+  function dormancyBand(days){
+    if(days==null)return "No movement date";
+    const b=CFG.dormancyBands;
+    if(days<b[0])return "Under "+b[0];
+    if(days<b[1])return b[0]+"–"+(b[1]-1);
+    if(days<b[2])return b[1]+"–"+(b[2]-1);
+    return b[2]+"+";
+  }
+
+  return {exproRipe,gateCheck,pastGate,bandOf,caseBand,caseDrag,caseRoute,dormancy,daysSince,
+          movement,completeness,adoptedOf,basisOf,referralBand,dormancyBand,
+          transmittalView,currentHop,openTransmittals,oldestOpenDesk,openWaits,ladderKeyByLabel,
+          validServiceOutcomes,OFFER_TYPES};
+})();
+
+/* ---- Deterministic pseudo-random source for the demo seed.
+   Fixed seed: the same records appear after every reset. ---- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+
+/* ---------- FIELD DEFINITIONS (sectioned) ---------- */
+const BRGY_NAMES=CFG.barangays.map(b=>b[0]);
+const DEF={
+  ident:[["lotNumber","Lot number","text"],["barangay","Barangay","select",BRGY_NAMES],["mrpNo","MRP number","text"],["dotrPin","Tagum PIN","text"],
+    ["parcellaryLot","Parcellary lot number","text"],["legacyId","Sequence number","text"],["titleNo","Title number","text"],["taxDecNo","Tax-declaration number","text"]],
+  ctrl:[["projectComponent","Project component","select",CFG.projectComponents],["priority","Priority","select",CFG.priority],
+    ["priorityRemarks","Priority remarks (required if Other)","text"],
+    ["inventoryStart","Inventory date (start)","date"],["inventoryEnd","Inventory date (end)","date"]],
+  land:[["landClass","Land classification","select",CFG.landClass],
+    ["totalArea","Total area (sqm)","area2"],["affectedArea","Affected area (sqm)","area2"],["compensableArea","Compensable area (sqm)","area2"],["remainingArea","Remaining area (sqm)","area2"],
+    ["ca141","CA 141 applicable","select",["Yes","No","N/A"]],["ownershipIssue","Ownership / title issue","area"]],
+  landVal:VAL_LAND,
+  primary:[["name","Title holder","text"],["type","Party type","select",CFG.partyTypes],["civilStatus","Civil status","select",CFG.civilStatus],["spouse","Spouse","text"],
+    ["address","Address","text"],["disputeStatus","Dispute status","text"],["authority","Authority / representation","text"]],
+  stat:[["status","Current status","select",CFG.statuses],["statusDate","Status date / as-of","date"],["statusRemarks","Status remarks","area"],
+    ["primaryIssue","Primary issue","text"],["blocker","Blocker","text"],["blockerRemarks","Blocker remarks","text"],
+    ["route","Recommended route","select",CFG.routes],["instrument","Recommended legal instrument","select",CFG.instruments],
+    ["wayForward","Recommended way forward","area"],["responsibleOffice","Responsible office","text"]]
+};
+const CHILD_DEF={
+  parties:[["name","Name / entity","text"],["type","Party type","select",CFG.partyTypes],["role","Role","select",CFG.claimRoles],["assetClaimed","Asset claimed","text"],
+    ["relationship","Relationship to title holder/owner","text"],["civilStatus","Civil status","select",CFG.civilStatus],["spouse","Spouse","text"],["address","Address","text"],["contact","Contact","text"],
+    ["claimedShare","Claimed share","text"],["validatedShare","Validated share","text"],["claimBasis","Claim basis","text"],["spaAuthority","SPA / authority","text"],
+    ["heirDetails","Heir / estate details","text"],["creditorInterest","Creditor interest","text"],["validationStatus","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]],
+  structures:[["tag","Structure tag","text"],["ownerClaimant","Owner / claimant","text"],["type","Type","select",CFG.structureTypes],["use","Use","text"],["location","Location","text"],
+    ["totalFloorArea","Total floor area (sqm)","area2"],["affectedFloorArea","Affected floor area (sqm)","area2"],["pctAffected","% affected","text"],
+    ["severity","Severity","select",CFG.severity],["structuralCompromise","Structural compromise","check"],["ownershipBasis","Ownership basis","text"],["taxDec","Tax declaration","text"],
+    ["clearingStatus","Clearing status","select",["Not started","For clearing","Cleared","N/A"]],["remarks","Remarks","area"]],
+  cropsTrees:[["claimant","Claimant","text"],["species","Species / type","text"],["classification","Classification","select",CFG.ctClassifications],["maturity","Maturity","select",CFG.ctMaturity],
+    ["location","Location","text"],["quantity","Quantity","area2"],["unit","Unit","select",CFG.units],["unitValue","Appraisal unit value","num"],
+    ["apprRef","Appraisal reference / date","text"],["validation","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]],
+  offers:[["assetType","Applies to","select",["Land","Structure","Crops & trees","Land + improvements","Other"]],
+    ["owner","Owner / claimant served","text"],
+    ["offerType","Offer / notice type","select",CFG.noticeTypes],["issueDate","Issue date","date"],
+    ["serviceDate","Service date / attempt","date"],["recipient","Recipient","text"],["manner","Manner of service","text"],
+    ["outcome","Service outcome","select",["Served / received","Refused to receive","Unlocatable","Substituted service","Not yet served","Other"]],
+    ["proofAvailable","Proof available","select",["Yes","No","Awaiting verification"]],
+    ["response","Response","select",["None yet","Accepted","Rejected","Counter-offer","For further discussion","No reply within period"]],
+    ["responseDate","Response date","date"],["responseDeadline","Response deadline / lapse","date"],
+    ["triggerPotential","Potential expropriation trigger (note only)","text"],["remarks","Remarks","area"]],
+  encumbrances:[["notedOn","Date noted","date"],["type","Encumbrance type","select",["Mortgage","Lien","Adverse claim","Notice of lis pendens","Easement / right of way","Attachment / levy","Tax delinquency","Annotation (other)","Other"]],
+    ["holder","Holder / creditor / claimant","text"],["amount","Amount involved","num"],
+    ["instrument","Instrument / entry no.","text"],["dateAnnotated","Date annotated","date"],
+    ["annotated","Annotated on title","select",["Yes","No","Not yet verified"]],
+    ["status","Status","select",["Subsisting","Cancelled","For cancellation","Under verification","Other"]],["remarks","Remarks","area"]],
+  documents:[["docType","Document","select",CFG.docTypes],["status","Status","select",CFG.docStatuses],["validity","Validity","select",CFG.docValidity],["otherDesc","If Other, description","text"],
+    ["reference","Reference","text"],["date","Date","date"],["deficiency","Deficiency","text"],["remarks","Remarks","area"]]
+};
+
+/* ---------- D1-2.0 FIELD DEFINITIONS ---------- */
+const N_CODES=CFG.stagesN.map(s=>s[0]+" — "+s[1]);
+const E_CODES=CFG.stagesE.map(s=>s[0]+" — "+s[1]);
+const ALL_STAGE_OPTS=N_CODES.concat(E_CODES);
+function stageCode(v){return String(v||"").split(" — ")[0]}
+function stageOpt(code){const a=CFG.stagesN.concat(CFG.stagesE).find(s=>s[0]===code);return a?a[0]+" — "+a[1]:""}
+
+/* Current tracker block — the fields that drive every dashboard. */
+DEF.track=[
+  ["route","Acquisition route","select",["Undetermined","Negotiated","Expropriation","Donation","CA 141 (free patent/reversion)"]],
+  ["stageOpt","Current stage","select",ALL_STAGE_OPTS],
+  ["stageDate","Stage date","date"],
+  ["condition","Current condition / major issue","area"],
+  ["nextAction","Next action","area"],
+  ["ddRequired","Due diligence required","select",["No","Yes"]],
+  ["ddReason","Due diligence reason","select",CFG.ddReasons],
+  ["lastMovementDate","Last movement date","date"],
+  ["assignedReviewer","Assigned reviewer / handler","text"]
+];
+
+/* Initial PMO Inventory (As Found) — locked once captured. */
+DEF.baseline=[
+  ["route","Initial PMO route","select",["Undetermined","Negotiated","Expropriation","Donation","CA 141 (free patent/reversion)"]],
+  ["stageOpt","Initial PMO stage","select",ALL_STAGE_OPTS],
+  ["date","Initial PMO inventory date","date"],
+  ["condition","Condition / major issue as found","area"],
+  ["recommendation","Initial recommended action","area"]
+];
+
+/* Basic expropriation block. Service itself lives in the offers table and
+   is never duplicated here. Deposit carries its regime so the figure can be
+   checked; nothing is auto-computed and nothing is auto-deducted. */
+DEF.expro=[
+  ["basis","Reason / basis for expropriation","area"],
+  ["ecpStatus","ECP status","select",["Not started","In preparation","For review","Returned","Cleared","Endorsed"]],
+  ["endorsedTo","Endorsed to","select",["","OAROWSA","OSEC","OULA","OSG"]],
+  ["endorsedDate","Date endorsed","date"],
+  ["oulaStatus","OULA / OSG status","text"],
+  ["court","Court","text"],["caseNo","Court case number","text"],["filedDate","Date complaint filed","date"],
+  ["depositRegime","Deposit regime","select",CFG.depositRegimes],
+  ["depositBasisRef","Deposit basis reference","text"],
+  ["depositAmount","Initial deposit / provisional value recorded","num"],
+  ["writDate","Date of writ / order of possession","date"],
+  ["finalComp","Final compensation","num"],
+  ["closedDate","Date fully paid or closed","date"]
+];
+
+/* Payment visibility: manual, indicative, unreconciled. No arithmetic,
+   no derived balance, no headline total. See COMMENT SHEET C-09. */
+DEF.pay=[
+  ["paymentStatus","Payment status (indicative)","select",["Not yet","Partial","Fully paid"]],
+  ["paymentSourceRef","Source reference (voucher / advice no.)","text"],
+  ["paymentAsOfDate","As of date","date"]
+];
+
+/* Transmittals: one document in transit on one ladder. The rung log
+   (per-desk date-in / date-out) lives in rec.hops. Attaches to an ASSET
+   (lot / a structure / a C&T line) so each asset ages on its own path. */
+CHILD_DEF.transmittals=[
+  ["docType","Document","select",["NOT / RFD / OTB-C","DOAS","ADRI","ACRCT","ECP","RFEL","Complaint","eCAR / tax","Other"]],
+  ["ladder","Routing ladder","select",CFG.ladderList.map(k=>CFG.ladders[k].label)],
+  ["assetRef","Asset (lot / structure / C&T)","text"],
+  ["ref","Document reference no.","text"],
+  ["startedOn","Date started","date"],
+  ["closedOn","Date issued / returned","date"],
+  ["remarks","Remarks","area"]
+];
+/* Timestamped remarks line — appended, never overwritten. holder optional. */
+CHILD_DEF.remarksLog=[
+  ["text","Issue / remark","area"],
+  ["holder","Waiting on (optional)","select",[""].concat(CFG.holders.map(h=>h[1]))],
+  ["stageAt","At stage","text"]
+];
+
+/* Per-asset route and stage. A structure can go to expropriation while the
+   land under it settles by deed — the model has to be able to say that. */
+CHILD_DEF.structures=CHILD_DEF.structures.concat([
+  ["route","Acquisition route","select",["Undetermined","Negotiated","Expropriation","Donation"]],
+  ["stageOpt","Current stage","select",ALL_STAGE_OPTS],
+  ["stageDate","Stage date","date"]
+]);
+CHILD_DEF.cropsTrees=CHILD_DEF.cropsTrees.concat([
+  ["route","Acquisition route","select",["Undetermined","Negotiated","Expropriation","Donation"]],
+  ["stageOpt","Current stage","select",ALL_STAGE_OPTS],
+  ["stageDate","Stage date","date"]
+]);
+
+/* ---------- APP ---------- */
+const App=(function(){
+  let S={user:null,device:null,deviceUuid:null,screen:"home",folder:null,filters:{},adminMode:false,data:{}};
+
+  async function boot(){
+    await Store.init();
+    document.getElementById("tbEnv").textContent=Store.mode+(CFG.demo?" · demo":"");
+    if(CFG.demo){const b=document.getElementById("demobadge");
+      b.classList.remove("hidden");
+      b.textContent="DUMMY DATA · DEMO MODE — fictional records, isolated database ("+DB_NAME+"), no upload to the consolidator";}
+    await migrateV2();
+    // device uuid persistent — set BEFORE any seeding so login never races it
+    let du=localStorage.getItem(LSK("deviceUuid")); if(!du){du=U.uuid();localStorage.setItem(LSK("deviceUuid"),du)}
+    S.deviceUuid=du;
+    if(CFG.demo){const seeded=await Store.get("meta","demoSeeded");
+      if(!seeded||!seeded.value){await seedDemo()}}
+    const sess=localStorage.getItem(LSK("session"));
+    if(sess){try{const o=JSON.parse(sess);S.user=o.user;S.device=o.device;await enter()}catch(e){}}
+    registerSW();
+  }
+  /* D-04: name-based admin retained for continuity, but every administrative
+     action is stamped to the audit trail with the typed name and device UUID.
+     Setting CFG.adminPassphrase requires the passphrase in addition. */
+  function isAdminName(name){
+    const byName=String(name||"").toLowerCase().replace(/[^a-z]/g,"").includes("escuadra");
+    if(!byName)return false;
+    if(!CFG.adminPassphrase)return true;
+    return S.adminPass===CFG.adminPassphrase;
+  }
+  async function login(){
+    const orgSel=(document.getElementById("authOrg").value||"").trim();
+    const name=(document.getElementById("authName").value||"").trim();
+    if(!orgSel){notice("Select your organization.");return}
+    if(!name){notice("Type your name to continue.");return}
+    const org=(orgSel==="PMO")?"PMO":"LGU";
+    if(!S.deviceUuid){S.deviceUuid=localStorage.getItem(LSK("deviceUuid"))||U.uuid();localStorage.setItem(LSK("deviceUuid"),S.deviceUuid)}
+    const dev=(document.getElementById("authDevice").value||"").trim()||("DEV-"+String(S.deviceUuid).slice(0,4).toUpperCase());
+    S.user={name,role:orgSel+" personnel",org}; S.device=dev;
+    localStorage.setItem(LSK("session"),JSON.stringify({user:S.user,device:S.device}));
+    await audit("LOGIN","session","-","",org,name); await enter();
+  }
+  function logout(){localStorage.removeItem(LSK("session"));location.reload()}
+  async function enter(){
+    document.getElementById("auth").classList.add("hidden");
+    ["top","nav","main"].forEach(id=>document.getElementById(id).classList.remove("hidden"));
+    document.getElementById("tbUser").textContent=S.user.name.replace("Atty. ","");
+    document.getElementById("tbDevice").textContent=S.device;
+    S.isAdmin=isAdminName(S.user.name);
+    const NAV=[["overall","Dashboard"],["lots","Lots"],["structures","Structures"],["ct","Crops &amp; trees"],
+      ["compare","Compare"],["await","Waiting on"],["home","Case folders"],["new","New folder"],
+      ["backup","Backup &amp; sync"]].concat(S.isAdmin?[["admin","Admin"]]:[]).concat([["help","Help"]]);
+    document.getElementById("nav").innerHTML=NAV.map(n=>`<button data-v="${n[0]}" onclick="App.go('${n[0]}')">${n[1]}</button>`).join("");
+    await refresh(); go("home");
+  }
+  async function refresh(){for(const s of STORES){if(s!=="meta")S.data[s]=await Store.all(s)}
+    const m=await Store.get("meta","counters"); S.counters=(m&&m.value)||{seq:0};
+    hydrate();
+  }
+  const ASSET_TAB={lots:"Lots",structures:"Structures",ct:"CropsTrees"};
+  function go(v){ if(v==="new"){return App.newFolder()}
+    if(ASSET_TAB[v]){dash().asset=ASSET_TAB[v];dash().page=1}
+    S.screen=v; S.folder=(v==="form")?S.folder:null;
+    document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v||(v==="form"&&b.dataset.v==="home")));
+    render(); window.scrollTo(0,0);
+  }
+  function render(){const m=document.getElementById("main");
+    const y=(typeof window!=="undefined"&&window.scrollY)||0;
+    if(S.screen==="form")captureOpen();
+    const R={home:vHome,form:vForm,admin:vAdmin,backup:vBackup,help:vHelp,
+      overall:vOverall,lots:vAsset,structures:vAsset,ct:vAsset,compare:vCompare,await:vAwait};
+    m.innerHTML=(R[S.screen]||vHome)();
+    if(S.screen==="form"){bindForm(); if(y)window.scrollTo(0,y);}
+  }
+
+  /* ---- provenance / ids ---- */
+  function stamp(isNew){const t=U.now();return isNew?
+    {createdBy:S.user.name,createdAt:t,createdDevice:S.deviceUuid,updatedBy:S.user.name,updatedAt:t,updatedDevice:S.deviceUuid,version:1,dirty:true}:
+    {updatedBy:S.user.name,updatedAt:t,updatedDevice:S.deviceUuid,dirty:true}}
+  async function nextSeq(){const c=S.counters||{seq:0};c.seq=(c.seq||0)+1;S.counters=c;await Store.put("meta","counters",{key:"counters",value:c});return c.seq}
+  async function audit(action,entity,id,field,oldv,newv){const e={id:U.uuid(),ts:U.now(),user:S.user?S.user.name:"?",device:S.deviceUuid,action,entity,recordId:id,field,oldv:String(oldv||""),newv:String(newv||"")};await Store.put("audit",e.id,e)}
+  function folderCode(f){const bc=CFG.brgyCode(f.ident?.barangay||"");const lot=(f.ident?.lotNumber||"").trim();
+    return lot?`TAG-${bc}-${lot}-${String(f.seq).padStart(3,"0")}`:`TAG-${bc}-TEMP-${String(f.seq).padStart(3,"0")}`}
+
+  /* ---- folder lifecycle ---- */
+  async function newFolder(){
+    const seq=await nextSeq();
+    const f={uuid:U.uuid(),seq,ident:{},ctrl:{priority:"",org:S.user.org},land:{},landVal:{},primary:{},offer:{},stat:{status:"Inventory in Progress"},
+      assignedHandler:S.user.name,assignedOrg:S.user.org,assignedBy:S.user.name,assignmentDate:U.now(),acceptanceDate:U.now(),assignmentStatus:"Assigned",
+      reassignHistory:[{at:U.now(),from:"",to:S.user.name,by:S.user.name,reason:"self-registered on this device (D1)"}],
+      parties:[],structures:[],cropsTrees:[],documents:[],specialConditions:[],offers:[],encumbrances:[],
+      transmittals:[],remarksLog:[],
+      route:"Undetermined",stage:"LN01",stageOpt:stageOpt("LN01"),stageDate:U.today(),
+      condition:"",nextAction:"",ddRequired:"No",ddReason:"",
+      lastMovementDate:U.today(),assignedReviewer:S.user.name,
+      baseline:{locked:false},expro:{},pay:{},formSchemaVersion:2,
+      status:"Inventory in Progress",reportVersion:1,draftFinal:"Draft",syncStatus:"Local Only",deleted:false};
+    f.caseFolderId=folderCode(f);
+    Object.assign(f,stamp(true));
+    await saveFolder(f,true);
+    S.openSecs=null; S.folder=f; S.screen="form"; go("form"); notice("New Case Folder "+f.caseFolderId+" created — you are the Case Handler.");
+  }
+  /* What counts as SUBSTANTIVE movement. A clerical correction is not
+     movement; if it were, every dormancy figure on the dashboard would read
+     zero the day after anyone opened a folder. See C-11. */
+  function movementSignature(f){
+    return JSON.stringify([f.route,f.stage,(f.offers||[]).map(o=>[o.offerType,o.serviceDate,o.outcome,o.response,o.proofAvailable]),
+      (f.structures||[]).map(s=>[s.route,s.stage]),(f.cropsTrees||[]).map(c=>[c.route,c.stage]),
+      (f.expro||{}).ecpStatus,(f.expro||{}).filedDate,(f.expro||{}).writDate,(f.pay||{}).paymentStatus]);
+  }
+  async function saveFolder(f,silent){
+    f.caseFolderId=folderCode(f);
+    f.status=(f.stat&&f.stat.status)||f.status||"For Assignment";
+    /* substantive-movement stamp */
+    const sig=movementSignature(f);
+    if(f.__sig__&&f.__sig__!==sig){f.lastMovementDate=U.today();f.movedAt=U.now()}
+    f.__sig__=sig;
+    /* Initial PMO (As Found) baseline locks the first time the record carries
+       a route and a stage. It is not captured from an empty form, and it is
+       never fabricated for a record that was inherited rather than assessed. */
+    if((!f.baseline||!f.baseline.locked) && f.route && f.route!=="Undetermined" && f.stage){
+      f.baseline={locked:true,lockedAt:U.today(),lockedBy:(S.user&&S.user.name)||"",
+        route:f.route,stage:f.stage,band:Derive.bandOf(f.stage),date:f.stageDate||U.today(),
+        condition:f.condition||"",recommendation:f.nextAction||""};
+      await audit("BASELINE-LOCK","folder",f.uuid,"baseline","",f.route+" / "+f.stage);
+    }
+    if(!f.__isNew__)Object.assign(f,stamp(false)); f.dirty=true;
+    if(f.syncStatus==="Uploaded")f.syncStatus="Pending Upload";
+    await Store.put("folders",f.uuid,f);
+    // child stores mirror (each child carries folderUuid + own uuid + provenance)
+    for(const cs of ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances","transmittals"]){
+      for(const ch of (f[cs]||[])){if(!ch.uuid)ch.uuid=U.uuid();ch.folderUuid=f.uuid;if(!ch.createdAt)Object.assign(ch,stamp(true));else Object.assign(ch,stamp(false));await Store.put(cs,ch.uuid,ch)}
+    }
+    await refresh();
+    if(!silent)notice("Saved "+f.caseFolderId+" (v"+(f.version||1)+").");
+  }
+  const autosave=U.debounce(async()=>{ if(S.screen!=="form"||!S.folder)return; collectFolder(); S.folder.__auto__=true; await saveFolder(S.folder,true); const b=document.getElementById("autoflag"); if(b){b.textContent="autosaved "+new Date().toLocaleTimeString();} },900);
+
+  function loadFolder(uuid){const f=S.data.folders.find(x=>x.uuid===uuid);if(!f)return;
+    ["ident","ctrl","land","landVal","primary","stat","expro","pay"].forEach(k=>{if(!f[k])f[k]={}});
+    ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances","transmittals"].forEach(cs=>{f[cs]=(S.data[cs]||[]).filter(c=>c.folderUuid===uuid)});
+    if(!Array.isArray(f.remarksLog))f.remarksLog=[];
+    f.stageOpt=stageOpt(f.stage); f.__sig__=movementSignature(f);
+    (f.structures||[]).forEach(s=>s.stageOpt=stageOpt(s.stage));
+    (f.cropsTrees||[]).forEach(c=>c.stageOpt=stageOpt(c.stage));
+    S.openSecs=null; S.folder=f; S.screen="form"; go("form"); window.scrollTo(0,0);
+  }
+  async function deleteFolder(uuid){const f=S.data.folders.find(x=>x.uuid===uuid);if(!f)return;
+    if(!confirm("Archive Case Folder "+f.caseFolderId+"? It is retained (soft-delete) and excluded from active lists."))return;
+    f.deleted=true;Object.assign(f,stamp(false));await Store.put("folders",f.uuid,f);await audit("ARCHIVE","folder",f.uuid,"deleted","","true");await refresh();go("home")}
+
+  /* ---- collect current form into S.folder ---- */
+  function collectFolder(){const f=S.folder;if(!f)return;
+    collectFields(f.ident,DEF.ident,"id_"); collectFields(f.ctrl,DEF.ctrl,"ct_");
+    collectFields(f.land,DEF.land,"ld_"); collectFields(f.landVal,DEF.landVal,"lv_");
+    collectFields(f.primary,DEF.primary,"pc_");
+    collectFields(f.stat,DEF.stat,"st_");
+    collectFields(f,DEF.track,"tk_");
+    f.stage=stageCode(f.stageOpt)||f.stage;
+    if(f.stage&&(!f.route||f.route==="Undetermined"))f.route=CFG.stageRoute(f.stage);
+    f.expro=collectFields(f.expro||{},DEF.expro,"xp_");
+    f.pay=collectFields(f.pay||{},DEF.pay,"py_");
+    const og=document.getElementById("selOrg"); if(og)f.ctrl.org=og.value;
+    f.draftFinal=(document.getElementById("selDraftFinal")||{}).value||f.draftFinal;
+    // derived land valuation (never overwrites a benchmark)
+    const calc=calcLand(f.landVal,f.land);
+    f.landVal.adoptedRate=calc.adoptedRate; f.landVal.adoptedComp=calc.adoptedComp;
+    paintCalc("lv_",calc);
+  }
+
+  /* ---- completion indicator ---- */
+  function completion(f){
+    const g=(o,k)=>(o&&o[k])||"", A=k=>(f[k]||(S.data[k]||[]).filter(x=>x.folderUuid===f.uuid)||[]).length;
+    const checks=[g(f.ident,"lotNumber")||g(f.ident,"barangay"), g(f.ctrl,"projectComponent"), f.assignedHandler, g(f.primary,"name"),
+      g(f.land,"totalArea"), g(f.land,"affectedArea"), (A("structures")||A("cropsTrees")||g(f.land,"affectedArea")),
+      f.stage, f.route, f.nextAction, g(f.stat,"responsibleOffice"), A("documents")];
+    const done=checks.filter(Boolean).length; return {done,total:checks.length,pct:Math.round(100*done/checks.length)};
+  }
+  function statusRemarkNeeded(f){return CFG.statusRemarkRequired.includes(f.stat.status)&&!(f.stat.statusRemarks||"").trim()}
+  function isProvisional(f){return (f.assignmentStatus==="For Assignment")||!f.assignedHandler}
+
+  /* ============ FORM ============ */
+  function secWrap(title,body,open){
+    const k=String(title).replace(/[^A-Za-z]/g,"").slice(0,24);
+    const isOpen=(S.openSecs&&S.openSecs[k]!==undefined)?S.openSecs[k]:!!open;
+    return `<details class="sec" data-k="${k}" ${isOpen?'open':''}><summary>${title}</summary><div class="body">${body}</div></details>`}
+  function captureOpen(){const o={};let n=0;
+    document.querySelectorAll("details.sec").forEach(d=>{if(d.dataset.k){o[d.dataset.k]=d.open;n++}});
+    if(n)S.openSecs=o}
+  function vForm(){const f=S.folder;if(!f)return vHome();
+    ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances","transmittals","remarksLog"].forEach(k=>{if(!Array.isArray(f[k]))f[k]=[]});
+    ["ident","ctrl","land","landVal","primary","stat","expro","pay"].forEach(k=>{if(!f[k])f[k]={}});
+    const cp=completion(f), prov=isProvisional(f), locked=!S.isAdmin;
+    const assignBlock=`<div class="flag info">Case Handler: <b>${U.esc(f.assignedHandler||S.user.name)}</b>${f.assignedHandler===S.user.name?" (you)":""}. You can encode everything and print the report now — no assignment step needed. ${S.isAdmin?"As Administrator you may reassign below (kept in history).":"Only the Administrator can reassign this folder."}</div>
+      <div class="row">
+        <div class="field"><label>Assigned Case Handler</label><input id="asgHandler" value="${U.esc(f.assignedHandler||'')}" class="locked" readonly></div>
+        <div class="field"><label>Organization</label><input value="${U.esc(f.assignedOrg||'')}" class="locked" readonly></div>
+        <div class="field"><label>Assigned by</label><input value="${U.esc(f.assignedBy||'')}" class="locked" readonly></div>
+        <div class="field"><label>Assignment date</label><input value="${U.esc(U.fmtDate(f.assignmentDate))}" class="locked" readonly></div>
+      </div>
+      ${S.isAdmin?`<button class="btn sm" onclick="App.assignModal('${f.uuid}')">Reassign (Admin)</button>`:''}
+      ${f.reassignHistory&&f.reassignHistory.length?`<h4>Assignment history</h4><div class="grid-wrap"><table><tr><th>When</th><th>From→To</th><th>By</th><th>Reason</th></tr>${f.reassignHistory.map(h=>`<tr><td>${U.fmtDate(h.at)}</td><td>${U.esc(h.from||'—')} → ${U.esc(h.to)}</td><td>${U.esc(h.by)}</td><td>${U.esc(h.reason)}</td></tr>`).join('')}</table></div>`:''}`;
+
+    const secA=assignBlock+renderFields(f.ctrl,DEF.ctrl,"ct_")+
+      `<div class="row">
+        <div class="field"><label>Handling org</label><select id="selOrg"><option ${f.ctrl.org==='PMO'?'selected':''}>PMO</option><option ${f.ctrl.org!=='PMO'?'selected':''}>LGU</option></select></div>
+        <div class="field"><label>Report status (local)</label><select id="selDraftFinal"><option ${f.draftFinal!=='Final (local)'?'selected':''}>Draft</option><option ${f.draftFinal==='Final (local)'?'selected':''}>Final (local)</option></select></div>
+      </div>
+      <p class="muted">“Final (local)” marks local completion only; FINAL-APPROVED requires the connected review (D3).</p>`;
+
+    const secB=`<h4>Parcel identifiers</h4>${renderFields(f.ident,DEF.ident,"id_")}
+      <p class="muted">Case Folder ID: <span class="mono">${U.esc(f.caseFolderId)}</span> · UUID <span class="mono">${U.esc(f.uuid)}</span> — the UUID never changes even if the lot/barangay is corrected.</p>
+      <h4>Land parcel</h4>${renderFields(f.land,DEF.land,"ld_")}
+      <h4>Encumbrances (${f.encumbrances.length})</h4>${gridEncumbrances(f)}
+      <h4>Title holder</h4>${renderFields(f.primary,DEF.primary,"pc_")}`;
+
+    const secLV=`<p class="muted">Benchmarks stay beside the land. Enter ₱ amount or N/A (not zero). Choose the <b>adopted valuation basis</b> — the adopted rate and adopted land compensation are then computed automatically (rate × compensable area, falling back to affected area). Land is never depreciated.</p>${renderFields(f.landVal,DEF.landVal,"lv_")}`;
+
+    const submitWarn = (statusRemarkNeeded(f)?'<div class="flag bad">Status Remarks are required for the selected status before submitting.</div>':'');
+    const review=`${submitWarn}
+      <p>Completion <b>${cp.pct}%</b> (${cp.done}/${cp.total} key areas). Structures: ${f.structures.length} · C&T lines: ${f.cropsTrees.length} · Other claimants: ${f.parties.length} · Documents: ${f.documents.length} · Special conditions: ${f.specialConditions.length}.</p>
+      <div class="bar">
+        <button class="btn ghost" onclick="App.openReport('${f.uuid}')">Print / Generate report (PDF)</button>
+        <button class="btn" onclick="App.submitReview('${f.uuid}')">Mark: For Simultaneous Review</button>
+      </div>`;
+
+    return `<div class="bar"><button class="btn ghost sm" onclick="App.go('home')">‹ All folders</button>
+      <span class="pill n">${U.esc(f.caseFolderId)}</span><span class="tag" id="autoflag">autosave on</span></div>
+    <div class="card"><div class="row" style="align-items:center">
+      <div style="flex:1"><h2 style="margin:0">${U.esc(f.primary.name||'(unnamed claimant)')}</h2>
+        <span class="muted">${U.esc(f.status)} · v${f.reportVersion} · ${U.esc(f.syncStatus)}</span></div>
+      <div style="min-width:96px;text-align:right"><span class="pill ${cp.pct>=80?'g':cp.pct>=40?'y':'r'}">${cp.pct}%</span></div></div>
+      <div class="prog" style="margin-top:8px"><i style="width:${cp.pct}%"></i></div>
+      <div class="bar" style="margin-top:10px"><button class="btn" onclick="App.saveNow('${f.uuid}')">Save</button>
+        <button class="btn ghost" onclick="App.openReport('${f.uuid}')">Report</button>
+        <button class="btn ghost warn" onclick="App.deleteFolder('${f.uuid}')">Archive</button></div>
+    </div>
+    ${secWrap("A · Folder control &amp; assignment",secA,true)}
+    ${secWrap("B · Land parcel &amp; primary claimant",secB,true)}
+    ${secWrap("B· · Land valuation",secLV)}
+    ${secWrap("C · Other claimants &amp; interested parties ("+f.parties.length+")",gridParties(f))}
+    ${secWrap("D · Structures &amp; improvements ("+f.structures.length+")",gridStructures(f))}
+    ${secWrap("E · Crops &amp; trees ("+f.cropsTrees.length+")",gridCT(f))}
+    ${secWrap("F · Derived valuation summary",valSummary(f))}
+    ${secWrap("G · Document checklist ("+f.documents.length+")",gridDocs(f))}
+    ${secWrap("H · Offers, notices &amp; responses ("+f.offers.length+")",gridOffers(f))}
+    ${secWrap("I · Status, issues &amp; way forward",renderFields(f.stat,DEF.stat,"st_")+(statusRemarkNeeded(f)?'<div class="flag bad">Status Remarks required for “'+U.esc(f.stat.status)+'”.</div>':''))}
+    ${secWrap("L · Route, stage &amp; movement",trackBlock(f),true)}
+    ${secWrap("M · Initial PMO inventory (As Found)",baselineBlock(f))}
+    ${secWrap("N · Transmittals — document routing &amp; custody ("+(f.transmittals||[]).length+")",gridTransmittals(f),true)}
+    ${secWrap("N2 · Issues / remarks log ("+(f.remarksLog||[]).length+")",gridRemarksLog(f))}
+    ${secWrap("O · Expropriation &amp; deposit",exproBlock(f))}
+    ${secWrap("P · Payment (indicative)",'<div class="flag warn">Indicative only — per Accounting advice, unreconciled. This tracker does not compute a balance and is not a disbursement record.</div>'+renderFields(f.pay||{},DEF.pay,"py_"))}
+    ${secWrap("J · Special conditions &amp; proposed arrangements ("+f.specialConditions.length+")",gridSpecial(f))}
+    ${secWrap("K · Review &amp; submit",review,true)}`;
+  }
+  function bindForm(){const m=document.getElementById("main");
+    m.addEventListener("input",autosave); m.addEventListener("change",autosave);}
+
+  async function saveNow(uuid){collectFolder();await saveFolder(S.folder,false);render()}
+
+  /* ---- derived valuation summary (no double count: each asset once) ---- */
+  function valSummary(f){
+    collectFolder&&0;
+    const rows=[];
+    const lc=U.num(f.landVal.adoptedComp);
+    rows.push(["Land",f.ident.lotNumber?("Lot "+f.ident.lotNumber):"Land",f.landVal.adoptedComp,f.landVal.offer]);
+    f.structures.forEach((s,i)=>rows.push(["Structure",(s.tag||("Str "+(i+1)))+" "+(s.type||""),s.val?.adoptedComp,s.val?.offer]));
+    f.cropsTrees.forEach((c,i)=>rows.push(["Crops/Trees",(c.species||("Line "+(i+1)))+" ×"+(c.quantity||"—"),c.val?.adoptedComp,c.val?.offer]));
+    const sum=k=>rows.reduce((t,r)=>t+(U.num(r[k])||0),0);
+    const tAdopt=sum(2),tOffer=sum(3);
+    return `<p class="muted">Derived from asset records — each asset counted once (no double counting). Authoritative values live on the assets.</p>
+    <div class="grid-wrap"><table><thead><tr><th>Asset</th><th>Ref</th><th>Adopted comp.</th><th>Offer</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td>${r[0]}</td><td>${U.esc(r[1])}</td><td>${U.peso(r[2])}</td><td>${U.peso(r[3])}</td></tr>`).join("")}
+    <tr style="font-weight:700"><td colspan="2">TOTAL</td><td>${U.peso(tAdopt)}</td><td>${U.peso(tOffer)}</td></tr>
+    </tbody></table></div>`;
+  }
+
+  async function submitReview(uuid){collectFolder();const f=S.folder;
+    if(statusRemarkNeeded(f)){notice("Status Remarks required for the selected status.");return}
+    f.stat.status="For Simultaneous Review"; f.status="For Simultaneous Review";
+    f.reportVersion=(f.reportVersion||1)+1; f.draftFinal="Draft";
+    await saveFolder(f,true); await audit("SUBMIT","folder",f.uuid,"status","","For Simultaneous Review");
+    notice("Marked For Simultaneous Review (v"+f.reportVersion+"). Connected reviewer approval is handled in D3."); render();
+  }
+
+  /* ============ GRIDS ============ */
+  function gridParties(f){return `<button class="btn sm" onclick="App.openChild('parties',null)">+ Add claimant / party</button>
+    ${f.parties.length?`<div class="grid-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Share (claim/valid)</th><th>Validation</th><th></th></tr></thead><tbody>
+    ${f.parties.map((p,i)=>`<tr><td>${U.esc(p.name||'—')}</td><td>${U.esc(p.type||'—')}</td><td>${U.esc(p.role||'—')}</td><td>${U.esc(p.claimedShare||'—')} / ${U.esc(p.validatedShare||'—')}</td><td>${U.esc(p.validationStatus||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('parties',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('parties',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No other claimants recorded.</p>'}`}
+
+  function gridStructures(f){return `<button class="btn sm" onclick="App.openChild('structures',null)">+ Add structure / improvement</button>
+    ${f.structures.length?`<div class="grid-wrap"><table><thead><tr><th>Tag</th><th>Type</th><th>Aff. FA</th><th>Severity</th><th>Adopted comp.</th><th></th></tr></thead><tbody>
+    ${f.structures.map((s,i)=>`<tr><td>${U.esc(s.tag||('S'+(i+1)))}</td><td>${U.esc(s.type||'—')}</td><td>${U.esc(s.affectedFloorArea||'—')}</td><td>${U.esc(s.severity||'—')}</td><td>${U.peso(s.val?.adoptedComp)}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('structures',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('structures',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No structures. Each physical structure is one line, counted separately.</p>'}`}
+
+  function gridCT(f){return `<p class="muted">One line per species/classification. Line value = Quantity × Unit value (never × land area). Paste from Excel (Tab or comma) or import CSV.</p>
+    <div class="row"><div class="field full"><label>Paste rows: species, classification, maturity, quantity, unit, unit value</label><textarea id="ctPaste" placeholder="Narra&#9;Timber&#9;Bearing&#9;12&#9;pc&#9;1500&#10;Mango&#9;Fruit-bearing&#9;Bearing&#9;5&#9;pc&#9;8000"></textarea></div></div>
+    <div class="bar"><button class="btn sm" onclick="App.ctPaste()">Add pasted rows</button>
+      <label class="btn sm ghost" style="display:inline-block">Import CSV<input type="file" accept=".csv,text/csv" onchange="App.ctCSV(this.files[0])" style="display:none"></label>
+      <button class="btn sm ghost" onclick="App.ctAdd()">+ Add empty row</button></div>
+    ${f.cropsTrees.length?`<div class="grid-wrap"><table class="gridtbl"><thead><tr><th>Species</th><th>Classification</th><th>Maturity</th><th>Qty</th><th>Unit</th><th>Unit value</th><th>Line value</th><th></th></tr></thead><tbody>
+    ${f.cropsTrees.map((c,i)=>`<tr>
+      <td><input value="${U.esc(c.species||'')}" onchange="App.ctEdit(${i},'species',this.value)"></td>
+      <td><select onchange="App.ctEdit(${i},'classification',this.value)"><option value=""></option>${CFG.ctClassifications.map(o=>`<option ${c.classification===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><select onchange="App.ctEdit(${i},'maturity',this.value)"><option value=""></option>${CFG.ctMaturity.map(o=>`<option ${c.maturity===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><input inputmode="decimal" style="width:64px" value="${U.esc(c.quantity||'')}" onchange="App.ctEdit(${i},'quantity',this.value)"></td>
+      <td><select onchange="App.ctEdit(${i},'unit',this.value)">${CFG.units.map(o=>`<option ${c.unit===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td><input inputmode="decimal" style="width:90px" value="${U.esc(c.unitValue||'')}" onchange="App.ctEdit(${i},'unitValue',this.value)"></td>
+      <td class="mono">${U.peso(c.lineValue)}</td>
+      <td><button class="btn sm ghost" onclick="App.ctLine(${i})">⋯</button> <button class="btn sm ghost" onclick="App.delChild('cropsTrees',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div><p class="muted">Tap ⋯ to add location, appraisal, validation and per-line valuation benchmarks.</p>`:'<p class="muted">No crops/trees lines.</p>'}`}
+
+  function gridDocs(f){return `<button class="btn sm" onclick="App.openChild('documents',null)">+ Add document row</button>
+    <button class="btn sm ghost" onclick="App.seedDocs()">Load standard checklist</button>
+    ${f.documents.length?`<div class="grid-wrap"><table class="gridtbl"><thead><tr><th>Document</th><th>Status</th><th>Reference</th><th></th></tr></thead><tbody>
+    ${f.documents.map((d,i)=>`<tr><td>${U.esc(d.docType||'—')}${d.docType==='Other'?' ('+U.esc(d.otherDesc||'')+')':''}</td>
+      <td><select onchange="App.docStatus(${i},this.value)">${CFG.docStatuses.map(o=>`<option ${d.status===o?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td>${U.esc(d.reference||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('documents',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('documents',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No documents yet — add rows or load the standard checklist.</p>'}`}
+
+  function gridSpecial(f){return `<div class="bar">
+      <button class="btn sm" onclick="App.openSpecial('RPT',null)">+ RPT deduction request</button>
+      <button class="btn sm" onclick="App.openSpecial('Creditor',null)">+ Creditor / Deed of Assignment</button>
+      <button class="btn sm ghost" onclick="App.openSpecial('Other',null)">+ Other condition</button></div>
+    ${f.specialConditions.length?f.specialConditions.map((sc,i)=>`<div class="list-item"><div class="grow"><b>${U.esc(sc.kind)}</b>
+      <span class="muted">${U.esc(sc.summary||'')}</span></div>
+      <button class="btn sm ghost" onclick="App.openSpecial('${sc.kind}',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('specialConditions',${i})">✕</button></div>`).join(''):'<p class="muted">No special conditions. Recording a proposal is not approval — all remain subject to review; RPT is a request, never auto-deducted.</p>'}`}
+
+  function gridOffers(f){return `<p class="muted">One row per offer/notice actually issued. Assets can be served separately and may belong to different owners — add a row for each. A typed date is not proof of service.</p>
+    <button class="btn sm" onclick="App.openChild('offers',null)">+ Add offer / notice</button>
+    ${f.offers.length?`<div class="grid-wrap"><table><thead><tr><th>Applies to</th><th>Asset ref</th><th>Owner served</th><th>Notice</th><th>Served</th><th>Outcome</th><th>Response</th><th></th></tr></thead><tbody>
+    ${f.offers.map((o,i)=>`<tr><td>${U.esc(o.assetType||'—')}</td><td>${U.esc(o.assetRef||'—')}${o.assetCount>1?` <span class="tag">${o.assetCount} assets</span>`:''}</td><td>${U.esc(o.owner||'—')}</td><td>${U.esc(o.offerType||'—')}</td>
+      <td>${U.fmtDate(o.serviceDate)}</td><td>${U.esc(o.outcome||'—')}</td><td>${U.esc(o.response||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('offers',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('offers',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No offers or notices recorded yet.</p>'}`}
+
+  function gridEncumbrances(f){return `<button class="btn sm" onclick="App.openChild('encumbrances',null)">+ Add encumbrance</button>
+    ${f.encumbrances.length?`<div class="grid-wrap"><table><thead><tr><th>Type</th><th>Holder / creditor</th><th>Amount</th><th>Instrument</th><th>Annotated</th><th>Status</th><th></th></tr></thead><tbody>
+    ${f.encumbrances.map((e,i)=>`<tr><td>${U.esc(e.type||'—')}</td><td>${U.esc(e.holder||'—')}</td><td>${U.peso(e.amount)}</td><td>${U.esc(e.instrument||'—')}</td>
+      <td>${U.esc(e.annotated||'—')}</td><td>${U.esc(e.status||'—')}</td>
+      <td><button class="btn sm ghost" onclick="App.openChild('encumbrances',${i})">Edit</button> <button class="btn sm ghost" onclick="App.delChild('encumbrances',${i})">✕</button></td></tr>`).join('')}
+    </tbody></table></div>`:'<p class="muted">No encumbrances recorded. One row per encumbrance (mortgage, lien, adverse claim, easement…).</p>'}`}
+
+  /* ---- offer asset picker (one offer may cover several assets) ---- */
+  function assetOptions(f){
+    const out=[];
+    out.push({id:"LAND",label:"Land — Lot "+(f.ident.lotNumber||"—")+(f.land.affectedArea?(" ("+f.land.affectedArea+" sqm affected)"):""),group:"Land"});
+    (f.structures||[]).forEach((s,i)=>out.push({id:"STR:"+(s.uuid||i),label:(s.tag||("Structure "+(i+1)))+(s.type?(" — "+s.type):"")+(s.ownerClaimant?(" · "+s.ownerClaimant):""),group:"Structures"}));
+    (f.cropsTrees||[]).forEach((c,i)=>out.push({id:"CT:"+(c.uuid||i),label:(c.species||("Line "+(i+1)))+(c.quantity?(" ×"+c.quantity+" "+(c.unit||"")):"")+(c.claimant?(" · "+c.claimant):""),group:"Crops & trees"}));
+    return out;
+  }
+  function assetPicker(f,rec){
+    const opts=assetOptions(f), sel=(rec.assetIds||[]);
+    const groups={};opts.forEach(o=>{(groups[o.group]=groups[o.group]||[]).push(o)});
+    const body=Object.keys(groups).map(g=>`<div style="margin:.35rem 0">
+      <label style="display:flex;justify-content:space-between;align-items:center">${g}
+        <button type="button" class="btn sm ghost" style="padding:3px 8px" onclick="App.pickGroup('${g}',true)">all</button></label>
+      ${groups[g].map(o=>`<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink);margin:.15rem 0">
+        <input type="checkbox" class="offAsset" data-g="${g}" value="${U.esc(o.id)}" ${sel.indexOf(o.id)>=0?"checked":""} style="width:auto;margin-top:3px">
+        <span>${U.esc(o.label)}</span></label>`).join("")}</div>`).join("");
+    return `<div class="field full"><label>Assets covered by this offer (tick all that apply)</label>
+      <div style="border:1px solid var(--line);border-radius:9px;padding:8px;max-height:230px;overflow:auto;background:#fbfdff">${body}</div>
+      <p class="muted" style="margin:.3rem 0 0">One offer can cover several structures or crops/trees lines. Tick only the assets actually covered by this notice — leave the rest for a separate offer.</p></div>
+    <div class="field full"><label>Other / manual reference</label><input id="c_assetRefOther" value="${U.esc(rec.assetRefOther||"")}" placeholder="e.g. unnumbered improvement, or a description"></div>`;
+  }
+  function pickGroup(g,on){document.querySelectorAll('.offAsset[data-g="'+g+'"]').forEach(cb=>{cb.checked=on})}
+  function collectAssets(f){
+    const ids=[],labels=[];const map={};assetOptions(f).forEach(o=>map[o.id]=o.label);
+    document.querySelectorAll(".offAsset").forEach(cb=>{if(cb.checked){ids.push(cb.value);labels.push(map[cb.value]||cb.value)}});
+    return {ids,labels};
+  }
+
+  /* ---- modal + child editors ---- */
+  function modal(title,body){document.getElementById("modalHost").innerHTML=
+    `<div style="position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px" onclick="if(event.target===this)App.closeModal()">
+      <div class="card" style="max-width:640px;width:100%;margin-top:2vh"><div class="row" style="align-items:center"><h3 style="flex:1">${title}</h3><button class="btn sm ghost" onclick="App.closeModal()">✕</button></div>${body}</div></div>`}
+  function closeModal(){document.getElementById("modalHost").innerHTML=""}
+
+  function openChild(cs,idx){const f=S.folder;const rec=idx==null?{}:Object.assign({},f[cs][idx]);
+    if(cs==="structures"||cs==="cropsTrees")rec.stageOpt=stageOpt(rec.stage);
+    let body=renderFields(rec,CHILD_DEF[cs],"c_");
+    if(cs==="offers"){body=renderFields(rec,CHILD_DEF[cs].slice(0,2),"c_")+assetPicker(f,rec)+renderFields(rec,CHILD_DEF[cs].slice(2),"c_")}
+    if(cs==="structures"){body+=`<h4>Structure valuation (on this line)</h4>`+renderFields(rec.val||{},VAL_STRUCT,"sv_")}
+    body+=`<button class="btn wide" onclick="App.saveChild('${cs}',${idx==null?'null':idx})">Save</button>`;
+    modal((idx==null?"Add ":"Edit ")+cs.replace(/s$/,""),body);
+  }
+  async function saveChild(cs,idx){const f=S.folder;const rec=idx==null?{uuid:U.uuid()}:f[cs][idx];
+    collectFields(rec,CHILD_DEF[cs],"c_");
+    if(cs==="structures"||cs==="cropsTrees"){rec.stage=stageCode(rec.stageOpt);
+      if(rec.stage&&(!rec.route||rec.route==="Undetermined"))rec.route=CFG.stageRoute(rec.stage)}
+    if(cs==="offers"){const a=collectAssets(f);
+      rec.assetIds=a.ids; rec.assetCount=a.ids.length;
+      rec.assetRefOther=(document.getElementById("c_assetRefOther")||{}).value||"";
+      rec.assetRef=a.labels.join("; ")+(rec.assetRefOther?((a.labels.length?"; ":"")+rec.assetRefOther):"");
+      if(!a.ids.length&&!rec.assetRefOther){notice("Tick at least one asset (or type a manual reference) for this offer.");return}}
+    if(cs==="structures"){rec.val=collectFields(rec.val||{},VAL_STRUCT,"sv_")}
+    if(cs==="documents"&&rec.docType==="Other"&&!(rec.otherDesc||"").trim()){notice("“Other” document requires a description.");return}
+    if(idx==null)f[cs].push(rec);
+    await saveFolder(f,true);closeModal();render()}
+  async function delChild(cs,idx){const f=S.folder;const rec=f[cs][idx];if(!rec)return;
+    if(!confirm("Remove this "+cs.replace(/s$/,"")+"?"))return;
+    f[cs].splice(idx,1);if(rec.uuid)await Store.del(cs,rec.uuid);await saveFolder(f,true);render()}
+  async function docStatus(i,v){S.folder.documents[i].status=v;await saveFolder(S.folder,true)}
+  async function seedDocs(){const f=S.folder;const have=new Set(f.documents.map(d=>d.docType));
+    CFG.docTypes.filter(t=>t!=="Other"&&!have.has(t)).forEach(t=>f.documents.push({uuid:U.uuid(),docType:t,status:"Not Yet Verified"}));
+    await saveFolder(f,true);render();notice("Standard checklist loaded.")}
+
+  /* ---- crops & trees inline + paste/CSV ---- */
+  async function ctAdd(){S.folder.cropsTrees.push({uuid:U.uuid(),unit:"pc"});await saveFolder(S.folder,true);render()}
+  async function ctEdit(i,field,val){const c=S.folder.cropsTrees[i];c[field]=val;
+    c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";
+    await saveFolder(S.folder,true);if(field==='quantity'||field==='unitValue')render()}
+  function ctLine(i){const c=S.folder.cropsTrees[i];
+    c.stageOpt=stageOpt(c.stage);
+    const extra=[["claimant","Claimant","text"],["location","Location","text"],
+      ["route","Acquisition route","select",["Undetermined","Negotiated","Expropriation","Donation"]],
+      ["stageOpt","Current stage","select",ALL_STAGE_OPTS],["stageDate","Stage date","date"],
+      ["apprRef","Appraisal reference / date","text"],["validation","Validation status","select",["Not determined","For validation","Validated","Disputed"]],["remarks","Remarks","area"]];
+    let body=renderFields(c,extra,"cx_")+`<h4>Line valuation</h4>`+renderFields(c.val||{},VAL_CT,"cv_")+`<button class="btn wide" onclick="App.ctLineSave(${i})">Save line</button>`;
+    modal("Crops/Trees line — "+(c.species||("#"+(i+1))),body)}
+  async function ctLineSave(i){const c=S.folder.cropsTrees[i];
+    collectFields(c,[["claimant","Claimant","text"],["location","Location","text"],
+      ["route","Route","select"],["stageOpt","Stage","select"],["stageDate","Stage date","date"],
+      ["apprRef","Appraisal","text"],["validation","Validation","text"],["remarks","Remarks","area"]],"cx_");
+    c.stage=stageCode(c.stageOpt);
+    c.val=collectFields(c.val||{},VAL_CT,"cv_");
+    await saveFolder(S.folder,true);closeModal();render()}
+  function parseRows(text){return text.split(/\r?\n/).map(l=>l.replace(/\s+$/,"")).filter(l=>l.trim()).map(l=>l.split(/\t|,/).map(c=>c.trim()))}
+  async function ctPaste(){const t=(document.getElementById("ctPaste")||{}).value||"";const rows=parseRows(t);if(!rows.length){notice("Nothing to add.");return}
+    if(rows.length&&/species/i.test(rows[0][0]||""))rows.shift();
+    rows.forEach(r=>{const c={uuid:U.uuid(),species:r[0]||"",classification:r[1]||"",maturity:r[2]||"",quantity:r[3]||"",unit:r[4]||"pc",unitValue:r[5]||""};
+      c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";S.folder.cropsTrees.push(c)});
+    const ta=document.getElementById("ctPaste");if(ta)ta.value="";await saveFolder(S.folder,true);render();notice(rows.length+" line(s) added.")}
+  function ctCSV(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{let rows=parseRows(String(rd.result));
+    if(rows.length&&/species/i.test(rows[0][0]||""))rows.shift();
+    rows.forEach(r=>{const c={uuid:U.uuid(),species:r[0]||"",classification:r[1]||"",maturity:r[2]||"",quantity:r[3]||"",unit:r[4]||"pc",unitValue:r[5]||""};
+      c.lineValue=(U.num(c.quantity)!=null&&U.num(c.unitValue)!=null)?(U.num(c.quantity)*U.num(c.unitValue)):"";S.folder.cropsTrees.push(c)});
+    await saveFolder(S.folder,true);render();notice(rows.length+" line(s) imported from CSV.")};rd.readAsText(file)}
+
+  /* ---- special conditions ---- */
+  const SPEC_DEF={
+    RPT:[["estArrears","Estimated RPT arrears","num"],["certArrears","Certified RPT arrears","num"],["certRef","Certificate / reference","text"],
+      ["writtenRequest","Written request available","select",["Yes","No"]],["authorization","Authorization available","select",["Yes","No"]],
+      ["proposedDeduction","Proposed deduction","num"],["proposedNet","Proposed net payment to PAP","num"],["proposedRemit","Proposed remittance to LGU","num"],["remarks","Remarks","area"]],
+    Creditor:[["creditorName","Creditor / assignee name","text"],["address","Address / contact","text"],["basis","Basis of obligation","text"],
+      ["amountClaimed","Amount claimed","num"],["amountAck","Amount acknowledged by PAP","num"],["affectedComp","Affected compensation","num"],["supportingDoc","Supporting document","text"],
+      ["doaRequired","Deed of Assignment required","select",["Yes","No"]],["doaAvailable","Deed of Assignment available","select",["Yes","No"]],["creditorConsent","Creditor consent / release","select",["Yes","No","Pending"]],
+      ["proposedPayCreditor","Proposed payment to creditor","num"],["balanceToPAP","Balance to PAP","num"],["remarks","Remarks","area"]],
+    Other:[["title","Special condition / request","text"],["facts","Facts","area"],["persons","Persons / creditors","text"],["amount","Amount","num"],
+      ["basis","Supporting basis","text"],["arrangement","Proposed legal / payment arrangement","area"],["instrument","Recommended instrument","text"],["approval","Required approval / action","text"],["remarks","Remarks","area"]]
+  };
+  function openSpecial(kind,idx){const f=S.folder;const rec=idx==null?{kind}:Object.assign({},f.specialConditions[idx]);
+    const note=kind==="RPT"?'<div class="flag warn">Recorded as a request. The amount is not auto-deducted until the written request and authority are confirmed.</div>':
+      kind==="Creditor"?'<div class="flag warn">Recording the proposal is not legal approval. It remains subject to simultaneous review.</div>':'';
+    const body=note+renderFields(rec.data||{},SPEC_DEF[kind],"sp_")+`<button class="btn wide" onclick="App.saveSpecial('${kind}',${idx==null?'null':idx})">Save</button>`;
+    modal((idx==null?"Add ":"Edit ")+kind+" condition",body)}
+  async function saveSpecial(kind,idx){const f=S.folder;const rec=idx==null?{uuid:U.uuid(),kind}:f.specialConditions[idx];
+    rec.data=collectFields(rec.data||{},SPEC_DEF[kind],"sp_");
+    rec.summary=kind==="RPT"?("Arrears "+U.peso(rec.data.certArrears||rec.data.estArrears)+" · net to PAP "+U.peso(rec.data.proposedNet)):
+      kind==="Creditor"?((rec.data.creditorName||"")+" — claim "+U.peso(rec.data.amountClaimed)):(rec.data.title||"");
+    if(idx==null)f.specialConditions.push(rec);
+    await saveFolder(f,true);closeModal();render()}
+
+  /* ---- assignment (admin) ---- */
+  function assignModal(uuid){const f=S.folder;
+    const body=`<div class="field"><label>Assign to Case Handler</label><select id="asg_h"><option value=""></option>${CFG.roster.map(r=>`<option value="${U.esc(r.name)}|${r.org}" ${f.assignedHandler===r.name?'selected':''}>${U.esc(r.name)} (${r.org})</option>`).join("")}</select></div>
+      <div class="field"><label>Reason (required for reassignment)</label><input id="asg_reason" placeholder="basis for assignment / reassignment"></div>
+      <p class="muted">Only the Administrator may assign or reassign. Previous assignment is preserved in history; every PDF and export shows the assigned handler.</p>
+      <button class="btn wide" onclick="App.doAssign()">Confirm assignment</button>`;
+    modal("Assign / Reassign — "+f.caseFolderId,body)}
+  async function doAssign(){const f=S.folder;const v=(document.getElementById("asg_h")||{}).value||"";const reason=(document.getElementById("asg_reason")||{}).value||"";
+    if(!v){notice("Select a Case Handler.");return}
+    const[name,org]=v.split("|");
+    const prev=f.assignedHandler||"";
+    if(prev&&prev!==name&&!reason.trim()){notice("Reassignment requires a reason.");return}
+    f.reassignHistory.push({at:U.now(),from:prev,to:name,by:S.user.name,reason:reason||(prev?"reassignment":"initial assignment")});
+    f.assignedHandler=name;f.assignedOrg=org;f.assignedBy=S.user.name;f.assignmentDate=U.now();f.assignmentStatus="Assigned";
+    if(f.stat.status==="For Assignment"){f.stat.status="For Inventory";f.status="For Inventory"}
+    await saveFolder(f,true);await audit("ASSIGN","folder",f.uuid,"assignedHandler","",name);closeModal();render();notice("Assigned to "+name+".")}
+
+  function filt(k,v){S.filters[k]=v;render()}
+
+  async function mkFolder(over){const seq=await nextSeq();
+    const f=Object.assign({uuid:U.uuid(),seq,ident:{},ctrl:{priority:"",org:"LGU"},land:{},landVal:{},primary:{},offer:{},stat:{status:"For Inventory"},
+      assignedHandler:"",assignedOrg:"",assignedBy:"",assignmentDate:"",assignmentStatus:"For Assignment",reassignHistory:[],
+      parties:[],structures:[],cropsTrees:[],documents:[],specialConditions:[],offers:[],encumbrances:[],status:"For Inventory",reportVersion:1,draftFinal:"Draft",syncStatus:"Local Only",deleted:false},over);
+    f.caseFolderId=folderCode(f);Object.assign(f,stamp(true));return f}
+  async function seedSamples(){
+    // 1 land-only
+    const a=await mkFolder({ident:{lotNumber:"1001",barangay:"Apokon"},ctrl:{projectComponent:"Mainline",priority:"P3",org:"LGU"},
+      assignedHandler:"LGU Tagum Case Handler",assignedOrg:"LGU",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"800",affectedArea:"300",landClass:"Agricultural"},landVal:{smvRate:"1200",smvTotal:"360000",adoptedBasis:"SMV",adoptedRate:"1200",adoptedComp:"360000"},
+      primary:{name:"Reyes, Maria",type:"Individual",claimedShare:"1/1",claimBasis:"TCT T-1001"}});
+    a.reassignHistory=[{at:U.now(),from:"",to:"LGU Tagum Case Handler",by:CFG.admin,reason:"initial assignment"}];
+    // 2 land + 2 structures (Priority/PMO)
+    const b=await mkFolder({ident:{lotNumber:"2002",barangay:"Magugpo Poblacion"},ctrl:{projectComponent:"Station",priority:"P1",org:"PMO"},
+      assignedHandler:"Debbie Cartagena",assignedOrg:"PMO",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"1200",affectedArea:"1200",landClass:"Commercial"},landVal:{zvRate:"5000",zvTotal:"6000000",adoptedBasis:"BIR zonal value",adoptedRate:"5000",adoptedComp:"6000000"},
+      primary:{name:"Santos Holdings Inc.",type:"Corporation",claimedShare:"1/1",claimBasis:"TCT T-2002"},
+      structures:[{uuid:U.uuid(),tag:"S1",type:"Commercial",use:"Store",totalFloorArea:"200",affectedFloorArea:"200",pctAffected:"100",severity:"Severe (≥80%)",val:{rcRate:"12000",rcTotal:"2400000",adoptedBasis:"Replacement cost",adoptedComp:"2400000"}},
+        {uuid:U.uuid(),tag:"S2",type:"Fence/Perimeter",use:"Perimeter",totalFloorArea:"N/A",affectedFloorArea:"60",severity:"Marginal (<80%)",val:{rcRate:"800",rcTotal:"48000",adoptedComp:"48000"}}]});
+    b.reassignHistory=[{at:U.now(),from:"",to:"Debbie Cartagena",by:CFG.admin,reason:"initial assignment"}];
+    // 3 land + 3 crops/trees + RPT + creditor
+    const c=await mkFolder({ident:{lotNumber:"3003",barangay:"Madaum"},ctrl:{projectComponent:"Mainline",priority:"P3",org:"LGU"},
+      assignedHandler:"Glenn",assignedOrg:"PMO",assignedBy:CFG.admin,assignmentDate:U.now(),assignmentStatus:"Assigned",
+      land:{totalArea:"5000",affectedArea:"1500",landClass:"Agricultural"},landVal:{smvRate:"300",smvTotal:"450000",adoptedBasis:"SMV",adoptedRate:"300",adoptedComp:"450000"},
+      primary:{name:"Heirs of Pedro Cruz",type:"Heirs / Estate",claimedShare:"pro-indiviso",claimBasis:"EJSE pending",disputeStatus:"Disputed"},
+      parties:[{uuid:U.uuid(),name:"Cruz, Ana",type:"Individual",role:"Heir",claimedShare:"1/3",validationStatus:"For validation"},
+        {uuid:U.uuid(),name:"Cruz, Ben",type:"Individual",role:"Heir",claimedShare:"1/3",validationStatus:"For validation"}],
+      cropsTrees:[{uuid:U.uuid(),species:"Coconut",classification:"Fruit-bearing",maturity:"Bearing",quantity:"40",unit:"pc",unitValue:"1200",lineValue:48000,val:{adoptedComp:"48000"}},
+        {uuid:U.uuid(),species:"Mango",classification:"Fruit-bearing",maturity:"Bearing",quantity:"12",unit:"pc",unitValue:"8000",lineValue:96000,val:{adoptedComp:"96000"}},
+        {uuid:U.uuid(),species:"Mahogany",classification:"Timber",maturity:"Old / Senile",quantity:"25",unit:"pc",unitValue:"2500",lineValue:62500,val:{adoptedComp:"62500"}}],
+      specialConditions:[{uuid:U.uuid(),kind:"RPT",data:{estArrears:"80000",certArrears:"75000",certRef:"RPT-2026-014",writtenRequest:"No",authorization:"No",proposedDeduction:"75000",proposedNet:"375000"},summary:"Arrears ₱75,000.00 · net to PAP ₱375,000.00"},
+        {uuid:U.uuid(),kind:"Creditor",data:{creditorName:"Rural Bank of Tagum",basis:"Mortgage",amountClaimed:"200000",doaRequired:"Yes",doaAvailable:"No",creditorConsent:"Pending",proposedPayCreditor:"200000",balanceToPAP:"250000"},summary:"Rural Bank of Tagum — claim ₱200,000.00"}]});
+    c.reassignHistory=[{at:U.now(),from:"",to:"Glenn",by:CFG.admin,reason:"initial assignment"}];
+    for(const f of [a,b,c]){await saveFolder(f,true)}
+    await refresh();render();notice("3 demo samples loaded.")}
+
+  function vHome(){
+    const q=(S.filters.q||"").toLowerCase();
+    let list=S.data.folders.filter(f=>!f.deleted);
+    if(S.filters.pri)list=list.filter(f=>(f.ctrl||{}).priority===S.filters.pri);
+    if(S.filters.sync)list=list.filter(f=>f.syncStatus===S.filters.sync);
+    if(q)list=list.filter(f=>[f.caseFolderId,(f.primary||{}).name,(f.ident||{}).lotNumber,(f.ident||{}).barangay,f.assignedHandler,f.status].some(x=>String(x||"").toLowerCase().includes(q)));
+    list.sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+    const counts={total:S.data.folders.filter(f=>!f.deleted).length};
+    return `<div class="bar"><button class="btn" onclick="App.newFolder()">+ New Case Folder</button>
+      <span class="pill n">${counts.total} folder(s)</span>
+      <span class="pill y">${S.data.folders.filter(f=>!f.deleted&&f.syncStatus!=='Uploaded').length} unsynced</span></div>
+    <div class="card">
+      <input id="q" placeholder="Search: folder ID, claimant, lot, barangay, handler…" oninput="App.filt('q',this.value)" value="${U.esc(S.filters.q||'')}">
+      <div class="chipbar">
+        <span class="chip ${!S.filters.pri?'on':''}" onclick="App.filt('pri','')">All</span>
+        ${CFG.priority.map(p=>`<span class="chip ${S.filters.pri===p?'on':''}" onclick="App.filt('pri','${S.filters.pri===p?'':p}')">${p}</span>`).join("")}
+        ${CFG.syncStates.map(s=>`<span class="chip ${S.filters.sync===s?'on':''}" onclick="App.filt('sync','${S.filters.sync===s?'':s}')">${s}</span>`).join("")}
+      </div>
+    </div>
+    ${list.slice(0,300).map(f=>{const cp=completion(f);const cnt=k=>((f[k]&&f[k].length)||(S.data[k]||[]).filter(x=>x.folderUuid===f.uuid).length);
+      return `<div class="list-item" onclick="App.loadFolder('${f.uuid}')">
+      <div class="grow"><b>${U.esc(f.caseFolderId)}</b>
+        <span class="muted">${U.esc((f.primary||{}).name||"—")} · Lot ${U.esc((f.ident||{}).lotNumber||"—")}, ${U.esc((f.ident||{}).barangay||"—")}</span><br>
+        <span class="tag">${U.esc(CFG.stageLabel(f.stage))}</span> <span class="tag">${U.esc(f.route||'—')}</span>
+        <span class="tag">handler: ${U.esc(f.assignedHandler||"For Assignment")}</span>
+        <span class="tag">${cnt("structures")} str · ${cnt("cropsTrees")} C&T</span></div>
+      <div style="text-align:right;min-width:74px"><span class="pill ${cp.pct>=80?'g':cp.pct>=40?'y':'r'}">${cp.pct}%</span><br>
+        <span class="tag ${f.syncStatus==='Uploaded'?'':''}">${f.syncStatus}</span></div>
+    </div>`}).join("")||`<div class="card muted">No case folders yet. Tap “New Case Folder” to begin the inventory.</div>`}`;
+  }
+  /* ============ REPORT (print-CSS, Letter) ============ */
+  function vfRows(obj,defs){return defs.map(d=>{const v=obj?obj[d[0]]:"";const isMoney=(d[2]==="num");const disp=isMoney?U.peso(v):(v&&String(v).trim()?U.esc(v):"—");
+    return `<tr><td class="k">${U.esc(d[1])}</td><td>${disp}</td></tr>`}).join("")}
+  function openReport(uuid){collectFolder&&(S.folder&&S.folder.uuid===uuid&&collectFolder());
+    const f=S.data.folders.find(x=>x.uuid===uuid)||S.folder; if(!f)return;
+    const kids=cs=>(S.folder&&S.folder.uuid===uuid?S.folder[cs]:(S.data[cs]||[]).filter(c=>c.folderUuid===uuid))||[];
+    const parties=kids("parties"),structures=kids("structures"),ct=kids("cropsTrees"),docs=kids("documents"),spec=kids("specialConditions"),offers=kids("offers"),encumbrances=kids("encumbrances");
+    const sumRows=[["Land",f.ident.lotNumber?("Lot "+f.ident.lotNumber):"Land",f.landVal.adoptedComp,f.landVal.offer]]
+      .concat(structures.map((s,i)=>["Structure",(s.tag||("S"+(i+1)))+" "+(s.type||""),s.val?.adoptedComp,s.val?.offer]))
+      .concat(ct.map((c,i)=>["Crops/Trees",(c.species||("Line"+(i+1)))+" ×"+(c.quantity||"—"),c.val?.adoptedComp,c.val?.offer]));
+    const tot=k=>sumRows.reduce((t,r)=>t+(U.num(r[k])||0),0);
+    const sec=(t,inner)=>`<h2>${t}</h2>${inner}`;
+    const kv=(obj,defs)=>`<table class="kv">${vfRows(obj,defs)}</table>`;
+    const reviewers=CFG.reviewers.map(r=>`<tr><td class="k">${U.esc(r)}</td><td>Pending — [ ] Approved [ ] Approved w/ remarks [ ] Returned</td></tr>`).join("");
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>${U.esc(f.caseFolderId)} — Case Folder Summary</title>
+    <style>
+    @page{size:Letter;margin:16mm 14mm 16mm}
+    body{font:11px/1.4 Arial,Helvetica,sans-serif;color:#111;margin:0}
+    .runhdr{position:fixed;top:0;left:0;right:0;font-size:9px;color:#333;border-bottom:1px solid #999;padding-bottom:2px;display:flex;justify-content:space-between}
+    .wm{position:fixed;top:42%;left:0;right:0;text-align:center;font-size:46px;color:rgba(176,42,42,.10);transform:rotate(-22deg);font-weight:800;letter-spacing:3px;z-index:-1}
+    .content{padding-top:16px}
+    h1{font-size:16px;margin:0 0 2px;color:#12315b}
+    h2{font-size:12px;background:#12315b;color:#fff;padding:4px 7px;margin:12px 0 5px;break-after:avoid}
+    table{width:100%;border-collapse:collapse;margin:3px 0}
+    td,th{border:1px solid #b6bfcb;padding:4px 6px;vertical-align:top;text-align:left}
+    th{background:#eef2f7;font-size:9.5px;text-transform:uppercase;letter-spacing:.03em}
+    table.kv td.k{width:34%;background:#f6f8fb;font-weight:700;color:#33435c}
+    thead{display:table-header-group}
+    tr{break-inside:avoid}
+    .muted{color:#666}.right{text-align:right}
+    .sig{margin-top:34px;border-top:1px solid #333;padding-top:2px;font-size:9.5px;width:70%}
+    </style></head><body>
+    <div class="runhdr"><span>${U.esc(f.caseFolderId)} · ${U.esc(f.primary.name||"—")}</span><span>DRAFT – FOR REVIEW · Handler: ${U.esc(f.assignedHandler||"For Assignment")} · v${f.reportVersion}</span></div>
+    <div class="wm">DRAFT – FOR REVIEW</div>
+    <div class="content">
+    <h1>MRP · LGU Tagum — ROWSAE Case Folder Summary</h1>
+    <div class="muted">Generated ${new Date().toLocaleString()} · Case Folder ID <b>${U.esc(f.caseFolderId)}</b> · UUID ${U.esc(f.uuid)} · Report v${f.reportVersion} · <b>DRAFT – FOR REVIEW – NOT YET THE FINAL CASE DISPOSITION</b></div>
+
+    ${sec("Folder &amp; assignment",kv({
+        h:f.assignedHandler||"For Assignment",b:f.assignedBy,d:U.fmtDate(f.assignmentDate),o:f.assignedOrg,
+        pr:f.ctrl.priority,prc:f.ctrl.priorityRemarks,st:f.status
+      },[["h","Assigned Case Handler"],["o","Organization"],["b","Assigned by"],["d","Assignment date"],["pr","Priority"],["prc","Priority remarks"],["st","Current status"]]))}
+
+    ${sec("Land parcel &amp; primary claimant",kv(f.ident,DEF.ident)+kv(f.land,DEF.land)+`<h4>Primary claimant</h4>`+kv(f.primary,DEF.primary))}
+
+    ${sec("Land valuation",kv(f.landVal,DEF.landVal))}
+
+    ${parties.length?sec("Other claimants &amp; interested parties",`<table><thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Claimed/Validated</th><th>Basis</th><th>Validation</th></tr></thead><tbody>${parties.map(p=>`<tr><td>${U.esc(p.name)}</td><td>${U.esc(p.type||"")}</td><td>${U.esc(p.role||"")}</td><td>${U.esc(p.claimedShare||"")}/${U.esc(p.validatedShare||"")}</td><td>${U.esc(p.claimBasis||"")}</td><td>${U.esc(p.validationStatus||"")}</td></tr>`).join("")}</tbody></table>`):""}
+
+    ${structures.length?sec("Structures &amp; improvements",structures.map((s,i)=>`<h4>Structure ${i+1}: ${U.esc(s.tag||"")} — ${U.esc(s.type||"")}</h4>${kv(s,CHILD_DEF.structures.filter(d=>d[2]!=="check"))}<div class="muted">Structural compromise: ${s.structuralCompromise?"Yes":"No"}</div><table class="kv">${vfRows(s.val,VAL_STRUCT)}</table>`).join("")):""}
+
+    ${ct.length?sec("Crops &amp; trees",`<table><thead><tr><th>Species</th><th>Class</th><th>Maturity</th><th>Qty</th><th>Unit</th><th>Unit value</th><th>Line value</th><th>Adopted comp.</th></tr></thead><tbody>${ct.map(c=>`<tr><td>${U.esc(c.species||"")}</td><td>${U.esc(c.classification||"")}</td><td>${U.esc(c.maturity||"")}</td><td>${U.esc(c.quantity||"")}</td><td>${U.esc(c.unit||"")}</td><td class="right">${U.peso(c.unitValue)}</td><td class="right">${U.peso(c.lineValue)}</td><td class="right">${U.peso(c.val?.adoptedComp)}</td></tr>`).join("")}</tbody></table>`):""}
+
+    ${sec("Derived valuation summary",`<table><thead><tr><th>Asset</th><th>Reference</th><th class="right">Adopted comp.</th><th class="right">Offer</th></tr></thead><tbody>${sumRows.map(r=>`<tr><td>${r[0]}</td><td>${U.esc(r[1])}</td><td class="right">${U.peso(r[2])}</td><td class="right">${U.peso(r[3])}</td></tr>`).join("")}<tr style="font-weight:700"><td colspan="2">TOTAL</td><td class="right">${U.peso(tot(2))}</td><td class="right">${U.peso(tot(3))}</td></tr></tbody></table>`)}
+
+    ${sec("Document checklist",`<table><thead><tr><th>Document</th><th>Status</th><th>Validity</th><th>Reference</th><th>Deficiency</th><th>Remarks</th></tr></thead><tbody>${docs.map(d=>`<tr><td>${U.esc(d.docType)}${d.docType==="Other"?" ("+U.esc(d.otherDesc||"")+")":""}</td><td>${U.esc(d.status||"")}</td><td>${U.esc(d.validity||"")}</td><td>${U.esc(d.reference||"")}</td><td>${U.esc(d.deficiency||"")}</td><td>${U.esc(d.remarks||"")}</td></tr>`).join("")||`<tr><td colspan="6" class="muted">No documents recorded.</td></tr>`}</tbody></table>`)}
+
+    ${offers.length?sec("Offers, notices &amp; responses",`<table><thead><tr><th>Applies to</th><th>Asset ref</th><th>Owner served</th><th>Notice</th><th>Issued</th><th>Served</th><th>Outcome</th><th>Proof</th><th>Response</th><th>Deadline</th></tr></thead><tbody>${offers.map(o=>`<tr><td>${U.esc(o.assetType||"")}</td><td>${U.esc(o.assetRef||"")}</td><td>${U.esc(o.owner||"")}</td><td>${U.esc(o.offerType||"")}</td><td>${U.esc(U.fmtDate(o.issueDate))}</td><td>${U.esc(U.fmtDate(o.serviceDate))}</td><td>${U.esc(o.outcome||"")}</td><td>${U.esc(o.proofAvailable||"")}</td><td>${U.esc(o.response||"")}</td><td>${U.esc(U.fmtDate(o.responseDeadline))}</td></tr>`).join("")}</tbody></table><div class="muted">A typed date is not proof of service — the receiving copy or affidavit must be on file.</div>`):""}
+
+    ${spec.length?sec("Special conditions &amp; proposed arrangements",spec.map(sc=>`<h4>${U.esc(sc.kind)}</h4><table class="kv">${Object.entries(sc.data||{}).map(([k,v])=>`<tr><td class="k">${U.esc(k)}</td><td>${U.esc(v)}</td></tr>`).join("")}</table><div class="muted">${sc.kind==="RPT"?"Request only — not auto-deducted.":sc.kind==="Creditor"?"Proposal only — subject to review.":""}</div>`).join("")):""}
+
+    ${sec("Status, issues &amp; recommended way forward",kv(f.stat,DEF.stat))}
+
+    ${sec("Simultaneous review (pending — D3)",`<table class="kv">${reviewers}</table><div class="muted">FINAL APPROVED becomes available only through the connected review process when all required reviewers approve the same version.</div>`)}
+
+    <div style="display:flex;gap:8%;margin-top:10px"><div class="sig">Prepared by: ${U.esc(f.assignedHandler||S.user.name)} — signature / date</div><div class="sig">Noted: ${U.esc(CFG.admin)} — signature / date</div></div>
+    </div>
+    <script>window.onload=function(){setTimeout(function(){window.print()},350)}<\/script>
+    </body></html>`;
+    const w=window.open("","_blank"); if(!w){notice("Allow pop-ups to print the report.");return}
+    w.document.write(html); w.document.close();
+    audit("PRINT","report",f.uuid,"","","DRAFT");
+  }
+
+  /* ============ ADMIN ============ */
+  function vAdmin(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const byClass=k=>fs.filter(f=>f.ctrl.priority===k).length;
+    const prov=fs.filter(f=>isProvisional(f));
+    const byHandler={};fs.forEach(f=>{const h=f.assignedHandler||"(For Assignment)";byHandler[h]=(byHandler[h]||0)+1});
+    return `<h2>Administration</h2><p class="sub">Assignment Administrator: ${CFG.admin} · storage ${Store.mode} · ${CFG.appVersion}</p>
+    <div class="card"><h3>Portfolio</h3>
+      <div class="bar"><span class="pill n">${fs.length} folders</span>${CFG.priority.map(p=>`<span class="pill n">${byClass(p)} ${p}</span>`).join("")}<span class="pill y">${prov.length} For Assignment</span></div>
+      <h4>By handler</h4><div class="grid-wrap"><table><thead><tr><th>Handler</th><th>Folders</th></tr></thead><tbody>${Object.entries(byHandler).map(([h,n])=>`<tr><td>${U.esc(h)}</td><td>${n}</td></tr>`).join("")}</tbody></table></div>
+    </div>
+    ${prov.length?`<div class="card"><h3>Provisional — need assignment</h3>${prov.map(f=>`<div class="list-item"><div class="grow"><b>${U.esc(f.caseFolderId)}</b><span class="muted">${U.esc(f.primary.name||"—")}</span></div><button class="btn sm" onclick="App.loadFolder('${f.uuid}')">Open</button></div>`).join("")}</div>`:""}
+    <div class="card"><h3>Demo samples (field-testing)</h3><p class="muted">Loads three representative Case Folders (land-only; land + 2 structures; land + 3 crops/trees with RPT and creditor/DoA). For training and acceptance testing.</p>
+      <button class="btn ghost" onclick="App.seedSamples()">Load demo samples</button></div>
+    <div class="card"><h3>Barangay code reference</h3><p class="muted">Deterministic temporary codes. Names stored separately; UUID never depends on the code.</p>
+      <div class="grid-wrap"><table><thead><tr><th>Barangay</th><th>Code</th></tr></thead><tbody>${CFG.barangays.map(b=>`<tr><td>${U.esc(b[0])}</td><td class="mono">${b[1]}</td></tr>`).join("")}</tbody></table></div></div>`;
+  }
+
+  /* ============ BACKUP & SYNC ============ */
+  function vBackup(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const counts=CFG.syncStates.map(s=>[s,fs.filter(f=>f.syncStatus===s).length]);
+    return `<h2>Backup &amp; Sync</h2><p class="sub">All data stays on this device until you export. Google Sheets import is D2 — the JSON package below is the authoritative export.</p>
+    <div class="card"><h3>Sync status</h3><div class="bar">${counts.map(c=>`<span class="pill ${c[0]==='Uploaded'?'g':c[0]==='Upload Error'?'r':'y'}">${c[1]} ${c[0]}</span>`).join("")}</div></div>
+    <div class="card"><h3>A · Complete device backup</h3><p class="muted">Everything needed to restore this device (all folders, children, assignments, drafts, settings, audit).</p>
+      <div class="bar"><button class="btn" onclick="App.exportBackup()">Download full backup (JSON)</button>
+        <label class="btn ghost" style="display:inline-block">Restore from backup<input type="file" accept=".json,application/json" onchange="App.importBackup(this.files[0])" style="display:none"></label></div></div>
+    <div class="card"><h3>B · Daily update package</h3><p class="muted">Export this, then upload it to the Google Sheets consolidator (D2) — open the upload web app, choose this file, and it fills the Master List. Carries package ID, schema version, device UUID, counts, and an integrity checksum. Same envelope as the parked console (packageType = inventory).</p>
+      <button class="btn" onclick="App.exportPackage()">Download daily package (JSON)</button></div>
+    <div class="card"><h3>C · Mark uploaded (from receipt)</h3><p class="muted">After the consolidator imports your package it returns a receipt. Import it here to mark those folders <b>Uploaded</b>. Folders you edited after exporting stay Pending.</p>
+      <label class="btn ghost" style="display:inline-block">Import upload receipt<input type="file" accept=".json,application/json" onchange="App.importReceipt(this.files[0])" style="display:none"></label></div>
+    <div class="card"><h3>D · Human-readable CSV</h3><p class="muted">Case Folder master list for emergency review. Convenience copy only — it does not replace the repeatable child records in the JSON package.</p>
+      <button class="btn ghost" onclick="App.exportCSV()">Download master list (CSV)</button></div>`;
+  }
+
+  /* ============ HELP ============ */
+  function vHelp(){return `<h2>Help</h2>
+    <div class="card"><h3>Field workflow</h3><ol>
+      <li>Tap <b>New Case Folder</b>. The Case Folder ID and permanent UUID are generated automatically.</li>
+      <li>Fill sections A–J. Everything autosaves as you type; you can close and reopen safely.</li>
+      <li>Add other claimants, structures and crops/trees as repeatable lines. Crops/trees line value = Quantity × Unit value.</li>
+      <li>Keep each valuation benchmark beside its asset; use <b>N/A</b> where a benchmark does not apply (not zero).</li>
+      <li>Tap <b>Report</b> to generate the printable Draft summary, then use the browser's Save as PDF.</li>
+      <li>In <b>Backup &amp; Sync</b>, export the full backup and the daily package before handing off.</li>
+    </ol></div>
+    <div class="card"><h3>Rules the tool enforces</h3><ul>
+      <li>Whoever creates a folder is automatically its Case Handler and can encode, complete and print right away — no assignment step.</li>
+      <li>Only the Administrator (a login whose name contains “Escuadra”) can reassign a folder to a different handler; reassignment keeps a reason and history.</li>
+      <li>RPT is recorded as a request and never auto-deducted; land and assessed value are never depreciated; adopted compensation is manual.</li>
+      <li>FINAL APPROVED is not available in D1 — reports print as DRAFT – FOR REVIEW until the connected D3 review.</li>
+    </ul></div>
+    <div class="card"><h3>Session</h3><button class="btn ghost" onclick="App.logout()">Log out on this device</button></div>`;
+  }
+
+  /* ============ EXPORTS ============ */
+  async function dumpAll(){const o={};for(const s of STORES){o[s]=await Store.all(s)}return o}
+  async function exportBackup(){const data=await dumpAll();
+    const pkg={type:"backup",app:CFG.appVersion,formSchemaVersion:CFG.formSchemaVersion,lgu:CFG.lgu,deviceUuid:S.deviceUuid,device:S.device,user:S.user.name,exportedAt:U.now(),data};
+    download(JSON.stringify(pkg,null,2),"TAGUM_INV_BACKUP_"+S.device.replace(/\W+/g,"")+"_"+ts()+".json");
+    await audit("BACKUP","device","-","","",Object.values(data).reduce((n,a)=>n+a.length,0)+" records")}
+  async function importBackup(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{
+    let pkg;try{pkg=JSON.parse(rd.result)}catch(e){notice("Invalid backup file.");return}
+    const data=pkg.data||pkg.records||pkg; if(!data.folders){notice("Not a recognizable backup.");return}
+    if(!confirm("Restore this backup? Records with the same key will be overwritten on this device."))return;
+    for(const s of STORES){if(Array.isArray(data[s]))for(const r of data[s]){const k=r.__k||r.uuid||r.id||r.key;if(k)await Store.put(s,k,r)}}
+    await refresh();notice("Backup restored.");go("home")};rd.readAsText(file)}
+  async function importReceipt(file){if(!file)return;const rd=new FileReader();rd.onload=async()=>{
+    let rc;try{rc=JSON.parse(rd.result)}catch(e){notice("Invalid receipt file.");return}
+    if(rc.type!=="receipt"||!Array.isArray(rc.uploadedFolders)){notice("Not a valid upload receipt.");return}
+    let marked=0,newer=0;
+    for(const uf of rc.uploadedFolders){const f=(await Store.all("folders")).find(x=>x.uuid===uf.uuid);if(!f)continue;
+      if((f.version||1)<=(uf.version||1)){f.syncStatus="Uploaded";f.uploadedAt=rc.at;f.uploadedPackageId=rc.packageId;await Store.put("folders",f.uuid,f);marked++}
+      else newer++;}
+    await refresh();render();
+    if(Array.isArray(rc.ackAudit)&&rc.ackAudit.length){
+      const set=new Set(rc.ackAudit);
+      for(const a of (await Store.all("audit"))){if(set.has(a.id)&&!a.ackPackageId){a.ackPackageId=rc.packageId;await Store.put("audit",a.id,a)}}}
+    await audit("RECEIPT","package",rc.packageId||"-","","",marked+" marked uploaded");
+    notice(marked+" folder(s) marked Uploaded"+(newer?"; "+newer+" have newer local edits (left Pending).":"."));
+  };rd.readAsText(file)}
+  async function exportPackage(){
+    if(CFG.demo&&!confirm("This is the DEMO build. The package will be marked demoData:true and the consolidator is configured to reject it. Continue?"))return;
+    let fs=(await Store.all("folders")).filter(f=>!f.deleted);
+    // mark Pending Upload BEFORE snapshotting so the payload and checksum agree
+    for(const f of fs){if(f.syncStatus==="Local Only"){f.syncStatus="Pending Upload";await Store.put("folders",f.uuid,f)}}
+    fs=(await Store.all("folders")).filter(f=>!f.deleted);
+    const records={folders:fs,
+      parties:(await Store.all("parties")),structures:(await Store.all("structures")),
+      cropsTrees:(await Store.all("cropsTrees")),documents:(await Store.all("documents")),
+      specialConditions:(await Store.all("specialConditions")),offers:(await Store.all("offers")),
+      encumbrances:(await Store.all("encumbrances")),
+      transmittals:(await Store.all("transmittals")),
+      /* D-02: archived folders travel as tombstones in their own array. They are
+         NOT put back into records.folders, because an older consolidator would
+         upsert them and resurrect the row. An updated consolidator moves them to
+         an Archive tab with the reason and the audit stamp intact. */
+      tombstones:(await Store.all("folders")).filter(f=>f.deleted).map(f=>({
+        uuid:f.uuid,caseFolderId:f.caseFolderId,deleted:true,version:f.version||1,
+        deletedBy:f.updatedBy,deletedAt:f.updatedAt,reason:f.deleteReason||""})),
+      /* D-03: ship every audit entry the consolidator has not acknowledged,
+         oldest first, rather than an arbitrary tail. */
+      audit:(await Store.all("audit")).filter(a=>!a.ackPackageId).sort((a,b)=>String(a.ts).localeCompare(String(b.ts))).slice(0,5000)};
+    const body=JSON.stringify(records);
+    const pkg={packageSchema:CFG.packageSchema,packageType:"inventory",formVariant:CFG.formVariant,formSchemaVersion:CFG.formSchemaVersion,
+      demoData:!!CFG.demo, sharedSecret:CFG.sharedSecret||undefined,
+      lgu:CFG.lgu,app:CFG.appVersion,packageId:"TAGUM_INV_"+S.device.replace(/\W+/g,"")+"_"+ts(),
+      sourceDeviceUuid:S.deviceUuid,sourceUser:S.user.name,assignedHandlers:[...new Set(fs.map(f=>f.assignedHandler).filter(Boolean))],
+      exportedAt:U.now(),includedFolderUuids:fs.map(f=>f.uuid),recordVersions:Object.fromEntries(fs.map(f=>[f.uuid,f.version||1])),
+      counts:Object.fromEntries(Object.entries(records).map(([k,v])=>[k,v.length])),checksum:U.hash(body),records};
+    await refresh();
+    download(JSON.stringify(pkg,null,2),(CFG.demo?"DEMO_":"")+pkg.packageId+".json");
+    await audit("EXPORT","package",pkg.packageId,"","",pkg.counts.folders+" folders")}
+  function exportCSV(){const fs=S.data.folders.filter(f=>!f.deleted);
+    const cols=["caseFolderId","uuid","ident.lotNumber","ident.barangay","ctrl.projectComponent","ctrl.priority","ctrl.org","assignedHandler","primary.name","status","stat.route","stat.instrument","stat.wayForward","stat.responsibleOffice","reportVersion","syncStatus","updatedAt"];
+    const head=["Case Folder ID","UUID","Lot","Barangay","Component","Priority","Org","Assigned handler","Title holder","Status","Route","Instrument","Way forward","Responsible office","Report version","Sync status","Last updated"];
+    const val=(o,path)=>path.split(".").reduce((x,k)=>x==null?"":x[k],o);
+    const esc=s=>{s=String(s==null?"":s).replace(/"/g,'""');return /[",\n]/.test(s)?'"'+s+'"':s};
+    const H=(CFG.demo?["DEMO_DATA"]:[]).concat(head);
+    const rows=[H.join(",")].concat(fs.map(f=>(CFG.demo?["DEMO"]:[]).concat(cols.map(c=>esc(val(f,c)))).join(",")));
+    // child counts appended
+    download(rows.join("\r\n"),(CFG.demo?"DEMO_":"")+"TAGUM_INV_MASTERLIST_"+ts()+".csv");
+    audit("EXPORT","csv","-","","",fs.length+" folders")}
+  let __lastExport=null;
+  function download(text,name){__lastExport={name,text};
+    try{const blob=new Blob([text],{type:name.endsWith(".csv")?"text/csv":"application/json"});
+      const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){}}
+  function ts(){return U.now().replace(/\D/g,"").slice(0,14)}
+
+  /* ---- misc ---- */
+  function notice(msg){const h=document.getElementById("noticeHost");h.innerHTML=`<div class="notice">${U.esc(msg)}</div>`;setTimeout(()=>{h.innerHTML=""},3200)}
+  function registerSW(){try{if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}}catch(e){}}
+
+
+  /* ============================================================
+     D1-2.0 TRACKER / DASHBOARD LAYER
+     ============================================================ */
+
+  /* ---- Hydration: attach children so the derivation engine can read a
+     whole case. Built once per refresh, not per render. ---- */
+  function hydrate(){
+    const byF={};
+    ["parties","structures","cropsTrees","documents","specialConditions","offers","encumbrances","transmittals"]
+      .forEach(cs=>{byF[cs]={};(S.data[cs]||[]).forEach(r=>{(byF[cs][r.folderUuid]=byF[cs][r.folderUuid]||[]).push(r)})});
+    S.h=(S.data.folders||[]).filter(f=>!f.deleted).map(f=>{
+      const o=Object.assign({},f);
+      Object.keys(byF).forEach(cs=>{o[cs]=byF[cs][f.uuid]||[]});
+      return o;
+    });
+    S.hIndex={}; S.h.forEach(f=>S.hIndex[f.uuid]=f);
+  }
+
+  /* ---- Dashboard state ---- */
+  function dash(){
+    if(!S.dash)S.dash={mode:"current",asset:"all",page:1,per:50,sort:"caseFolderId",dir:1,
+      f:{route:"",stage:"",brgy:"",comp:"",holder:"",handler:"",dd:"",dorm:"",
+         areaMin:"",areaMax:"",areaUnit:"sqm",basis:"Adopted",amtMin:"",amtMax:"",q:""}};
+    return S.dash;
+  }
+  function setF(k,v){const d=dash();d.f[k]=v;d.page=1;render()}
+  function setStage(code){const d=dash();d.f.stage=(d.f.stage===code)?"":code;d.page=1;render()}
+  function setMode(m){dash().mode=m;render()}
+  function setAsset(a){const d=dash();d.asset=a;d.f.stage="";d.page=1;render()}
+  function clearF(){const d=dash();Object.keys(d.f).forEach(k=>{if(k!=="areaUnit"&&k!=="basis")d.f[k]=""});d.page=1;render()}
+  function pageTo(n){dash().page=n;render()}
+  function sortBy(k){const d=dash();if(d.sort===k)d.dir=-d.dir;else{d.sort=k;d.dir=1}d.page=1;render()}
+
+  /* ---- Filtering. Every filter combines; every total, stage count and
+     list on screen is computed from the same filtered set. ---- */
+  function passFolder(f,fl){
+    const cr=Derive.caseRoute(f);
+    if(fl.route&&cr!==fl.route)return false;
+    if(fl.brgy&&(f.ident||{}).barangay!==fl.brgy)return false;
+    if(fl.comp&&(f.ctrl||{}).projectComponent!==fl.comp)return false;
+    if(fl.handler&&f.assignedHandler!==fl.handler)return false;
+    if(fl.dd==="Yes"&&f.ddRequired!=="Yes")return false;
+    if(fl.dd==="No"&&f.ddRequired==="Yes")return false;
+    if(fl.holder){
+      const inTrans=Derive.openTransmittals(f).some(v=>v.holderLabel===fl.holder);
+      const inWait=(f.remarksLog||[]).some(r=>r.holder===fl.holder&&!r.resolvedOn);
+      if(!inTrans&&!inWait)return false;
+    }
+    if(fl.dorm){const dv=Derive.dormancy(f);if(Derive.dormancyBand(dv)!==fl.dorm)return false}
+    const ar=U.num((f.land||{}).affectedArea);
+    const mul=fl.areaUnit==="ha"?10000:1;
+    if(fl.areaMin!==""&&U.num(fl.areaMin)!=null){if(ar==null||ar<U.num(fl.areaMin)*mul)return false}
+    if(fl.areaMax!==""&&U.num(fl.areaMax)!=null){if(ar==null||ar>U.num(fl.areaMax)*mul)return false}
+    const amt=Derive.basisOf(f,fl.basis);
+    if(fl.amtMin!==""&&U.num(fl.amtMin)!=null){if(amt==null||amt<U.num(fl.amtMin))return false}
+    if(fl.amtMax!==""&&U.num(fl.amtMax)!=null){if(amt==null||amt>U.num(fl.amtMax))return false}
+    if(fl.q){const q=fl.q.toLowerCase();
+      const hay=[f.caseFolderId,(f.primary||{}).name,(f.ident||{}).barangay,(f.ident||{}).lotNumber,
+        (f.ident||{}).titleNo,(f.ident||{}).taxDecNo,f.condition,f.nextAction,
+        (f.expro||{}).caseNo,(f.stat||{}).statusRemarks].filter(Boolean).join(" ").toLowerCase();
+      if(hay.indexOf(q)<0)return false}
+    return true;
+  }
+  /* Base population for the active asset tab, before the stage filter. */
+  function population(){
+    const d=dash(), fl=d.f;
+    const folders=(S.h||[]).filter(f=>passFolder(f,fl));
+    if(d.asset==="Structures")
+      return folders.flatMap(f=>(f.structures||[]).map(s=>({kind:"Structure",rec:s,f,
+        route:s.route||"Undetermined",stage:s.stage||"",label:s.tag||s.type||"Structure"})));
+    if(d.asset==="CropsTrees")
+      return folders.flatMap(f=>(f.cropsTrees||[]).map(c=>({kind:"C&T",rec:c,f,
+        route:c.route||"Undetermined",stage:c.stage||"",label:c.species||"C&T line"})));
+    return folders.map(f=>({kind:"Lot",rec:f,f,
+      route:f.route&&f.route!=="Undetermined"?f.route:CFG.stageRoute(f.stage),
+      stage:f.stage,label:(f.primary||{}).name||f.caseFolderId}));
+  }
+  function applyStage(pop){const st=dash().f.stage;return st?pop.filter(r=>r.stage===st):pop}
+
+  /* ---- Stage pipeline rendering. Every stage card carries a count,
+     including zero, and clicking it filters the list below. ---- */
+  function pipeline(pop,route){
+    const list=CFG.stageList(route);
+    const st=dash().f.stage;
+    const cards=list.map(s=>{
+      const n=pop.filter(r=>r.route===route&&r.stage===s[0]).length;
+      return `<button class="stg ${st===s[0]?'on':''} ${n===0?'zero':''}" onclick="App.setStage('${s[0]}')">
+        <span class="c">${n}</span><span class="l">${U.esc(s[1])}</span><span class="b">${s[0]} · band ${s[2]}</span></button>`;
+    }).join("");
+    return `<div class="lane ${route==="Expropriation"?"exp":"neg"}">${route==="Expropriation"?"Expropriation":"Negotiated acquisition"} — ${pop.filter(r=>r.route===route).length} record(s)</div>
+      <div class="pipe">${cards}</div>`;
+  }
+
+  /* ---- Filter bar ---- */
+  function filterBar(){
+    const d=dash(),fl=d.f;
+    const opt=(arr,v)=>`<option value=""></option>`+arr.map(a=>`<option ${v===a?"selected":""}>${U.esc(a)}</option>`).join("");
+    const handlers=[...new Set((S.h||[]).map(f=>f.assignedHandler).filter(Boolean))].sort();
+    const dorms=["Under "+CFG.dormancyBands[0],CFG.dormancyBands[0]+"–"+(CFG.dormancyBands[1]-1),
+      CFG.dormancyBands[1]+"–"+(CFG.dormancyBands[2]-1),CFG.dormancyBands[2]+"+","No movement date"];
+    const chips=[];
+    const cl={route:"Route",brgy:"Barangay",comp:"Priority area",holder:"Awaiting",handler:"Handler",
+      dd:"Due diligence",dorm:"Dormancy",stage:"Stage",q:"Search",areaMin:"Area ≥",areaMax:"Area ≤",
+      amtMin:"Amount ≥",amtMax:"Amount ≤"};
+    Object.keys(cl).forEach(k=>{if(fl[k])chips.push(
+      `<span class="fchip">${cl[k]}: ${U.esc(k==="stage"?CFG.stageLabel(fl[k]):fl[k])}<x onclick="App.setF('${k}','')">×</x></span>`)});
+    return `<div class="card"><div class="fbar">
+      <div class="field"><label>Acquisition route</label><select onchange="App.setF('route',this.value)">${opt(["Negotiated","Expropriation","Undetermined"],fl.route)}</select></div>
+      <div class="field"><label>Barangay</label><select onchange="App.setF('brgy',this.value)">${opt(CFG.barangays.map(b=>b[0]),fl.brgy)}</select></div>
+      <div class="field"><label>Priority area</label><select onchange="App.setF('comp',this.value)">${opt(CFG.projectComponents,fl.comp)}</select></div>
+      <div class="field"><label>Waiting on (desk)</label><select onchange="App.setF('holder',this.value)">${opt(CFG.holders.map(h=>h[1]),fl.holder)}</select></div>
+      <div class="field"><label>Reviewer / handler</label><select onchange="App.setF('handler',this.value)">${opt(handlers,fl.handler)}</select></div>
+      <div class="field"><label>Due diligence required</label><select onchange="App.setF('dd',this.value)">${opt(["Yes","No"],fl.dd)}</select></div>
+      <div class="field"><label>Case dormancy (days)</label><select onchange="App.setF('dorm',this.value)">${opt(dorms,fl.dorm)}</select></div>
+      <div class="field"><label>Area unit</label><select onchange="App.setF('areaUnit',this.value)"><option value="sqm" ${fl.areaUnit==="sqm"?"selected":""}>square metres</option><option value="ha" ${fl.areaUnit==="ha"?"selected":""}>hectares</option></select></div>
+      <div class="field"><label>Affected area ≥</label><input inputmode="decimal" value="${U.esc(fl.areaMin)}" onchange="App.setF('areaMin',this.value)"></div>
+      <div class="field"><label>Affected area ≤</label><input inputmode="decimal" value="${U.esc(fl.areaMax)}" onchange="App.setF('areaMax',this.value)"></div>
+      <div class="field"><label>Amount basis</label><select onchange="App.setF('basis',this.value)">${["Adopted","SMV","ZV","CMV / appraised","Offer"].map(a=>`<option ${fl.basis===a?"selected":""}>${a}</option>`).join("")}</select></div>
+      <div class="field"><label>Amount ≥</label><input inputmode="decimal" value="${U.esc(fl.amtMin)}" onchange="App.setF('amtMin',this.value)"></div>
+      <div class="field"><label>Amount ≤</label><input inputmode="decimal" value="${U.esc(fl.amtMax)}" onchange="App.setF('amtMax',this.value)"></div>
+      <div class="field"><label>Search</label><input value="${U.esc(fl.q)}" placeholder="case ID, PAP, title, remarks, court no." onchange="App.setF('q',this.value)"></div>
+    </div>
+    <div class="chips">${chips.join("")||'<span class="mini">No filters applied.</span>'}
+      ${chips.length?'<button class="btn ghost sm" onclick="App.clearF()">Clear all filters</button>':''}</div></div>`;
+  }
+
+  /* ---- Totals. Headline money is Adopted Value only; the count of records
+     with no adopted basis is shown beside it so the total is never read as
+     complete. Mixed valuation regimes make any other aggregate meaningless. */
+  function totals(folders){
+    let area=0,areaN=0,amt=0,amtN=0,noBasis=0;
+    folders.forEach(f=>{
+      const a=U.num((f.land||{}).affectedArea); if(a!=null){area+=a;areaN++}
+      const v=Derive.adoptedOf(f); if(v!=null){amt+=v;amtN++} else noBasis++;
+    });
+    return {area,areaN,amt,amtN,noBasis};
+  }
+  function fmtArea(sqm){const u=dash().f.areaUnit;
+    return u==="ha"?(sqm/10000).toLocaleString("en-PH",{maximumFractionDigits:4})+" ha"
+                   :sqm.toLocaleString("en-PH",{maximumFractionDigits:2})+" sqm"}
+
+  /* ============ OVERALL DASHBOARD ============ */
+  function vOverall(){
+    const d=dash();
+    const folders=(S.h||[]).filter(f=>passFolder(f,d.f));
+    const t=totals(folders);
+    const byRoute=r=>folders.filter(f=>Derive.caseRoute(f)===r).length;
+    const struct=folders.flatMap(f=>f.structures||[]).length;
+    const ct=folders.flatMap(f=>f.cropsTrees||[]).length;
+    const done=folders.filter(f=>Derive.caseBand(f)===8).length;
+    const ddc=folders.filter(f=>f.ddRequired==="Yes").length;
+    const dorm=n=>folders.filter(f=>{const v=Derive.dormancy(f);return v!=null&&v>=n}).length;
+    const pri=c=>folders.filter(f=>(f.ctrl||{}).projectComponent===c).length;
+    const trans=folders.flatMap(f=>Derive.openTransmittals(f));
+    const waits=folders.flatMap(f=>Derive.openWaits(f));
+    const overdue=trans.filter(v=>v.red).length;
+    const gate=folders.filter(f=>{const g=Derive.gateCheck(f);return g&&!g.overridden}).length;
+    const mv={};Object.keys(CFG.movementLabels).forEach(k=>mv[k]=0);
+    folders.forEach(f=>{const m=Derive.movement(f);mv[m.key]=(mv[m.key]||0)+1});
+    const tile=(v,l,cls,on)=>`<div class="tile ${cls||""}"><b>${v}</b><span>${l}</span></div>`;
+    const demoBar=CFG.demo?`<div class="card" style="background:#faf5ff;border-color:#e6d6f5">
+      <div class="bar"><b style="color:#7a1fa2">Demo controls</b>
+        <button class="btn ghost sm" onclick="App.resetDemo()">Reset dummy data</button>
+        <button class="btn ghost sm" onclick="App.exportBackup()">Export JSON</button>
+        <label class="btn ghost sm" style="display:inline-block">Import JSON<input type="file" accept=".json" onchange="App.importBackup(this.files[0])" style="display:none"></label>
+        <button class="btn ghost sm" onclick="App.exportFilteredCSV()">Export filtered CSV</button></div>
+      <p class="mini">This build is isolated: database `+DB_NAME+`, exports prefixed DEMO_, and the consolidator rejects demo packages.</p></div>`:"";
+    return `<h2>Overall dashboard</h2>
+    <p class="sub">All assets, all routes. Every figure below reflects the filters currently applied.</p>
+    ${demoBar}
+    ${filterBar()}
+    <div class="tiles">
+      ${tile(folders.length,"Lot cases")}${tile(struct,"Structure records")}${tile(ct,"Crops &amp; trees lines")}
+      ${tile(byRoute("Negotiated"),"Negotiated","t")}${tile(byRoute("Expropriation"),"Expropriation","o")}
+      ${tile(byRoute("Undetermined"),"Route undetermined")}
+      ${tile(done,"Completed / fully paid","t")}${tile(ddc,"For due diligence","o")}
+      ${tile(dorm(CFG.dormancyBands[0]),"No movement "+CFG.dormancyBands[0]+"d+")}
+      ${tile(dorm(CFG.dormancyBands[1]),"No movement "+CFG.dormancyBands[1]+"d+","o")}
+      ${tile(dorm(CFG.dormancyBands[2]),"No movement "+CFG.dormancyBands[2]+"d+","r")}
+      ${tile(pri("Station"),"Station priority")}${tile(pri("Depot"),"Depot priority")}
+      ${tile(trans.length,"Documents in transit")}${tile(overdue,"Past desk threshold","r")}${tile(waits.length,"Non-routing waits","o")}
+      ${tile(gate,"Expro without proof of service","r")}
+    </div>
+    <div class="card"><h3>Area and compensation</h3>
+      <div class="row"><div class="field"><label>Total affected area</label><input class="locked" readonly value="${fmtArea(t.area)}"></div>
+      <div class="field"><label>Records with recorded area</label><input class="locked" readonly value="${t.areaN} of ${folders.length}"></div>
+      <div class="field"><label>Adopted compensation (assets counted once)</label><input class="locked" readonly value="${U.peso(t.amt)}"></div>
+      <div class="field"><label>Records with no adopted basis</label><input class="locked" readonly value="${t.noBasis}"></div></div>
+      <p class="mini">Headline money is Adopted Value only. SMV, zonal and appraised values remain per-record reference figures: the applicable basis keys to the agreement or acceptance date under the RA 10752 / RA 12289 split, so a project-wide total on any single benchmark would have no legal meaning. N/A is never treated as zero.</p></div>
+    <div class="card"><h3>Baseline to current movement</h3>
+      ${Object.keys(CFG.movementLabels).map(k=>{
+        const n=mv[k]||0,pc=folders.length?Math.round(100*n/folders.length):0;
+        return `<div class="bandbar"><span class="nm">${U.esc(CFG.movementLabels[k])}</span>
+          <span class="tr"><i class="i1" style="width:${pc}%"></i></span><span class="vv">${n} · ${pc}%</span></div>`}).join("")}
+      <p class="mini">Every case falls in exactly one row; the rows sum to ${folders.length}. A newly inventoried case is never also counted as advanced — discovery is not movement.</p></div>
+    <div class="card"><h3>Inventory by barangay</h3>
+      ${CFG.barangays.map(b=>{const n=folders.filter(f=>(f.ident||{}).barangay===b[0]).length;
+        if(!n)return "";const pc=Math.round(100*n/(folders.length||1));
+        return `<div class="bandbar"><span class="nm">${U.esc(b[0])}</span><span class="tr"><i class="i1" style="width:${pc}%"></i></span><span class="vv">${n}</span></div>`}).join("")||'<span class="mini">No records.</span>'}</div>
+    ${caseList(folders.map(f=>({kind:"Lot",rec:f,f,route:Derive.caseRoute(f),stage:f.stage,label:(f.primary||{}).name||f.caseFolderId})))}`;
+  }
+
+  /* ============ ASSET DASHBOARDS ============ */
+  function vAsset(){
+    const d=dash();
+    const title={Lots:"Lots",Structures:"Structures",CropsTrees:"Crops and trees"}[d.asset]||"Lots";
+    const pop=population();
+    const shown=applyStage(pop);
+    const folders=[...new Set(shown.map(r=>r.f.uuid))].map(u=>S.hIndex[u]);
+    const t=totals(folders);
+    return `<h2>${title}</h2>
+    <p class="sub">Negotiated acquisition and expropriation are tracked as separate pipelines. A stage card filters the list beneath it.</p>
+    ${filterBar()}
+    <div class="tiles">
+      <div class="tile"><b>${pop.length}</b><span>${title} records</span></div>
+      <div class="tile t"><b>${pop.filter(r=>r.route==="Negotiated").length}</b><span>Negotiated</span></div>
+      <div class="tile o"><b>${pop.filter(r=>r.route==="Expropriation").length}</b><span>Expropriation</span></div>
+      <div class="tile"><b>${pop.filter(r=>!r.route||r.route==="Undetermined").length}</b><span>Route undetermined</span></div>
+      <div class="tile t"><b>${pop.filter(r=>Derive.bandOf(r.stage)===8).length}</b><span>Closed</span></div>
+      <div class="tile"><b>${fmtArea(t.area)}</b><span>Affected area</span></div>
+    </div>
+    <div class="card">${pipeline(pop,"Negotiated")}${pipeline(pop,"Expropriation")}
+      ${d.f.stage?`<div class="bar"><span class="fchip">Stage: ${U.esc(CFG.stageLabel(d.f.stage))}<x onclick="App.setF('stage','')">×</x></span>
+        <button class="btn ghost sm" onclick="App.setF('stage','')">Clear stage selection</button></div>`:'<p class="mini">No stage selected — the list below shows every record in this asset.</p>'}</div>
+    ${caseList(shown)}`;
+  }
+
+  /* ============ COMPARISON ============ */
+  function vCompare(){
+    const d=dash();
+    const folders=(S.h||[]).filter(f=>passFolder(f,d.f));
+    const withBase=folders.filter(f=>f.baseline&&f.baseline.locked);
+    const mv={};Object.keys(CFG.movementLabels).forEach(k=>mv[k]=0);
+    folders.forEach(f=>{const m=Derive.movement(f);mv[m.key]++});
+    const bandRow=b=>{
+      const init=withBase.filter(f=>(f.baseline.band==null?0:f.baseline.band)===b).length;
+      const cur=withBase.filter(f=>Derive.caseBand(f)===b).length;
+      const mx=Math.max(1,withBase.length);
+      return `<tr><td><b>Band ${b}</b><br><span class="mini">${U.esc(CFG.bandLabel(b))}</span></td>
+        <td style="text-align:right">${init}</td><td style="text-align:right">${cur}</td>
+        <td style="text-align:right"><span class="mv ${cur-init>0?'adv':cur-init<0?'reg':'non'}">${cur-init>0?"+":""}${cur-init}</span></td>
+        <td style="width:38%"><span class="tr" style="display:flex;height:14px;background:#eef2f7;border-radius:4px;overflow:hidden">
+          <i class="i0" style="width:${Math.round(100*init/mx)}%;background:#9fb3cc"></i></span>
+          <span class="tr" style="display:flex;height:14px;background:#eef2f7;border-radius:4px;overflow:hidden;margin-top:3px">
+          <i class="i1" style="width:${Math.round(100*cur/mx)}%;background:#1c4a86"></i></span></td></tr>`};
+    const byReviewer=()=>{
+      const names=[...new Set(folders.map(f=>f.assignedHandler).filter(Boolean))].sort();
+      if(!S.isAdmin)return `<p class="mini">Team aggregate shown. The per-reviewer breakdown is available to the administrator only — it produces individual performance statistics on an embedded team and is not a standing report.</p>
+        <div class="bandbar"><span class="nm">Team — advanced</span><span class="tr"><i class="i1" style="width:${folders.length?Math.round(100*mv.advanced/folders.length):0}%"></i></span><span class="vv">${mv.advanced}</span></div>
+        <div class="bandbar"><span class="nm">Team — no movement</span><span class="tr"><i class="i1" style="width:${folders.length?Math.round(100*mv.none/folders.length):0}%"></i></span><span class="vv">${mv.none}</span></div>`;
+      return `<div class="grid-wrap"><table><tr><th>Reviewer</th><th>Cases</th><th>Advanced</th><th>No movement</th><th>Shifted</th><th>Completed</th></tr>
+        ${names.map(n=>{const s=folders.filter(f=>f.assignedHandler===n);const c=k=>s.filter(f=>Derive.movement(f).key===k).length;
+        return `<tr><td>${U.esc(n)}</td><td>${s.length}</td><td>${c("advanced")}</td><td>${c("none")}</td><td>${c("shifted")}</td><td>${c("completed")}</td></tr>`}).join("")}</table></div>`};
+    const stalled=folders.filter(f=>{const m=Derive.movement(f);return m.key==="none"||m.key==="nobase"});
+    return `<h2>Initial PMO versus current</h2>
+    <p class="sub">Initial PMO Inventory (As Found) reflects folder condition at PMO intake. It is not an assessment of prior custodianship.</p>
+    ${filterBar()}
+    <div class="tiles">
+      ${Object.keys(CFG.movementLabels).map(k=>`<div class="tile ${k==='completed'?'t':k==='regressed'?'r':k==='shifted'?'o':''}"><b>${mv[k]}</b><span>${U.esc(CFG.movementLabels[k])}</span></div>`).join("")}
+    </div>
+    <div class="card"><h3>Unified progress bands</h3>
+      <div class="grid-wrap"><table class="dtbl"><tr><th class="nos">Band</th><th class="nos" style="text-align:right">Initial PMO</th>
+        <th class="nos" style="text-align:right">Current</th><th class="nos" style="text-align:right">Change</th><th class="nos">Initial (grey) / current (blue)</th></tr>
+        ${CFG.bands.map(b=>bandRow(b[0])).join("")}</table></div>
+      <p class="mini">Bands exist only for comparison, because negotiated and expropriation use different stage lists. A band is never a stage and is never entered by hand. ${folders.length-withBase.length} case(s) in this view have no locked baseline and are excluded from band arithmetic.</p></div>
+    <div class="card"><h3>Priority-area movement</h3>
+      ${["Station","Depot","Mainline"].map(c=>{const s=folders.filter(f=>(f.ctrl||{}).projectComponent===c);
+        const adv=s.filter(f=>Derive.movement(f).key==="advanced").length;const pc=s.length?Math.round(100*adv/s.length):0;
+        return `<div class="bandbar"><span class="nm">${c} (${s.length})</span><span class="tr"><i class="i1" style="width:${pc}%"></i></span><span class="vv">${adv} advanced</span></div>`}).join("")}</div>
+    <div class="card"><h3>Reviewer movement</h3>${byReviewer()}</div>
+    <div class="card"><h3>No movement or incomplete baseline (${stalled.length})</h3>
+      ${caseList(stalled.map(f=>({kind:"Lot",rec:f,f,route:Derive.caseRoute(f),stage:f.stage,label:(f.primary||{}).name||f.caseFolderId})),true)}</div>`;
+  }
+
+  /* ============ AWAITING ACTIONS ============ */
+  function vAwait(){
+    const d=dash();
+    const folders=(S.h||[]).filter(f=>passFolder(f,d.f));
+    const trans=folders.flatMap(f=>Derive.openTransmittals(f));
+    const waits=folders.flatMap(f=>Derive.openWaits(f));
+    // group by desk (holder label)
+    const groups={};
+    trans.forEach(v=>{const k=v.holderLabel||"(unspecified)";(groups[k]=groups[k]||{routing:[],waiting:[]}).routing.push(v)});
+    waits.forEach(w=>{const k=CFG.holderLabel(w.holder)||w.holder||"(unspecified)";(groups[k]=groups[k]||{routing:[],waiting:[]}).waiting.push(w)});
+    const deskKeys=Object.keys(groups).sort((a,b)=>{
+      const ma=Math.max(0,...groups[a].routing.map(v=>v.days||0),...groups[a].waiting.map(w=>w.days||0));
+      const mb=Math.max(0,...groups[b].routing.map(v=>v.days||0),...groups[b].waiting.map(w=>w.days||0));
+      return mb-ma;});
+    return `<h2>Waiting on</h2>
+    <p class="sub">Derived view — nothing is stored here. It reads who currently holds each document in transit (from Transmittals) and any non-routing waits logged in the remarks. Routing waits carry a per-desk threshold that turns red when exceeded; non-routing waits (PAP to submit, appraiser to deliver) are shown but not escalated the same way.</p>
+    ${filterBar()}
+    <div class="tiles">
+      <div class="tile"><b>${trans.length}</b><span>Documents in transit</span></div>
+      <div class="tile r"><b>${trans.filter(v=>v.red).length}</b><span>Past desk threshold</span></div>
+      <div class="tile o"><b>${waits.length}</b><span>Non-routing waits</span></div>
+      <div class="tile"><b>${deskKeys.length}</b><span>Desks with something pending</span></div>
+    </div>
+    ${deskKeys.map(k=>{
+      const g=groups[k];
+      const rr=g.routing.sort((a,b)=>(b.days||0)-(a.days||0)).map(v=>`<tr onclick="App.loadFolder('${v.folderUuid}')" ${v.red?'style="background:#fdeeee"':''}>
+        <td>${U.esc(v.caseFolderId)}</td><td>${U.esc(v.docType)}${v.assetRef?' · '+U.esc(v.assetRef):''}</td>
+        <td>rung ${v.rung||"?"}/${v.rungs}</td><td>${v.days==null?"—":v.days+"d"}</td>
+        <td>${v.thr==null?"—":v.thr+"d"}${v.red?' <span class="pill r">over</span>':''}</td>
+        <td>${U.esc(v.caseRoute)}</td><td>${U.esc(v.handler||"—")}</td></tr>`).join("");
+      const ww=g.waiting.sort((a,b)=>(b.days||0)-(a.days||0)).map(w=>`<tr onclick="App.loadFolder('${w.folderUuid}')">
+        <td>${U.esc(w.caseFolderId)}</td><td>${U.esc(w.text||"(no note)")}</td>
+        <td><span class="mini">non-routing</span></td><td>${w.days==null?"—":w.days+"d"}</td>
+        <td>—</td><td>${U.esc(w.caseRoute)}</td><td>${U.esc(w.handler||"—")}</td></tr>`).join("");
+      return `<div class="card"><h3>${U.esc(k)} — ${g.routing.length+g.waiting.length} pending</h3>
+        <div class="grid-wrap"><table class="dtbl"><tr><th class="nos">Case</th><th class="nos">Document / issue</th>
+          <th class="nos">Position</th><th class="nos">Days</th><th class="nos">Threshold</th><th class="nos">Route</th><th class="nos">Handler</th></tr>
+          ${rr}${ww}</table></div></div>`;
+    }).join("")||'<div class="card"><p class="mini">Nothing is currently pending on any desk in this view.</p></div>'}`;
+  }
+  /* ============ CASE LIST ============ */
+  const LIST_COLS=[["caseFolderId","Case ID"],["pap","PAP / claimant"],["brgy","Barangay"],["comp","Priority area"],
+    ["asset","Asset"],["route","Route"],["stage","Stage"],["area","Area"],["amt","Amount"],
+    ["handler","Handler"],["await","Oldest desk"],["move","Movement"],["lastmv","Last movement"],["age","Dormancy"]];
+  function rowVals(r){
+    const f=r.f,m=Derive.movement(f),dv=Derive.dormancy(f);
+    const worst=Derive.oldestOpenDesk(f);
+    const openT=Derive.openTransmittals(f);
+    const acts=openT.map(v=>v.holderLabel);
+    const ar=U.num((f.land||{}).affectedArea);
+    return {caseFolderId:f.caseFolderId,pap:(f.primary||{}).name||"—",brgy:(f.ident||{}).barangay||"—",
+      comp:(f.ctrl||{}).projectComponent||"—",asset:r.kind+(r.kind==="Lot"?"":" · "+(r.label||"")),
+      route:r.route||"—",stage:r.stage||"—",area:ar==null?null:ar,
+      amt:Derive.basisOf(f,dash().f.basis),handler:f.assignedHandler||"—",
+      await:worst?worst.holderLabel+" ("+(worst.days==null?"?":worst.days+"d")+")":(acts.length?acts.join(", "):"—"),
+      awaitRed:!!(worst&&worst.red),move:m,lastmv:f.lastMovementDate||"",age:dv};
+  }
+  function caseList(pop,compact){
+    const d=dash();
+    const rows=pop.map(r=>({r,v:rowVals(r)}));
+    const k=d.sort,dir=d.dir;
+    rows.sort((a,b)=>{
+      let x=a.v[k],y=b.v[k];
+      if(k==="move"){x=x.label;y=y.label}
+      if(typeof x==="number"||typeof y==="number"){x=x==null?-1:x;y=y==null?-1:y;return (x-y)*dir}
+      return String(x==null?"":x).localeCompare(String(y==null?"":y))*dir;
+    });
+    const total=rows.length,per=d.per,pages=Math.max(1,Math.ceil(total/per));
+    const page=Math.min(d.page,pages);
+    const slice=rows.slice((page-1)*per,page*per);
+    const head=LIST_COLS.map(c=>`<th onclick="App.sortBy('${c[0]}')">${c[1]}${d.sort===c[0]?(dir>0?" ▲":" ▼"):""}</th>`).join("");
+    const body=slice.map(({r,v})=>`<tr onclick="App.loadFolder('${r.f.uuid}')">
+      <td class="mono">${U.esc(v.caseFolderId)}</td><td>${U.esc(v.pap)}</td><td>${U.esc(v.brgy)}</td>
+      <td>${U.esc(v.comp)}</td><td>${U.esc(v.asset)}</td><td>${U.esc(v.route)}</td>
+      <td>${U.esc(v.stage)}</td><td>${v.area==null?"—":fmtArea(v.area)}</td>
+      <td>${v.amt==null?'<span class="mini">N/A</span>':U.peso(v.amt)}</td><td>${U.esc(v.handler)}</td>
+      <td>${v.awaitRed?'<b style="color:#b91c1c">'+U.esc(v.await)+'</b>':U.esc(v.await)}</td><td><span class="mv ${v.move.cls}">${U.esc(v.move.label)}</span></td>
+      <td>${U.fmtDate(v.lastmv)}</td><td>${v.age==null?"—":v.age+"d"}</td></tr>`).join("");
+    return `<div class="card"><h3>${compact?"Cases":"Case list"} — ${total} record(s)</h3>
+      <div class="bar"><button class="btn ghost sm" onclick="App.exportFilteredCSV()">Export this list to CSV</button></div>
+      <div class="scroller"><table class="dtbl"><thead><tr>${head}</tr></thead><tbody>${body||'<tr><td colspan="14" class="mini">No records match the current filters.</td></tr>'}</tbody></table></div>
+      <div class="pager"><span>Page ${page} of ${pages}</span>
+        <button class="btn ghost sm" ${page<=1?"disabled":""} onclick="App.pageTo(${page-1})">Previous</button>
+        <button class="btn ghost sm" ${page>=pages?"disabled":""} onclick="App.pageTo(${page+1})">Next</button></div></div>`;
+  }
+  function exportFilteredCSV(){
+    const pop=applyStage(population());
+    const cols=LIST_COLS.map(c=>c[0]);
+    const head=(CFG.demo?["DEMO_DATA"]:[]).concat(LIST_COLS.map(c=>c[1]));
+    const esc=s=>{s=String(s==null?"":s).replace(/"/g,'""');return /[",\n]/.test(s)?'"'+s+'"':s};
+    const lines=[head.join(",")].concat(pop.map(r=>{
+      const v=rowVals(r);
+      const cells=cols.map(c=>c==="move"?v.move.label:v[c]);
+      return (CFG.demo?["DEMO"]:[]).concat(cells).map(esc).join(",");
+    }));
+    download(lines.join("\r\n"),(CFG.demo?"DEMO_":"")+"TAGUM_CASELIST_"+ts()+".csv");
+    audit("EXPORT","filtered-csv","-","","",pop.length+" rows");
+  }
+
+  /* ============ DEMO DATA ============ */
+  async function resetDemo(){
+    if(!CFG.demo){notice("Demo reset is only available in the demo build.");return}
+    if(!confirm("Reset all dummy data? Every demo edit is discarded and the original fictional records are restored."))return;
+    await Store.clearAll(); await seedDemo(); await refresh(); notice("Dummy data reset."); go("overall");
+  }
+  async function seedDemo(){
+    const rnd=mulberry32(20260724);
+    const pick=a=>a[Math.floor(rnd()*a.length)];
+    const iso=d=>new Date(d).toISOString().slice(0,10);
+    const DAY=86400000, base=new Date("2026-07-24").getTime();
+    const back=n=>iso(base-Math.floor(rnd()*n)*DAY);
+    const FIRST=["Renato","Marilou","Efren","Dolores","Arnel","Josefina","Rogelio","Teresita","Bernardo","Lourdes",
+      "Danilo","Erlinda","Feliciano","Norma","Ricardo","Perlita","Alfredo","Corazon","Nestor","Imelda",
+      "Wilfredo","Rosalinda","Eduardo","Adelaida","Melchor","Estrella"];
+    const LAST=["Bacaltos","Dagohoy","Malinao","Sarangani","Tuburan","Quijano","Balatbat","Nabunturan","Panabo",
+      "Lumbay","Cabatuan","Sibulan","Talomo","Mabini","Bansalan","Kapalong","Asuncion","Maragusan","Baganga","Lupon"];
+    const nameOf=()=>pick(FIRST)+" "+pick(LAST);
+    const brgys=CFG.barangays.filter(b=>b[1]!=="OTHR");
+    const handlers=CFG.roster.map(r=>r.name);
+    const comps=[].concat(Array(150).fill("Station"),Array(119).fill("Depot"),Array(169).fill("Mainline"));
+    for(let i=comps.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));const t=comps[i];comps[i]=comps[j];comps[j]=t}
+
+    const folders=[],structures=[],cropsTrees=[],offers=[],docs=[],transmittals=[],parties=[];
+    const nStages=CFG.stagesN.map(s=>s[0]), eStages=CFG.stagesE.map(s=>s[0]);
+    for(let i=0;i<438;i++){
+      const b=pick(brgys), seq=i+1;
+      const roll=rnd();
+      let route,stage;
+      if(roll<0.12){route="Undetermined";stage="LN01"}
+      else if(roll<0.72){route="Negotiated";stage=nStages[Math.floor(rnd()*nStages.length)]}
+      else {route="Expropriation";stage=eStages[Math.floor(rnd()*eStages.length)]}
+      const band=CFG.stageBand(stage);
+      const baseBand=Math.max(0,band-Math.floor(rnd()*3));
+      const baseRoute=(route==="Expropriation"&&rnd()<0.45)?"Negotiated":route;
+      const baseStageList=baseRoute==="Expropriation"?CFG.stagesE:CFG.stagesN;
+      const cand=baseStageList.filter(s=>s[2]===baseBand);
+      const baseStage=(cand.length?pick(cand):baseStageList[0])[0];
+      const lockedAt=rnd()<0.18?back(20):iso(base-(60+Math.floor(rnd()*90))*DAY);
+      const area=Math.round((120+rnd()*4200)*100)/100;
+      const aff=Math.round(area*(0.15+rnd()*0.8)*100)/100;
+      const zv=[600,900,1200,1800,2400,3200][Math.floor(rnd()*6)];
+      const smv=Math.round(zv*(1.1+rnd()*0.6));
+      const dd=rnd()<0.28;
+      const uuid=U.uuid();
+      const f={uuid,seq,__k:uuid,
+        ident:{lotNumber:"L-"+(1000+i),barangay:b[0],titleNo:rnd()<0.78?"T-"+(20000+Math.floor(rnd()*60000)):"",
+          taxDecNo:"TD-"+(90000+Math.floor(rnd()*9000)),mrpNo:"",dotrPin:"",parcellaryLot:"",legacyId:String(seq)},
+        ctrl:{projectComponent:comps[i],priority:pick(CFG.priority),org:rnd()<0.7?"PMO":"LGU",
+          inventoryStart:lockedAt,inventoryEnd:""},
+        land:{landClass:pick(CFG.landClass),totalArea:String(area),affectedArea:String(aff),
+          compensableArea:String(aff),remainingArea:String(Math.round((area-aff)*100)/100),ca141:"No",ownershipIssue:""},
+        landVal:{smvRate:String(smv),zvRate:String(zv),cmvRate:rnd()<0.55?String(Math.round(smv*1.15)):"",
+          adoptedBasis:band>=3?pick(["SMV","BIR zonal value","CMV / appraised"]):"",valDate:back(200)},
+        primary:{name:nameOf(),type:rnd()<0.86?"Individual":"Heirs / Estate",civilStatus:pick(CFG.civilStatus),spouse:"",address:b[0]+", Tagum City"},
+        stat:{status:"",statusDate:"",statusRemarks:"",route:route,wayForward:""},
+        expro:{},pay:{},remarksLog:[],
+        route,stage,stageDate:back(120),
+        condition:dd?pick(CFG.ddReasons):"",
+        nextAction:band>=4?"Follow through on current stage":"Complete inventory and assessment",
+        ddRequired:dd?"Yes":"No",ddReason:dd?pick(CFG.ddReasons):"",
+        lastMovementDate:rnd()<0.3?iso(base-(20+Math.floor(rnd()*90))*DAY):back(20),
+        assignedReviewer:pick(handlers),
+        baseline:{locked:true,lockedAt,lockedBy:"Atty. Chris Escuadra",route:baseRoute,stage:baseStage,
+          band:baseBand,date:lockedAt,condition:dd?"Folder dormant; documents unverified":"Folder located, contents readable",
+          recommendation:baseBand<=2?"Inventory and verify ownership":"Proceed with current route"},
+        assignedHandler:pick(handlers),assignedOrg:"PMO",assignedBy:"Atty. Chris Escuadra",
+        assignmentDate:lockedAt,assignmentStatus:"Assigned",reassignHistory:[],
+        status:"Inventory in Progress",reportVersion:1,draftFinal:"Draft",syncStatus:"Local Only",
+        deleted:false,formSchemaVersion:2,demo:true,
+        createdBy:"demo",createdAt:lockedAt+"T08:00:00.000Z",createdDevice:"demo",
+        updatedBy:"demo",updatedAt:back(10)+"T08:00:00.000Z",updatedDevice:"demo",version:1,dirty:false};
+      const bc=CFG.brgyCode(b[0]);
+      f.caseFolderId="TAG-"+bc+"-"+f.ident.lotNumber+"-"+String(seq).padStart(3,"0");
+      if(f.landVal.adoptedBasis){
+        const rate=f.landVal.adoptedBasis==="SMV"?smv:f.landVal.adoptedBasis==="BIR zonal value"?zv:Math.round(smv*1.15);
+        f.landVal.adoptedRate=String(rate);f.landVal.adoptedComp=String(Math.round(rate*aff*100)/100);
+      }
+      // offers, with real service and proof states so the expro gate is exercised
+      if(band>=3){
+        const served=rnd()<0.82, proof=served&&rnd()<0.74;
+        const oType=pick(["Offer to Buy","Offer to Compensate","Combined NOT/RfD/OtB-C"]);
+        const issue=back(150), deadline=iso(new Date(issue).getTime()+30*DAY);
+        offers.push({uuid:U.uuid(),folderUuid:uuid,assetType:"Land",owner:f.primary.name,offerType:oType,
+          issueDate:issue,serviceDate:served?issue:"",recipient:served?f.primary.name:"",
+          manner:served?pick(["Personal service","Registered mail","Substituted — left with occupant"]):"",
+          outcome:served?pick(["Served / received","Served / received","Refused to receive","Substituted service"]):"Not yet served",
+          proofAvailable:proof?"Yes":(served?"Awaiting verification":"No"),
+          response:route==="Expropriation"?pick(["Rejected","None yet"]):pick(["None yet","Accepted","Counter-offer","For further discussion"]),
+          responseDeadline:deadline,remarks:"",demo:true});
+      }
+      // transmittals: for cases at band 6, put a document in transit on the right ladder
+      if(band>=6){
+        const isX=(route==="Expropriation");
+        const ladderKey=isX?(rnd()<0.5?"ECP":"RFEL"):"INSTRUMENT";
+        const rungs=CFG.ladders[ladderKey].rungs;
+        // land somewhere along the ladder; older cases sit deeper and longer
+        const at=1+Math.floor(rnd()*(rungs.length-1));
+        const hops=[];let t0=base-(30+Math.floor(rnd()*70))*DAY;
+        for(let r=0;r<=at;r++){
+          const inD=iso(t0);
+          const gap=(3+Math.floor(rnd()*14))*DAY; t0+=gap;
+          hops.push({holder:rungs[r],in:inD,out:(r<at)?iso(t0):""});
+        }
+        transmittals.push({uuid:U.uuid(),folderUuid:uuid,
+          docType:isX?(ladderKey==="ECP"?"ECP":"RFEL"):pick(["DOAS","ADRI","ACRCT"]),
+          ladder:CFG.ladders[ladderKey].label,assetRef:"Lot "+f.ident.lotNumber,
+          ref:(isX?"ECP-":"DOAS-")+(1000+i),startedOn:hops[0].in,closedOn:"",hops:hops,demo:true});
+      }
+      // an occasional non-routing wait, logged as a remark on the folder
+      if(rnd()<0.4){
+        f.remarksLog.push({at:iso(base-(5+Math.floor(rnd()*60))*DAY)+"T08:00:00.000Z",
+          text:pick(["Title not yet submitted by PAP","Heirs still being confirmed","Tax declaration outdated",
+            "Awaiting appraisal report","Boundary discrepancy to be resolved"]),
+          holder:rnd()<0.6?pick(["PAP / Owner","Appraiser","LGU ROWSAE"]):"",
+          stageAt:CFG.stageLabel(stage),by:"demo",resolvedOn:""});
+      }
+      if(rnd()<0.3)parties.push({uuid:U.uuid(),folderUuid:uuid,name:nameOf(),type:"Heirs / Estate",
+        role:"Heir",relationship:"Child of registered owner",validationStatus:"For validation",demo:true});
+      folders.push(f);
+    }
+    // 164 structures and 96 crops-and-trees lines, linked to selected cases
+    const withAssets=[...folders].sort(()=>rnd()-0.5);
+    for(let i=0;i<164;i++){
+      const f=withAssets[i%withAssets.length];
+      const route=rnd()<0.2?"Expropriation":(rnd()<0.15?"Undetermined":"Negotiated");
+      const stage=route==="Expropriation"?pick(eStages):route==="Undetermined"?"LN01":pick(nStages);
+      const tfa=Math.round((28+rnd()*180)*100)/100, afa=Math.round(tfa*(0.2+rnd()*0.8)*100)/100;
+      const pct=Math.round(1000*afa/tfa)/10;
+      structures.push({uuid:U.uuid(),folderUuid:f.uuid,tag:"S-"+String(i+1).padStart(3,"0"),
+        ownerClaimant:rnd()<0.7?f.primary.name:nameOf(),type:pick(CFG.structureTypes),
+        totalFloorArea:String(tfa),affectedFloorArea:String(afa),pctAffected:String(pct),
+        severity:pct>=80?"Severe (≥80%)":"Marginal (<80%)",route,stage,stageDate:back(120),
+        val:{adoptedBasis:"Replacement cost",adoptedComp:String(Math.round(afa*(9000+rnd()*7000)))},
+        clearingStatus:"Not started",demo:true});
+    }
+    for(let i=0;i<96;i++){
+      const f=withAssets[(i*3)%withAssets.length];
+      const route=rnd()<0.15?"Expropriation":"Negotiated";
+      const qty=1+Math.floor(rnd()*40), unit=Math.round(300+rnd()*4200);
+      cropsTrees.push({uuid:U.uuid(),folderUuid:f.uuid,claimant:rnd()<0.7?f.primary.name:nameOf(),
+        species:pick(["Coconut","Mango","Banana","Durian","Lanzones","Rambutan","Falcata","Mahogany","Cacao"]),
+        classification:pick(CFG.ctClassifications),maturity:pick(CFG.ctMaturity),
+        quantity:String(qty),unit:"pc",unitValue:String(unit),
+        route,stage:route==="Expropriation"?pick(eStages):pick(nStages),stageDate:back(120),
+        val:{adoptedBasis:"CMV / appraised",adoptedUnit:String(unit),adoptedComp:String(qty*unit)},
+        validation:"For validation",demo:true});
+    }
+    folders.forEach(f=>{
+      const need=["Transfer/Original Certificate of Title","Tax Declaration","Appraisal Report","Proof of Service"];
+      need.forEach(dt=>docs.push({uuid:U.uuid(),folderUuid:f.uuid,docType:dt,
+        status:rnd()<0.62?"Available":(rnd()<0.5?"Missing":"Not Yet Verified"),
+        validity:pick(CFG.docValidity),demo:true}));
+    });
+    await Store.bulkPut("folders",folders.map(f=>[f.uuid,f]));
+    await Store.bulkPut("structures",structures.map(r=>[r.uuid,r]));
+    await Store.bulkPut("cropsTrees",cropsTrees.map(r=>[r.uuid,r]));
+    await Store.bulkPut("offers",offers.map(r=>[r.uuid,r]));
+    await Store.bulkPut("documents",docs.map(r=>[r.uuid,r]));
+    await Store.bulkPut("transmittals",transmittals.map(r=>[r.uuid,r]));
+    await Store.bulkPut("parties",parties.map(r=>[r.uuid,r]));
+    await Store.put("meta","counters",{key:"counters",value:{seq:438}});
+    await Store.put("meta","demoSeeded",{key:"demoSeeded",value:true});
+    return {folders:folders.length,structures:structures.length,cropsTrees:cropsTrees.length};
+  }
+
+  /* ============ FORM BLOCKS (tracker / baseline / expro / awaiting) ============ */
+  function trackBlock(f){
+    f.stageOpt=f.stageOpt||stageOpt(f.stage);
+    const c=Derive.completeness(f), g=Derive.gateCheck(f), band=Derive.caseBand(f), drag=Derive.caseDrag(f);
+    const gateHtml=g?`<div class="gate ${g.blocked?'':'adv'}">
+        <b>${g.blocked?"Blocked — proof of service required":"Flagged — proof of service not on record"}</b><br>
+        This case sits at ${U.esc(CFG.exproGateFrom)} or beyond. The expropriation trigger is valid service of an offer plus non-acceptance, evidenced by a receiving copy or affidavit of service.<br>
+        ${g.reasons.map(r=>"· "+U.esc(r)).join("<br>")}
+        ${g.overridden?`<br><b>Administrative override on record</b> by ${U.esc(g.overrideBy||"")}: ${U.esc(g.overrideReason||"")}`:
+          `<br><button class="btn sm ghost" onclick="App.overrideGate('${f.uuid}')">Record administrative override</button>`}
+      </div>`:'';
+    const gaps=c.ok?'<div class="flag ok">No data gaps recorded on this case.</div>':
+      `<div class="flag warn"><b>Incomplete (${c.gaps.length})</b> — the record still saves; it is counted as a data gap on the dashboard.<br>${c.gaps.map(x=>"· "+U.esc(x)).join("<br>")}</div>`;
+    return `${gateHtml}
+      <p class="muted">The stage list follows the route. Unified progress band <b>${band}</b> — ${U.esc(CFG.bandLabel(band))}. Slowest asset: <b>${U.esc(drag.k)}</b> (${U.esc(drag.s||"no stage")}). Bands exist only for comparison and are never entered by hand.</p>
+      ${renderFields(f,DEF.track,"tk_")}
+      <p class="mini">Last movement date is the substantive one. Editing a typo does not reset it; changing route, stage, an offer's service state, or an expropriation or payment milestone does.</p>
+      ${gaps}`;
+  }
+  function baselineBlock(f){
+    const b=f.baseline||{};
+    if(!b.locked)return `<div class="lock"><b>Not yet locked.</b> The Initial PMO Inventory (As Found) locks automatically the first time this case is saved with a route and a stage. It is never fabricated from an inherited status.</div>
+      <button class="btn sm" onclick="App.lockBaseline('${f.uuid}')">Lock As Found baseline now</button>`;
+    return `<div class="lock"><b>Locked ${U.fmtDate(b.lockedAt)}</b> by ${U.esc(b.lockedBy||"—")}. Ordinary editing cannot change these values.</div>
+      <div class="grid-wrap"><table><tr><th>Field</th><th>As Found</th><th>Current</th></tr>
+        <tr><td>Route</td><td>${U.esc(b.route||"—")}</td><td>${U.esc(Derive.caseRoute(f))}</td></tr>
+        <tr><td>Stage</td><td>${U.esc(CFG.stageLabel(b.stage))}</td><td>${U.esc(CFG.stageLabel(f.stage))}</td></tr>
+        <tr><td>Band</td><td>${b.band==null?"—":b.band}</td><td>${Derive.caseBand(f)}</td></tr>
+        <tr><td>Inventory date</td><td>${U.fmtDate(b.date)}</td><td>${U.fmtDate(f.stageDate)}</td></tr>
+        <tr><td>Condition / issue</td><td>${U.esc(b.condition||"—")}</td><td>${U.esc(f.condition||"—")}</td></tr>
+        <tr><td>Recommended action</td><td>${U.esc(b.recommendation||"—")}</td><td>${U.esc(f.nextAction||"—")}</td></tr>
+      </table></div>
+      <p class="mini">Movement classification: <span class="mv ${Derive.movement(f).cls}">${U.esc(Derive.movement(f).label)}</span></p>
+      ${b.corrections&&b.corrections.length?`<h4>Correction history</h4><div class="grid-wrap"><table><tr><th>When</th><th>By</th><th>Field</th><th>From → To</th><th>Reason</th></tr>
+        ${b.corrections.map(c=>`<tr><td>${U.fmtDate(c.at)}</td><td>${U.esc(c.by)}</td><td>${U.esc(c.field)}</td><td>${U.esc(c.from||"—")} → ${U.esc(c.to)}</td><td>${U.esc(c.reason)}</td></tr>`).join("")}</table></div>`:""}
+      ${S.isAdmin?`<button class="btn sm ghost" onclick="App.correctBaseline('${f.uuid}')">Administrative correction</button>`:'<p class="mini">Only the administrator may correct a locked baseline, and every correction requires a written reason.</p>'}`;
+  }
+  function exproBlock(f){
+    return `<p class="muted">Service of notices is recorded once, in section H. It is never duplicated here — a second copy is a second version of the truth.</p>
+      ${renderFields(f.expro||{},DEF.expro,"xp_")}
+      <p class="mini">The deposit regime is recorded, not computed. Under RA 12289 §7(a) land and crops-and-trees deposit at 15% of SMV or BIR zonal value while structures deposit at 100% of replacement cost less depreciation; under RA 10752 the position was 100/100/100; the §19 carve-out supports 100% where a written agreement on the amount existed as of 04 October 2025. The ARROW IRR is unissued, so the interpretive basis for each call must be documented in the project folder before disbursement.</p>`;
+  }
+  /* ---- Transmittals UI (per asset) ---- */
+  function gridTransmittals(f){
+    const rows=(f.transmittals||[]).map((t,i)=>{
+      const v=Derive.transmittalView(t);
+      return `<tr>
+        <td>${U.esc(v.docType||"—")}</td><td>${U.esc(v.assetRef||"—")}</td>
+        <td>${U.esc(v.ladder||"—")}</td>
+        <td>${v.closed?'<span class="pill g">closed</span>':U.esc(v.holderLabel)+(v.rung?' <span class="mini">('+v.rung+'/'+v.rungs+')</span>':'')}</td>
+        <td>${v.closed?"—":(v.days==null?"—":v.days+"d")}${v.red?' <span class="pill r">over '+v.thr+'d</span>':''}</td>
+        <td><button class="btn sm ghost" onclick="App.openTransmittal(${i})">Log / edit</button>
+            <button class="btn sm warn" onclick="App.delTransmittal(${i})">Remove</button></td></tr>`}).join("");
+    return `<p class="muted">One row per document in transit. Each attaches to an asset and climbs a routing ladder; log a hop when the file moves desk to desk. The current holder and days-on-desk are computed, and a desk past its threshold turns red. On the LGU lane the money is LGU-held — there is no finance ladder here.</p>
+      <div class="grid-wrap"><table><tr><th>Document</th><th>Asset</th><th>Ladder</th><th>Currently with</th><th>On desk</th><th></th></tr>
+      ${rows||'<tr><td colspan="6" class="mini">No documents in transit.</td></tr>'}</table></div>
+      <button class="btn sm" onclick="App.addTransmittal()">Add transmittal</button>`;
+  }
+  function addTransmittal(){openTransmittal(null)}
+  function openTransmittal(idx){
+    const f=S.folder;const rec=idx==null?{hops:[]}:Object.assign({},f.transmittals[idx]);
+    const key=Derive.ladderKeyByLabel(rec.ladder);
+    const rungs=key?CFG.ladders[key].rungs:[];
+    const hopRows=(rec.hops||[]).map((h,j)=>`<tr>
+      <td>${U.esc(CFG.holderLabel(h.holder))}</td>
+      <td><input type="date" value="${U.esc((h.in||'').slice(0,10))}" onchange="App.hopEdit(${idx==null?'null':idx},${j},'in',this.value)"></td>
+      <td><input type="date" value="${U.esc((h.out||'').slice(0,10))}" onchange="App.hopEdit(${idx==null?'null':idx},${j},'out',this.value)"></td>
+      </tr>`).join("");
+    const rungPicker=rungs.length?`<div class="field"><label>Advance to rung</label>
+      <select id="tx_rung"><option value=""></option>${rungs.map((r,ri)=>`<option value="${r}">${ri+1}. ${U.esc(CFG.holderLabel(r))}</option>`).join("")}</select>
+      <button class="btn sm" onclick="App.advanceHop(${idx==null?'null':idx})">Record arrival at rung</button></div>`:'';
+    const body=renderFields(rec,CHILD_DEF.transmittals,"c_")+
+      (rec.ladder?`<h4>Rung log (${rungs.length}-rung ladder)</h4>
+        <div class="grid-wrap"><table><tr><th>Desk</th><th>Received</th><th>Released</th></tr>${hopRows||'<tr><td colspan="3" class="mini">No hops logged. Use the picker below to record arrival at the first desk.</td></tr>'}</table></div>${rungPicker}`:'<p class="mini">Choose a ladder, save, then log hops.</p>')+
+      `<button class="btn wide" onclick="App.saveTransmittal(${idx==null?'null':idx})">Save transmittal</button>`;
+    S._txDraft=rec;
+    modal((idx==null?"Add":"Edit")+" transmittal",body);
+  }
+  async function saveTransmittal(idx){
+    const f=S.folder;const rec=idx==null?{uuid:U.uuid(),hops:(S._txDraft&&S._txDraft.hops)||[]}:f.transmittals[idx];
+    collectFields(rec,CHILD_DEF.transmittals,"c_");
+    if(!rec.docType){notice("Choose a document type.");return}
+    rec.hops=rec.hops||[];
+    if(idx==null)f.transmittals.push(rec);
+    await saveFolder(f,true);closeModal();render();
+  }
+  function _txRec(idx){return idx==null?S._txDraft:S.folder.transmittals[idx]}
+  function advanceHop(idx){
+    const rec=_txRec(idx);const sel=document.getElementById("tx_rung");if(!sel||!sel.value){notice("Pick a rung.");return}
+    rec.hops=rec.hops||[];
+    // close the previous open hop
+    const open=rec.hops.find(h=>!h.out);if(open)open.out=U.today();
+    rec.hops.push({holder:sel.value,in:U.today(),out:""});
+    if(idx==null)S._txDraft=rec;
+    openTransmittal(idx);
+  }
+  function hopEdit(idx,j,field,val){const rec=_txRec(idx);if(!rec.hops[j])return;rec.hops[j][field]=val;if(idx==null)S._txDraft=rec;}
+  async function delTransmittal(idx){
+    const f=S.folder;const rec=f.transmittals[idx];if(!rec)return;
+    if(!confirm("Remove this transmittal?"))return;
+    f.transmittals.splice(idx,1);if(rec.uuid)await Store.del("transmittals",rec.uuid);
+    await saveFolder(f,true);render();
+  }
+
+  /* ---- Remarks / issues log (timestamped, append-only feel) ---- */
+  function gridRemarksLog(f){
+    const rows=(f.remarksLog||[]).slice().reverse().map((r,ri)=>{
+      const i=(f.remarksLog.length-1)-ri;
+      return `<tr>
+        <td class="mini">${U.fmtDate(r.at)}</td>
+        <td>${U.esc(r.text||"")}</td>
+        <td>${r.holder?U.esc(r.holder):'<span class="mini">—</span>'}${r.holder&&!r.resolvedOn?' <span class="pill y">waiting</span>':''}</td>
+        <td>${U.esc(r.stageAt||"")}</td>
+        <td>${r.holder&&!r.resolvedOn?`<button class="btn sm ghost" onclick="App.resolveRemark(${i})">Resolve</button>`:''}
+            <button class="btn sm warn" onclick="App.delRemark(${i})">Remove</button></td></tr>`}).join("");
+    return `<p class="muted">Append issues at any stage — missing document, PAP not responding, waiting on a desk. Each line is timestamped and never overwritten. If you set a "waiting on", the line feeds the Waiting-on view until you resolve it. This replaces the old awaiting-actions tab.</p>
+      <div class="row">
+        <div class="field" style="flex:2"><label>New remark</label><textarea id="rl_text" placeholder="e.g. Title not yet submitted by PAP"></textarea></div>
+        <div class="field"><label>Waiting on (optional)</label><select id="rl_holder"><option value=""></option>${CFG.holders.map(h=>`<option>${U.esc(h[1])}</option>`).join("")}</select></div>
+      </div>
+      <button class="btn sm" onclick="App.addRemark()">Add remark</button>
+      <div class="grid-wrap" style="margin-top:8px"><table><tr><th>When</th><th>Remark</th><th>Waiting on</th><th>At stage</th><th></th></tr>
+      ${rows||'<tr><td colspan="5" class="mini">No remarks logged.</td></tr>'}</table></div>`;
+  }
+  async function addRemark(){
+    const f=S.folder;
+    const text=(document.getElementById("rl_text")||{}).value||"";
+    const holder=(document.getElementById("rl_holder")||{}).value||"";
+    if(!text.trim()){notice("Type the remark first.");return}
+    f.remarksLog=f.remarksLog||[];
+    f.remarksLog.push({at:U.now(),text:text.trim(),holder:holder||"",stageAt:CFG.stageLabel(f.stage),by:(S.user&&S.user.name)||"",resolvedOn:""});
+    await saveFolder(f,true);render();
+  }
+  async function resolveRemark(i){
+    const f=S.folder;const r=f.remarksLog[i];if(!r)return;
+    r.resolvedOn=U.now();await saveFolder(f,true);render();
+  }
+  async function delRemark(i){
+    const f=S.folder;if(!f.remarksLog[i])return;
+    if(!confirm("Remove this remark line?"))return;
+    f.remarksLog.splice(i,1);await saveFolder(f,true);render();
+  }
+  async function lockBaseline(uuid){
+    const f=S.folder;if(!f||f.uuid!==uuid)return;collectFolder();
+    if(!f.route||f.route==="Undetermined"||!f.stage){notice("Set a route and a stage before locking the As Found baseline.");return}
+    await saveFolder(f,false);render();notice("Initial PMO (As Found) baseline locked.");
+  }
+  function correctBaseline(uuid){
+    const f=S.folder;if(!f||!S.isAdmin)return;
+    const b=f.baseline||{};
+    modal("Administrative correction to the locked baseline",
+      `<div class="flag bad">This alters the comparison baseline. The correction is recorded permanently with your name, the previous value and your reason. A correction without a reason is not accepted.</div>
+       ${renderFields({route:b.route,stageOpt:stageOpt(b.stage),date:b.date,condition:b.condition,recommendation:b.recommendation},DEF.baseline,"bl_")}
+       <div class="field"><label>Reason for correction <span class="reqmark">*</span></label><textarea id="bl_reason"></textarea></div>
+       <button class="btn wide" onclick="App.saveBaselineCorrection('${uuid}')">Record correction</button>`);
+  }
+  async function saveBaselineCorrection(uuid){
+    const f=S.folder;if(!f||!S.isAdmin)return;
+    const reason=(document.getElementById("bl_reason")||{}).value||"";
+    if(!reason.trim()){notice("A written reason is required.");return}
+    const nv=collectFields({},DEF.baseline,"bl_");
+    const b=f.baseline||{};b.corrections=b.corrections||[];
+    const map={route:"route",stageOpt:"stage",date:"date",condition:"condition",recommendation:"recommendation"};
+    for(const k of Object.keys(map)){
+      const target=map[k];
+      const newVal=(k==="stageOpt")?stageCode(nv[k]):nv[k];
+      const oldVal=b[target];
+      if(String(newVal||"")!==String(oldVal||"")){
+        b.corrections.push({at:U.now(),by:S.user.name,field:target,from:oldVal||"",to:newVal||"",reason:reason.trim()});
+        await audit("BASELINE-CORRECT","folder",f.uuid,target,oldVal||"",(newVal||"")+" — "+reason.trim());
+        b[target]=newVal;
+      }
+    }
+    b.band=Derive.bandOf(b.stage);
+    f.baseline=b;
+    await saveFolder(f,true);closeModal();render();notice("Correction recorded.");
+  }
+  async function overrideGate(uuid){
+    const f=S.folder;if(!f)return;
+    if(!S.isAdmin){notice("Only the administrator may override the proof-of-service requirement.");return}
+    const reason=prompt("Written reason for proceeding without proof of service on record:");
+    if(!reason||!reason.trim()){notice("An override without a written reason is not recorded.");return}
+    f.exproOverride=true;f.exproOverrideBy=S.user.name;f.exproOverrideReason=reason.trim();f.exproOverrideAt=U.now();
+    await audit("EXPRO-OVERRIDE","folder",f.uuid,"proofOfService","",reason.trim());
+    await saveFolder(f,false);render();notice("Override recorded in the audit trail.");
+  }
+
+  /* ---- expose ---- */
+  return {boot,login,logout,go,render,newFolder,loadFolder,deleteFolder,saveNow,filt,
+    openChild,saveChild,delChild,docStatus,seedDocs,ctAdd,ctEdit,ctLine,ctLineSave,ctPaste,ctCSV,
+    openSpecial,saveSpecial,assignModal,doAssign,submitReview,openReport,closeModal,pickGroup,
+    exportBackup,importBackup,importReceipt,exportPackage,exportCSV,seedSamples,
+    setF,setStage,setMode,setAsset,clearF,pageTo,sortBy,exportFilteredCSV,resetDemo,seedDemo,
+    addTransmittal,openTransmittal,saveTransmittal,advanceHop,hopEdit,delTransmittal,
+    addRemark,resolveRemark,delRemark,
+    lockBaseline,correctBaseline,saveBaselineCorrection,overrideGate,
+    _hydrate:hydrate,_dash:dash,_population:population,_movementSignature:movementSignature,
+    _S:()=>S,_stamp:stamp,_audit:audit,_refresh:refresh,_folderCode:folderCode,_completion:completion,_collect:collectFolder,_saveFolder:saveFolder,_lastExport:()=>__lastExport,_isProvisional:isProvisional};
+})();
+
+/* ---------- BOOT ---------- */
+if(typeof window!=="undefined"){window.App=App;window.U=U;window.CFG=CFG;window.Store=Store;window.STORES=STORES;window.calcLand=calcLand;window.Derive=Derive;window.migrateV2=migrateV2;window.mulberry32=mulberry32;window.DB_NAME=DB_NAME;window.LS_PREFIX=LS_PREFIX;window.DEF=DEF;window.CHILD_DEF=CHILD_DEF;window.VAL_STRUCT=VAL_STRUCT;window.VAL_CT=VAL_CT;}
+if(typeof document!=="undefined"){document.addEventListener("DOMContentLoaded",()=>{App.boot()})}
+if(typeof module!=="undefined"){module.exports={App,U,CFG,Store,STORES}}
+</script>
+</body>
+</html>
+</body>
+</html>
